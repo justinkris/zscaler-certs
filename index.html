@@ -185,6 +185,7 @@
   .tag-arch { background:var(--amber-light); color:#a07c00; border-color:#ffe680; }
   .tag-rev  { background:#fce8e8; color:#a32d2d; border-color:#f7c1c1; }
   .tag-pod  { background: var(--ink); color: var(--orange); border-color: var(--ink); }
+  .tag-lab  { background: #e8f0fb; color: #1a6bcc; border-color: #b3ccf0; }
 
   /* Main table */
   main {
@@ -536,6 +537,11 @@
       <div class="label">STUDY GUIDES</div>
       <div class="date">Click to open</div>
     </div>
+    <div class="exam-countdown" style="cursor:pointer;" onclick="window.location.href='mock-exams.html'">
+      <div style="font-size:42px;line-height:1;">📋</div>
+      <div class="label">MOCK EXAMS</div>
+      <div class="date">Click to open</div>
+    </div>
   </div>
 </header>
 
@@ -632,7 +638,7 @@
         <li>Identify weak points before focusing study effort</li>
       </ul>
       <div class="weight-badge">Full blueprint diagnostic</div>
-      <a href="day-02.html" class="guide-btn">→ Diagnostic Results</a>
+      <a href="mock-exams/day-02.html" class="guide-btn">→ Diagnostic Results</a>
       <span style="display:inline-flex;align-items:center;gap:5px;margin-top:10px;margin-left:8px;background:var(--green-light);color:var(--green);border:1px solid var(--green-border);padding:7px 14px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.06em;">✓ COMPLETE</span>
     </div>
     <div class="tags-col">
@@ -988,6 +994,7 @@
       <div class="day-weekday">Thu</div>
       <div class="day-date-main">30 Apr</div>
       <div class="session-note"><span class="session-dot"></span> Socratic session</div>
+      <div class="session-note"><span class="session-dot" style="background:var(--blue);"></span> Zscaler Lab</div>
     </div>
     <div class="topics-col">
       <div class="topic-title">Final Revision &amp; Confidence Session</div>
@@ -1003,6 +1010,7 @@
     <div class="tags-col">
       <span class="tag tag-rev">Review</span>
       <span class="tag tag-pod">🎧 Podcast</span>
+      <span class="tag tag-lab">🧪 Lab</span>
     </div>
   </div>
 
@@ -1028,6 +1036,7 @@
       <div class="day-weekday">Fri</div>
       <div class="day-date-main">1 May</div>
       <div class="session-note"><span class="session-dot"></span> Socratic session</div>
+      <div class="session-note"><span class="session-dot" style="background:var(--blue);"></span> Zscaler Lab</div>
     </div>
     <div class="topics-col">
       <div class="topic-title">Final Revision &amp; Confidence Session</div>
@@ -1042,6 +1051,7 @@
     </div>
     <div class="tags-col">
       <span class="tag tag-rev">Review</span>
+      <span class="tag tag-lab">🧪 Lab</span>
     </div>
   </div>
 
