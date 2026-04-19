@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZDTE Study Bite — HTTP POST Policy Enforcement</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #fef9f0;
+    --cream-dark: #f5eddb;
+    --ink: #1a1209;
+    --ink-soft: #5a4a35;
+    --ink-muted: #8a7660;
+    --orange: #ff6b35;
+    --orange-light: #fff3ec;
+    --orange-border: #ffd5c0;
+    --amber-light: #fffbe6;
+    --green: #3a7d44;
+    --green-light: #edf7ee;
+    --green-border: #b2dfb4;
+    --purple: #5c35cc;
+    --purple-light: #ece8ff;
+    --purple-border: #c8bbff;
+    --blue-light: #e8f0fb;
+    --blue-border: #b3ccf0;
+    --blue: #1a6bcc;
+    --red-light: #fce8e8;
+    --red-border: #f7c1c1;
+    --red: #a32d2d;
+    --border: #ede5d8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Epilogue', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 40px 60px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    background: var(--cream);
+  }
+
+  .header-left { flex: 1; }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .breadcrumb a { color: var(--orange); text-decoration: none; }
+  .breadcrumb-sep { color: var(--border); }
+
+  .day-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+
+  .day-badge-dot { width: 5px; height: 5px; background: var(--orange); border-radius: 50%; }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 42px;
+    font-weight: 700;
+    line-height: 1.0;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  h1 em { font-style: italic; font-weight: 400; color: var(--orange); }
+
+  .header-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 14px;
+  }
+
+  .tag {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    border: 1px solid;
+    display: inline-block;
+  }
+
+  .tag-zia   { background: var(--blue-light);   color: var(--blue);   border-color: var(--blue-border); }
+  .tag-weight { background: var(--orange-light); color: #cc4a18; border-color: var(--orange-border); }
+  .tag-bite  { background: var(--purple-light);  color: var(--purple); border-color: var(--purple-border); }
+
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+
+  .progress-card {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 14px 20px;
+    border-radius: 14px;
+    text-align: center;
+    min-width: 110px;
+  }
+
+  .progress-card .big {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--orange);
+    line-height: 1;
+  }
+
+  .progress-card .lbl { font-size: 10px; color: #7a6a55; letter-spacing: 0.1em; margin-top: 4px; }
+
+  .section-nav {
+    display: flex;
+    gap: 0;
+    padding: 0 60px;
+    border-bottom: 1px solid var(--border);
+    background: var(--cream-dark);
+    overflow-x: auto;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .nav-tab {
+    padding: 14px 20px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    font-family: 'Epilogue', sans-serif;
+  }
+
+  .nav-tab:hover { color: var(--ink); }
+  .nav-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  main {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 0;
+    min-height: calc(100vh - 200px);
+  }
+
+  .main-content {
+    padding: 36px 48px 60px 60px;
+    border-right: 1px solid var(--border);
+  }
+
+  .sidebar {
+    padding: 36px 28px 60px;
+    background: var(--cream-dark);
+  }
+
+  .section-block { margin-bottom: 44px; }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+
+  h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 10px;
+    margin-top: 24px;
+  }
+
+  p {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.8;
+    margin-bottom: 12px;
+  }
+
+  ul.content-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  ul.content-list li {
+    font-size: 14px;
+    color: var(--ink-soft);
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.6;
+  }
+
+  ul.content-list li::before {
+    content: '·';
+    position: absolute;
+    left: 2px;
+    color: var(--orange);
+    font-weight: 700;
+    font-size: 18px;
+    line-height: 1.2;
+  }
+
+  .callout {
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    border: 1px solid;
+  }
+
+  .callout-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+
+  .callout-icon {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+
+  .callout-body { font-size: 13px; line-height: 1.7; }
+
+  .callout-note  { background: var(--amber-light); border-color: #ffe680; }
+  .callout-note .callout-header { color: #a07c00; }
+  .callout-note .callout-icon   { background: #ffe680; color: #a07c00; }
+  .callout-note .callout-body   { color: #7a5c00; }
+
+  .callout-analogy { background: var(--green-light); border-color: var(--green-border); }
+  .callout-analogy .callout-header { color: var(--green); }
+  .callout-analogy .callout-icon   { background: var(--green-border); color: var(--green); }
+  .callout-analogy .callout-body   { color: #2a5c32; }
+
+  .callout-tip { background: var(--blue-light); border-color: var(--blue-border); }
+  .callout-tip .callout-header { color: var(--blue); }
+  .callout-tip .callout-icon   { background: var(--blue-border); color: var(--blue); }
+  .callout-tip .callout-body   { color: #153d7a; }
+
+  .callout-warn { background: var(--red-light); border-color: var(--red-border); }
+  .callout-warn .callout-header { color: var(--red); }
+  .callout-warn .callout-icon   { background: var(--red-border); color: var(--red); }
+  .callout-warn .callout-body   { color: #7a1f1f; }
+
+  .definition {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--orange);
+    border-radius: 0 10px 10px 0;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+  }
+
+  .definition-term { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+  .definition-body { font-size: 13px; color: var(--ink-soft); line-height: 1.7; }
+
+  .key-concept {
+    background: var(--orange-light);
+    border: 1px solid var(--orange-border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    margin-bottom: 16px;
+    font-size: 13px;
+    color: #7a3010;
+    line-height: 1.7;
+  }
+
+  .key-concept strong { color: var(--orange); font-weight: 600; }
+
+  .post-only {
+    display: inline-block;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    background: #fff0f0;
+    color: #a32d2d;
+    border: 1px solid #f7c1c1;
+    border-radius: 8px;
+    padding: 2px 8px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+
+  .pipeline { display: flex; flex-direction: column; gap: 0; margin: 20px 0 24px; }
+
+  .pipeline-phase-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--ink-muted);
+    margin: 16px 0 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .pipeline-phase-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  .pipeline-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 10px 14px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 4px;
+    transition: background 0.15s;
+  }
+
+  .pipeline-step:hover { background: var(--orange-light); border-color: var(--orange-border); }
+
+  .pipeline-step.post-exclusive {
+    background: #fff8f6;
+    border-color: var(--orange-border);
+  }
+
+  .pipeline-step.post-exclusive:hover { background: var(--orange-light); }
+
+  .step-num {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--cream);
+    font-size: 11px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .step-num.fw   { background: var(--blue); }
+  .step-num.web  { background: var(--orange); }
+  .step-num.note { background: var(--green); }
+  .step-num.new  { background: var(--red); }
+
+  .step-body { flex: 1; }
+
+  .step-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 2px;
+  }
+
+  .step-detail {
+    font-size: 12px;
+    color: var(--ink-muted);
+    line-height: 1.5;
+  }
+
+  .step-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 500;
+    flex-shrink: 0;
+    align-self: flex-start;
+    margin-top: 3px;
+  }
+
+  .step-tag.fw  { background: var(--blue-light);   color: var(--blue);   border: 1px solid var(--blue-border); }
+  .step-tag.web { background: var(--orange-light);  color: #cc4a18;       border: 1px solid var(--orange-border); }
+  .step-tag.atp { background: var(--purple-light);  color: var(--purple); border: 1px solid var(--purple-border); }
+  .step-tag.dlp { background: var(--red-light);     color: var(--red);    border: 1px solid var(--red-border); }
+
+  .pipeline-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 18px;
+    color: var(--orange);
+    font-size: 16px;
+    opacity: 0.5;
+  }
+
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin-bottom: 20px;
+  }
+
+  .compare-table th {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+  }
+
+  .compare-table th:first-child { border-radius: 10px 0 0 0; }
+  .compare-table th:last-child  { border-radius: 0 10px 0 0; }
+
+  .compare-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink-soft);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+
+  .compare-table tr:nth-child(even) td { background: var(--cream-dark); }
+
+  .compare-table td.highlight {
+    color: var(--red);
+    font-weight: 600;
+    background: #fff8f6;
+  }
+
+  .sidebar-section { margin-bottom: 28px; }
+
+  .sidebar-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .subtopic-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+
+  .subtopic-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    line-height: 1.5;
+    cursor: pointer;
+  }
+
+  .subtopic-list li:last-child { border-bottom: none; }
+
+  .subtopic-check {
+    width: 14px; height: 14px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+
+  .subtopic-list li.done .subtopic-check { background: var(--green); border-color: var(--green); }
+  .subtopic-list li.done span { text-decoration: line-through; color: var(--ink-muted); }
+
+  .quick-ref { background: var(--ink); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
+  .quick-ref-term { font-size: 11px; font-weight: 600; color: var(--orange); letter-spacing: 0.06em; margin-bottom: 4px; }
+  .quick-ref-def  { font-size: 12px; color: #9a8070; line-height: 1.6; }
+
+  .sidebar-note {
+    background: var(--amber-light);
+    border: 1px solid #ffe680;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: #7a5c00;
+    line-height: 1.6;
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+
+  footer {
+    padding: 20px 60px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--cream-dark);
+  }
+
+  .footer-left { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; }
+  .footer-left span { color: var(--orange); }
+  .footer-right { font-size: 11px; color: var(--ink-muted); letter-spacing: 0.06em; }
+
+  @media (max-width: 900px) {
+    header { padding: 24px 20px 20px; flex-direction: column; }
+    .header-right { align-items: flex-start; flex-direction: row; }
+    main { grid-template-columns: 1fr; }
+    .main-content { padding: 24px 20px 40px; border-right: none; }
+    .sidebar { padding: 24px 20px 40px; border-top: 1px solid var(--border); }
+    .section-nav { padding: 0 20px; }
+    footer { padding: 20px; flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="breadcrumb">
+      <a href="index.html">Study Plan</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Study Bites</span>
+      <span class="breadcrumb-sep">›</span>
+      <span>HTTP POST Policy Enforcement</span>
+    </div>
+
+    <div class="day-badge">
+      <span class="day-badge-dot"></span>
+      STUDY BITE — POLICY ENFORCEMENT
+    </div>
+
+    <h1>HTTP POST Request<br><em>End-to-End Policy Order</em></h1>
+
+    <div class="header-meta-row">
+      <span class="tag tag-zia">ZIA</span>
+      <span class="tag tag-bite">Study Bite</span>
+      <span class="tag tag-weight">Blueprint: ~15%</span>
+    </div>
+  </div>
+
+  <div class="header-right">
+    <div class="progress-card">
+      <div class="big" id="prog-num">0<span style="font-size:18px;color:#7a6a55;">%</span></div>
+      <div class="lbl">COMPLETE</div>
+    </div>
+  </div>
+</header>
+
+<nav class="section-nav">
+  <button class="nav-tab active" onclick="navTo('section-overview', this)">Overview</button>
+  <button class="nav-tab" onclick="navTo('section-pipeline', this)">Full Pipeline</button>
+  <button class="nav-tab" onclick="navTo('section-comparison', this)">POST vs GET</button>
+  <button class="nav-tab" onclick="navTo('section-mental', this)">Mental Notes</button>
+  <button class="nav-tab" onclick="navTo('section-exam', this)">Exam Tips</button>
+</nav>
+
+<main>
+
+  <div class="main-content">
+
+    <!-- OVERVIEW -->
+    <div class="section-block" id="section-overview">
+      <div class="section-label">OVERVIEW</div>
+      <h2>What makes a POST request different?</h2>
+      <p>
+        An HTTP POST request is a user <em>sending</em> data to the web — submitting a form, uploading a file, posting to social media, or sending an email through webmail. Because data is leaving the organisation, the policy chain is significantly longer than a GET request. Zscaler needs to inspect not just the destination, but the content itself.
+      </p>
+      <p>
+        POST requests share the early pipeline stages with GET (threat checks, app and URL control, browser control), but then diverge: they add Malicious URL checking against the global database, Malware Protection on outgoing files, File Type Control, and most critically — Data Loss Prevention (DLP).
+      </p>
+
+      <div class="key-concept">
+        <strong>Core principle:</strong> Like GET, a POST request first hits the <strong>Firewall Module</strong>, then the <strong>Web Module</strong>. But the POST pipeline has <strong>4 additional policies</strong> that GET never sees: Malicious URL Block (global DB), Malware Protection, File Type Control, and DLP. These exist because POST carries outbound data that could leak or contain malware.
+      </div>
+    </div>
+
+    <!-- PHASE 1 + 2: PIPELINE -->
+    <div class="section-block" id="section-pipeline">
+      <div class="section-label">PHASE 1 — FIREWALL MODULE</div>
+      <h2>The first gate: Firewall</h2>
+      <p>
+        Identical to GET — all outbound web traffic passes through the Firewall Module first. If the organisation has a firewall policy enabled for the location, that policy is evaluated before anything in the Web Module runs. A firewall block here ends the transaction immediately.
+      </p>
+
+      <div class="pipeline">
+        <div class="pipeline-step">
+          <div class="step-num fw">FW</div>
+          <div class="step-body">
+            <div class="step-name">Firewall Policy Evaluation</div>
+            <div class="step-detail">Evaluated against the organisation's firewall rules. A block here prevents the request from ever reaching the Web Module. The firewall always takes precedence over web policies.</div>
+          </div>
+          <span class="step-tag fw">FIREWALL</span>
+        </div>
+      </div>
+
+      <div class="section-label" style="margin-top:32px;">PHASE 2 — WEB MODULE (HTTP POST ORDER)</div>
+      <h2>Inside the Web Module: POST request pipeline</h2>
+      <p>
+        Once traffic clears the Firewall Module, it enters the Web Module. Steps marked <span class="post-only">POST ONLY</span> do not appear in the GET pipeline — they are unique to POST because data is being sent outbound.
+      </p>
+
+      <div class="pipeline">
+
+        <div class="pipeline-phase-label">THREAT CHECKS (EARLY)</div>
+
+        <div class="pipeline-step">
+          <div class="step-num web">1</div>
+          <div class="step-body">
+            <div class="step-name">Custom Malicious URLs</div>
+            <div class="step-detail">Checks the destination URL against the organisation's custom Advanced Threat Protection denylist. This is a custom blocklist configured by the admin — distinct from the global Zscaler URL database checked later.</div>
+          </div>
+          <span class="step-tag atp">ATP</span>
+        </div>
+
+        <div class="pipeline-arrow">↓</div>
+
+        <div class="pipeline-phase-label">APPLICATION & URL CONTROL</div>
+
+        <div class="pipeline-step">
+          <div class="step-num web">2</div>
+          <div class="step-body">
+            <div class="step-name">Cloud App Control</div>
+            <div class="step-detail">Checks if the destination application violates the Cloud App Control policy. Same behaviour as GET — an explicit allow skips URL Filtering by default; an explicit block ends the transaction here.</div>
+          </div>
+          <span class="step-tag web">WEB</span>
+        </div>
+
+        <div class="pipeline-arrow">↓</div>
+
+        <div class="pipeline-step">
+          <div class="step-num web">3</div>
+          <div class="step-body">
+            <div class="step-name">URL Filtering</div>
+            <div class="step-detail">Checks if the destination URL belongs to blocked URL categories. Skipped if Cloud App Control explicitly allowed the request (unless cascading is enabled). Wildcard rules always lose to a more specific match.</div>
+          </div>
+          <span class="step-tag web">WEB</span>
+        </div>
+
+        <div class="pipeline-arrow">↓</div>
+
+        <div class="pipeline-phase-label">SECURITY BYPASS & BROWSER</div>
+
+        <div class="pipeline-step">
+          <div class="step-num web">4</div>
+          <div class="step-body">
+            <div class="step-name">Security Exceptions</div>
+            <div class="step-detail">If the URL is on the organisation's allowlist, the ZIA Public Service Edge skips Malware Protection, Advanced Threat Protection, and Sandbox policies that follow. Configured under the Security Exceptions tab of Malware Protection or ATP policies.</div>
+          </div>
+          <span class="step-tag web">WEB</span>
+        </div>
+
+        <div class="pipeline-arrow">↓</div>
+
+        <div class="pipeline-step">
+          <div class="step-num web">5</div>
+          <div class="step-body">
+            <div class="step-name">Browser Control</div>
+            <div class="step-detail">Checks if the user's browser, or plug-ins and applications within it, violates the Browser Control policy.</div>
+          </div>
+          <span class="step-tag web">WEB</span>
+        </div>
+
+        <div class="pipeline-arrow">↓</div>
+
+        <div class="pipeline-phase-label">ADVANCED THREAT PROTECTION</div>
+
+        <div class="pipeline-step">
+          <div class="step-num web">6</div>
+          <div class="step-body">
+            <div class="step-name">Country-Based Blocking</div>
+            <div class="step-detail">Checks if the request is destined for a server in a blocked country under ATP policy. Skipped if URL is in Security Exceptions.</div>
+          </div>
+          <span class="step-tag atp">ATP</span>
+        </div>
+
+        <div class="pipeline-arrow">↓</div>
+
+        <div class="pipeline-step post-exclusive">
+          <div class="step-num new">7</div>
+          <div class="step-body">
+            <div class="step-name">Malicious URL Block <span class="post-only">POST ONLY</span></div>
+            <div class="step-detail">Checks if the destination URL is known to contain malicious content using Zscaler's <em>global</em> URL database — updated daily with feeds from various threat intelligence partners. Different from step 1, which checks only the organisation's custom denylist. Skipped if URL is in Security Exceptions.</div>
+          </div>
+          <span class="step-tag atp">ATP</span>
+        </div>
+
+        <div class="pipeline-arrow">↓</div>
+
+        <div class="pipeline-step">
+          <div class="step-num web">8</div>
+          <div class="step-body">
+            <div class="step-name">IPS Signature Detection</div>
+            <div class="step-detail">Signature-based detection protecting against botnets, XSS, phishing, malicious active content, and other advanced threats. Skipped if URL is in Security Exceptions.</div>
+          </div>
+          <span class="step-tag atp">ATP</span>
+        </div>
+
+        <div class="pipeline-arrow">↓</div>
+
+        <div class="pipeline-step">
+          <div class="step-num web">9</div>
+          <div class="step-body">
+            <div class="step-name">Suspicious Content Protection</div>
+            <div class="step-detail">Calculates a Page Risk value. If it exceeds the configured ATP threshold, the transaction is blocked. Skipped if URL is in Security Exceptions.</div>
+          </div>
+          <span class="step-tag atp">ATP</span>
+        </div>
+
+        <div class="pipeline-arrow">↓</div>
+
+        <div class="pipeline-phase-label">CONTENT & DATA INSPECTION (POST EXCLUSIVE)</div>
+
+        <div class="pipeline-step post-exclusive">
+          <div class="step-num new">10</div>
+          <div class="step-body">
+            <div class="step-name">Malware Protection <span class="post-only">POST ONLY</span></div>
+            <div class="step-detail">Checks files in the POST request against anti-virus and anti-spyware signatures. Files larger than 10 MB are processed by dedicated threads to avoid bottlenecking smaller file evaluations. Skipped if URL is in Security Exceptions.</div>
+          </div>
+          <span class="step-tag web">WEB</span>
+        </div>
+
+        <div class="pipeline-arrow">↓</div>
+
+        <div class="pipeline-step post-exclusive">
+          <div class="step-num new">11</div>
+          <div class="step-body">
+            <div class="step-name">File Type Control <span class="post-only">POST ONLY</span></div>
+            <div class="step-detail">Checks if the POST request violates the File Type Control policy — for example, blocking PDFs or executables from being uploaded. This runs <em>before</em> DLP, which matters: if file type blocks the transaction, DLP never fires.</div>
+          </div>
+          <span class="step-tag web">WEB</span>
+        </div>
+
+        <div class="pipeline-arrow">↓</div>
+
+        <div class="pipeline-step post-exclusive">
+          <div class="step-num new">12</div>
+          <div class="step-body">
+            <div class="step-name">Data Loss Prevention (DLP) <span class="post-only">POST ONLY</span></div>
+            <div class="step-detail">Checks the content of the POST request for sensitive data that violates the organisation's DLP policy — credit card numbers, Social Security numbers, PII, and more. DLP is the deepest inspection stage and only runs if all prior stages allow the transaction.</div>
+          </div>
+          <span class="step-tag dlp">DLP</span>
+        </div>
+
+        <div class="pipeline-arrow">↓</div>
+
+        <div class="pipeline-phase-label">P2P & BANDWIDTH</div>
+
+        <div class="pipeline-step">
+          <div class="step-num web">13</div>
+          <div class="step-body">
+            <div class="step-name">P2P Control</div>
+            <div class="step-detail">Checks if the destination application is a prohibited P2P file sharing, anonymizer, or VoIP application. Falls under the ATP policy category.</div>
+          </div>
+          <span class="step-tag atp">ATP</span>
+        </div>
+
+        <div class="pipeline-arrow">↓</div>
+
+        <div class="pipeline-step">
+          <div class="step-num note">14</div>
+          <div class="step-body">
+            <div class="step-name">Bandwidth Control</div>
+            <div class="step-detail">Determines full or reduced bandwidth based on the Bandwidth Control policy and current usage at the user's location. Does not block — throttles only.</div>
+          </div>
+          <span class="step-tag web">WEB</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- POST vs GET comparison -->
+    <div class="section-block" id="section-comparison">
+      <div class="section-label">COMPARISON — POST VS GET</div>
+      <h2>Where the pipelines diverge</h2>
+      <p>
+        POST has 14 steps vs GET's 10. The four extra policies all relate to outbound content inspection. Understanding exactly where they sit in the order — and what that means when policies conflict — is prime exam territory.
+      </p>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Policy</th>
+            <th>HTTP GET</th>
+            <th>HTTP POST</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Custom Malicious URLs</td>
+            <td>✓ Step 1</td>
+            <td>✓ Step 1</td>
+          </tr>
+          <tr>
+            <td>Cloud App Control</td>
+            <td>✓ Step 2</td>
+            <td>✓ Step 2</td>
+          </tr>
+          <tr>
+            <td>URL Filtering</td>
+            <td>✓ Step 3</td>
+            <td>✓ Step 3</td>
+          </tr>
+          <tr>
+            <td>Security Exceptions</td>
+            <td>✓ Step 4</td>
+            <td>✓ Step 4</td>
+          </tr>
+          <tr>
+            <td>Browser Control</td>
+            <td>✓ Step 5</td>
+            <td>✓ Step 5</td>
+          </tr>
+          <tr>
+            <td>Country-Based Blocking</td>
+            <td>✓ Step 6</td>
+            <td>✓ Step 6</td>
+          </tr>
+          <tr>
+            <td>Malicious URL Block (global DB)</td>
+            <td>✗ Not in GET</td>
+            <td class="highlight">✓ Step 7 — POST ONLY</td>
+          </tr>
+          <tr>
+            <td>IPS Signature Detection</td>
+            <td>✓ Step 7</td>
+            <td>✓ Step 8</td>
+          </tr>
+          <tr>
+            <td>Suspicious Content Protection</td>
+            <td>✓ Step 8</td>
+            <td>✓ Step 9</td>
+          </tr>
+          <tr>
+            <td>Malware Protection</td>
+            <td>✗ Not in GET</td>
+            <td class="highlight">✓ Step 10 — POST ONLY</td>
+          </tr>
+          <tr>
+            <td>File Type Control</td>
+            <td>✗ Not in GET</td>
+            <td class="highlight">✓ Step 11 — POST ONLY</td>
+          </tr>
+          <tr>
+            <td>Data Loss Prevention (DLP)</td>
+            <td>✗ Not in GET</td>
+            <td class="highlight">✓ Step 12 — POST ONLY</td>
+          </tr>
+          <tr>
+            <td>P2P Control</td>
+            <td>✓ Step 9</td>
+            <td>✓ Step 13</td>
+          </tr>
+          <tr>
+            <td>Bandwidth Control</td>
+            <td>✓ Step 10</td>
+            <td>✓ Step 14</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="key-concept">
+        <strong>The pattern:</strong> The four POST-only policies — Malicious URL Block, Malware Protection, File Type Control, and DLP — are all about inspecting <em>what is being sent outbound</em>. GET is read-only, so they don't apply. POST sends data, so they're essential.
+      </div>
+    </div>
+
+    <!-- MENTAL NOTES -->
+    <div class="section-block" id="section-mental">
+      <div class="section-label">MENTAL NOTES</div>
+      <h2>Things to remember</h2>
+
+      <div class="callout callout-note">
+        <div class="callout-header">
+          <div class="callout-icon">★</div>
+          MENTAL NOTE — File Type Control runs before DLP
+        </div>
+        <div class="callout-body">
+          File Type Control is step 11. DLP is step 12. This order is critical for exam scenarios. If a user tries to upload a PDF containing Social Security numbers and your File Type Control policy blocks PDFs — the transaction is blocked by File Type Control, and DLP never fires. The auditor notification configured in DLP is never sent. The policy that hits first wins.
+        </div>
+      </div>
+
+      <div class="callout callout-note">
+        <div class="callout-header">
+          <div class="callout-icon">★</div>
+          MENTAL NOTE — Two different URL threat databases
+        </div>
+        <div class="callout-body">
+          Step 1 (Custom Malicious URLs) checks your organisation's own custom denylist. Step 7 (Malicious URL Block) checks Zscaler's global threat intelligence database — updated daily with partner feeds. They are separate checks. A URL can pass your custom list but still be flagged by the global database.
+        </div>
+      </div>
+
+      <div class="callout callout-note">
+        <div class="callout-header">
+          <div class="callout-icon">★</div>
+          MENTAL NOTE — Malware Protection has a 10 MB thread split
+        </div>
+        <div class="callout-body">
+          Files larger than 10 MB are processed by dedicated threads so they don't block the evaluation of smaller files. This is a detail Zscaler specifically calls out — expect it to appear in questions about performance or why large file scans don't create a bottleneck.
+        </div>
+      </div>
+
+      <div class="callout callout-analogy">
+        <div class="callout-header">
+          <div class="callout-icon">⟳</div>
+          ANALOGY — Customs at the departure gate
+        </div>
+        <div class="callout-body">
+          If GET is arriving passengers going through passport control (who are you, where are you from?), then POST is departing passengers at a customs checkpoint. You not only check who they are and where they're going, but you also open their luggage. Customs inspects what's inside the bag (Malware Protection), checks whether certain items are prohibited to export (File Type Control), and looks for anything sensitive being smuggled out (DLP). The bag inspection only makes sense when something is leaving — hence why these checks don't exist for GET.
+        </div>
+      </div>
+    </div>
+
+    <!-- EXAM TIPS -->
+    <div class="section-block" id="section-exam">
+      <div class="section-label">EXAM TIPS</div>
+      <h2>What the exam tests</h2>
+
+      <div class="callout callout-tip">
+        <div class="callout-header">
+          <div class="callout-icon">→</div>
+          EXAM TIP — The File Type Control + DLP ordering trap
+        </div>
+        <div class="callout-body">
+          Classic scenario: "A user sends a PDF containing US SSNs. File Type Control blocks PDFs. DLP is configured to alert auditors when SSNs are detected. Does the auditor get notified?" — Answer: No. File Type Control (step 11) blocks the transaction before DLP (step 12) ever runs. Once a policy blocks, all subsequent policies are skipped. The DLP notification never triggers.
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-header">
+          <div class="callout-icon">→</div>
+          EXAM TIP — Know what POST has that GET does not
+        </div>
+        <div class="callout-body">
+          If a scenario describes a user uploading, submitting, or sending data — you're dealing with POST. The four policies exclusive to POST are: Malicious URL Block (global DB), Malware Protection, File Type Control, and DLP. These will never be correct answers for a GET-based scenario.
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-header">
+          <div class="callout-icon">!</div>
+          WATCH OUT — Custom denylist vs global database
+        </div>
+        <div class="callout-body">
+          Don't confuse "Custom Malicious URLs" (step 1 — your org's own list) with "Malicious URL Block" (step 7 — Zscaler's global database). They are separate checks at different points in the pipeline. The custom list is always checked first. The global database only appears in POST, not GET.
+        </div>
+      </div>
+
+      <ul class="content-list">
+        <li>POST pipeline has 14 steps — GET has 10. The 4 extras are all outbound content inspection</li>
+        <li>DLP is the very last content inspection step before P2P and Bandwidth Control</li>
+        <li>File Type Control always runs before DLP — a file type block silences the DLP alert</li>
+        <li>Malware Protection scans outgoing files against AV/anti-spyware signatures</li>
+        <li>Malicious URL Block (step 7) checks the global Zscaler threat DB — POST only</li>
+        <li>Security Exceptions bypass Malware Protection, ATP, and Sandbox — but not DLP or File Type Control</li>
+        <li>Bandwidth Control is always last — same as GET — it throttles, never blocks</li>
+      </ul>
+    </div>
+
+  </div><!-- end .main-content -->
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">PIPELINE CHECKLIST</div>
+      <ul class="subtopic-list" id="subtopic-list">
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>FW: Firewall Module</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>1. Custom Malicious URLs</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>2. Cloud App Control</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>3. URL Filtering</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>4. Security Exceptions</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>5. Browser Control</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>6. Country-Based Blocking</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>7. Malicious URL Block ★</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>8. IPS Signature Detection</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>9. Suspicious Content Protection</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>10. Malware Protection ★</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>11. File Type Control ★</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>12. Data Loss Prevention ★</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>13. P2P Control</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>14. Bandwidth Control</span>
+        </li>
+      </ul>
+      <p style="font-size:11px;color:var(--ink-muted);margin-top:8px;">★ = POST only (not in GET)</p>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">QUICK REFERENCE</div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">DLP</div>
+        <div class="quick-ref-def">Data Loss Prevention. Inspects POST content for sensitive data (PII, SSNs, credit cards). Only runs if all prior steps allow the transaction. POST only.</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">FILE TYPE CONTROL</div>
+        <div class="quick-ref-def">Blocks or allows specific file types from being uploaded. Runs at step 11 — before DLP at step 12. A file type block silences any DLP alert.</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">MALICIOUS URL BLOCK</div>
+        <div class="quick-ref-def">Step 7 in POST. Checks Zscaler's global, partner-fed threat URL database. Different from step 1 (Custom Malicious URLs), which checks only the org's own list.</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">MALWARE PROTECTION</div>
+        <div class="quick-ref-def">Scans outgoing files in POST against AV/anti-spyware signatures. Files &gt;10 MB use dedicated threads. POST only.</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">MEMORY HOOK</div>
+      <div class="sidebar-note">
+        POST = "Custom, Cloud, URL, Sec-Ex, Browser, Country, <strong>Mal-URL</strong>, IPS, Suspect, <strong>Malware, FileType, DLP</strong>, P2P, BW" — the four bold items are POST-only. Think of them as the "outbound content inspection block" that only exists when data is leaving.
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">RELATED TOPICS</div>
+      <ul class="subtopic-list">
+        <li style="cursor:default;">
+          <div style="width:14px;height:14px;background:var(--orange-light);border:1px solid var(--orange-border);border-radius:3px;flex-shrink:0;"></div>
+          <span>HTTP GET — Policy Order</span>
+        </li>
+        <li style="cursor:default;">
+          <div style="width:14px;height:14px;background:var(--orange-light);border:1px solid var(--orange-border);border-radius:3px;flex-shrink:0;"></div>
+          <span>GET/POST Response — Policy Order</span>
+        </li>
+        <li style="cursor:default;">
+          <div style="width:14px;height:14px;background:var(--orange-light);border:1px solid var(--orange-border);border-radius:3px;flex-shrink:0;"></div>
+          <span>SSL Inspection — Policy Workflow</span>
+        </li>
+        <li style="cursor:default;">
+          <div style="width:14px;height:14px;background:var(--orange-light);border:1px solid var(--orange-border);border-radius:3px;flex-shrink:0;"></div>
+          <span>Firewall Module — Deep Dive</span>
+        </li>
+      </ul>
+    </div>
+
+  </div><!-- end .sidebar -->
+
+</main>
+
+<footer>
+  <div class="footer-left">ZDTE<span>.</span></div>
+  <div class="footer-right">Zscaler Digital Transformation Engineer · Study Bite · HTTP POST Policy Enforcement</div>
+</footer>
+
+<script>
+  function navTo(id, el) {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    const target = document.getElementById(id);
+    if (target) {
+      const offset = document.querySelector('.section-nav').offsetHeight + 16;
+      window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
+    }
+  }
+
+  function toggleDone(li) {
+    li.classList.toggle('done');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const items = document.querySelectorAll('#subtopic-list li');
+    const done  = document.querySelectorAll('#subtopic-list li.done').length;
+    const pct   = items.length ? Math.round((done / items.length) * 100) : 0;
+    document.getElementById('prog-num').innerHTML = pct + '<span style="font-size:18px;color:#7a6a55;">%</span>';
+  }
+</script>
+
+</body>
+</html>
