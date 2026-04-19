@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZDTE Study Guide — Day 01: Zscaler Overview & Architecture</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #fef9f0;
+    --cream-dark: #f5eddb;
+    --ink: #1a1209;
+    --ink-soft: #5a4a35;
+    --ink-muted: #8a7660;
+    --orange: #ff6b35;
+    --orange-light: #fff3ec;
+    --orange-border: #ffd5c0;
+    --amber-light: #fffbe6;
+    --green: #3a7d44;
+    --green-light: #edf7ee;
+    --green-border: #b2dfb4;
+    --purple: #5c35cc;
+    --purple-light: #ece8ff;
+    --purple-border: #c8bbff;
+    --blue-light: #e8f0fb;
+    --blue-border: #b3ccf0;
+    --blue: #1a6bcc;
+    --red-light: #fce8e8;
+    --red-border: #f7c1c1;
+    --red: #a32d2d;
+    --border: #ede5d8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body { font-family: 'Epilogue', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+
+  header {
+    padding: 40px 60px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    background: var(--cream);
+  }
+
+  .header-left { flex: 1; }
+
+  .breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: var(--ink-muted); letter-spacing: 0.08em; margin-bottom: 12px;
+  }
+  .breadcrumb a { color: var(--orange); text-decoration: none; cursor: pointer; }
+  .breadcrumb-sep { color: var(--border); }
+
+  .day-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--ink); color: var(--cream);
+    padding: 5px 14px; border-radius: 20px;
+    font-size: 11px; letter-spacing: 0.1em; margin-bottom: 14px;
+  }
+  .day-badge-dot { width: 5px; height: 5px; background: var(--orange); border-radius: 50%; }
+
+  h1 { font-family: 'Fraunces', serif; font-size: 44px; font-weight: 700; line-height: 1.0; color: var(--ink); margin-bottom: 10px; }
+  h1 em { font-style: italic; font-weight: 400; color: var(--orange); }
+
+  .header-meta-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 14px; }
+
+  .tag { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; border: 1px solid; display: inline-block; }
+  .tag-zia   { background: var(--blue-light);   color: var(--blue);   border-color: var(--blue-border); }
+  .tag-zpa   { background: var(--green-light);  color: var(--green);  border-color: var(--green-border); }
+  .tag-arch  { background: var(--amber-light);  color: #a07c00;       border-color: #ffe680; }
+  .tag-weight { background: var(--orange-light); color: #cc4a18;      border-color: var(--orange-border); }
+
+  .header-right { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; flex-shrink: 0; }
+
+  .progress-card { background: var(--ink); color: var(--cream); padding: 14px 20px; border-radius: 14px; text-align: center; min-width: 110px; }
+  .progress-card .big { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; color: var(--orange); line-height: 1; }
+  .progress-card .lbl { font-size: 10px; color: #7a6a55; letter-spacing: 0.1em; margin-top: 4px; }
+
+  .section-nav {
+    display: flex; gap: 0; padding: 0 60px;
+    border-bottom: 1px solid var(--border);
+    background: var(--cream-dark); overflow-x: auto;
+  }
+
+  .nav-tab {
+    padding: 14px 20px; font-size: 12px; font-weight: 500;
+    color: var(--ink-muted); letter-spacing: 0.06em; cursor: pointer;
+    border-bottom: 2px solid transparent; white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+    background: none; border-top: none; border-left: none; border-right: none;
+    font-family: 'Epilogue', sans-serif;
+  }
+  .nav-tab:hover { color: var(--ink); }
+  .nav-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  main { display: grid; grid-template-columns: 1fr 320px; gap: 0; min-height: calc(100vh - 200px); }
+
+  .main-content { padding: 36px 48px 60px 60px; border-right: 1px solid var(--border); }
+  .sidebar { padding: 36px 28px 60px; background: var(--cream-dark); }
+
+  .section-block { margin-bottom: 40px; }
+
+  .section-label {
+    font-size: 10px; letter-spacing: 0.2em; color: var(--ink-muted);
+    margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  h2 { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; color: var(--ink); margin-bottom: 14px; line-height: 1.2; }
+  h3 { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; color: var(--ink); margin-bottom: 10px; margin-top: 24px; }
+
+  p { font-size: 14px; color: var(--ink-soft); line-height: 1.8; margin-bottom: 12px; }
+
+  ul.content-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  ul.content-list li { font-size: 14px; color: var(--ink-soft); padding-left: 16px; position: relative; line-height: 1.6; }
+  ul.content-list li::before { content: '·'; position: absolute; left: 2px; color: var(--orange); font-weight: 700; font-size: 18px; line-height: 1.2; }
+
+  .callout { border-radius: 14px; padding: 18px 20px; margin-bottom: 16px; border: 1px solid; }
+  .callout-header { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .callout-icon { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; flex-shrink: 0; }
+  .callout-body { font-size: 13px; line-height: 1.7; }
+
+  .callout-note { background: var(--amber-light); border-color: #ffe680; }
+  .callout-note .callout-header { color: #a07c00; }
+  .callout-note .callout-icon { background: #ffe680; color: #a07c00; }
+  .callout-note .callout-body { color: #7a5c00; }
+
+  .callout-analogy { background: var(--green-light); border-color: var(--green-border); }
+  .callout-analogy .callout-header { color: var(--green); }
+  .callout-analogy .callout-icon { background: var(--green-border); color: var(--green); }
+  .callout-analogy .callout-body { color: #2a5c32; }
+
+  .callout-tip { background: var(--blue-light); border-color: var(--blue-border); }
+  .callout-tip .callout-header { color: var(--blue); }
+  .callout-tip .callout-icon { background: var(--blue-border); color: var(--blue); }
+  .callout-tip .callout-body { color: #153d7a; }
+
+  .callout-warn { background: var(--red-light); border-color: var(--red-border); }
+  .callout-warn .callout-header { color: var(--red); }
+  .callout-warn .callout-icon { background: var(--red-border); color: var(--red); }
+  .callout-warn .callout-body { color: #7a1f1f; }
+
+  .definition { background: var(--cream); border: 1px solid var(--border); border-left: 3px solid var(--orange); border-radius: 0 10px 10px 0; padding: 14px 18px; margin-bottom: 16px; }
+  .definition-term { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+  .definition-body { font-size: 13px; color: var(--ink-soft); line-height: 1.7; }
+
+  .key-concept { background: var(--orange-light); border: 1px solid var(--orange-border); border-radius: 10px; padding: 14px 18px; margin-bottom: 16px; font-size: 13px; color: #7a3010; line-height: 1.7; }
+  .key-concept strong { color: var(--orange); font-weight: 600; }
+
+  .compare-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 20px; }
+  .compare-table th { background: var(--ink); color: var(--cream); padding: 10px 14px; text-align: left; font-weight: 500; font-size: 11px; letter-spacing: 0.08em; }
+  .compare-table th:first-child { border-radius: 10px 0 0 0; }
+  .compare-table th:last-child  { border-radius: 0 10px 0 0; }
+  .compare-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--ink-soft); vertical-align: top; line-height: 1.6; }
+  .compare-table tr:nth-child(even) td { background: var(--cream-dark); }
+  .compare-table tr:last-child td:first-child { border-radius: 0 0 0 10px; }
+  .compare-table tr:last-child td:last-child  { border-radius: 0 0 10px 0; }
+
+  .sidebar-section { margin-bottom: 28px; }
+  .sidebar-label { font-size: 10px; letter-spacing: 0.18em; color: var(--ink-muted); margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+
+  .subtopic-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+  .subtopic-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--ink-soft); padding: 6px 0; border-bottom: 1px solid var(--border); line-height: 1.5; cursor: pointer; }
+  .subtopic-list li:last-child { border-bottom: none; }
+  .subtopic-check { width: 14px; height: 14px; border: 1px solid var(--border); border-radius: 3px; flex-shrink: 0; margin-top: 1px; transition: background 0.15s, border-color 0.15s; }
+  .subtopic-list li.done .subtopic-check { background: var(--green); border-color: var(--green); }
+  .subtopic-list li.done span { text-decoration: line-through; color: var(--ink-muted); }
+
+  .quick-ref { background: var(--ink); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
+  .quick-ref-term { font-size: 11px; font-weight: 600; color: var(--orange); letter-spacing: 0.06em; margin-bottom: 4px; }
+  .quick-ref-def { font-size: 12px; color: #9a8070; line-height: 1.6; }
+
+  .sidebar-note { background: var(--amber-light); border: 1px solid #ffe680; border-radius: 10px; padding: 12px 14px; font-size: 12px; color: #7a5c00; line-height: 1.6; margin-bottom: 10px; font-style: italic; }
+
+  footer { padding: 20px 60px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--cream-dark); }
+  .footer-left { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; }
+  .footer-left span { color: var(--orange); }
+  .footer-right { font-size: 11px; color: var(--ink-muted); letter-spacing: 0.06em; }
+
+  @media (max-width: 900px) {
+    header { padding: 24px 20px 20px; flex-direction: column; }
+    .header-right { align-items: flex-start; flex-direction: row; }
+    main { grid-template-columns: 1fr; }
+    .main-content { padding: 24px 20px 40px; border-right: none; }
+    .sidebar { padding: 24px 20px 40px; border-top: 1px solid var(--border); }
+    .section-nav { padding: 0 20px; }
+    footer { padding: 20px; flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="breadcrumb">
+      <a href="index.html">Study Plan</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Study Guides</span>
+      <span class="breadcrumb-sep">›</span>
+      <span>Zscaler Overview &amp; Architecture</span>
+    </div>
+    <div class="day-badge">
+      <span class="day-badge-dot"></span>
+      DAY 01 — SUNDAY, 19 APRIL 2026
+    </div>
+    <h1>Zscaler Overview<br><em>&amp; Architecture</em></h1>
+    <div class="header-meta-row">
+      <span class="tag tag-arch">Architecture</span>
+      <span class="tag tag-zia">ZIA</span>
+      <span class="tag tag-zpa">ZPA</span>
+      <span class="tag tag-weight">Blueprint: 16%</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="progress-card">
+      <div class="big">0<span style="font-size:18px;color:#7a6a55;">%</span></div>
+      <div class="lbl">COMPLETE</div>
+    </div>
+  </div>
+</header>
+
+<nav class="section-nav">
+  <button class="nav-tab active" onclick="setTab(this)">Overview</button>
+  <button class="nav-tab" onclick="setTab(this)">Core Concepts</button>
+  <button class="nav-tab" onclick="setTab(this)">Mental Notes</button>
+  <button class="nav-tab" onclick="setTab(this)">Analogies</button>
+  <button class="nav-tab" onclick="setTab(this)">Exam Tips</button>
+</nav>
+
+<main>
+  <div class="main-content">
+
+    <!-- OVERVIEW -->
+    <div class="section-block">
+      <div class="section-label">OVERVIEW</div>
+      <h2>Why the old model broke — and what replaced it</h2>
+      <p>Traditional network security assumed that location equals trust. Inside the corporate network meant trusted. Security lived at the perimeter — firewalls, VPNs, a hard boundary between "inside" and "outside." This worked when users sat at desks in office buildings and apps lived on on-premises servers.</p>
+      <p>That model collapsed as users went remote and applications moved to SaaS platforms like Microsoft 365 and Salesforce. The perimeter became impossible to define. Zscaler's architecture responds directly: instead of securing a network boundary, it secures the connection between a user and a specific application — regardless of where either one lives.</p>
+      <div class="key-concept">
+        <strong>Central insight:</strong> When you can no longer control where users and apps are, you stop trusting location and start trusting verified identity. Security moves from the network edge into the cloud, inline between every user and every destination.
+      </div>
+    </div>
+
+    <!-- CORE CONCEPTS -->
+    <div class="section-block">
+      <div class="section-label">CORE CONCEPTS</div>
+      <h2>How Zscaler's architecture works</h2>
+
+      <h3>Zero Trust Network Access (ZTNA)</h3>
+      <p>Zero Trust is built on one principle: never trust, always verify. No user or device is trusted by default — not even on the corporate network. Access is granted only after verifying identity, device posture, and context, and only to the specific application requested — never the network itself.</p>
+
+      <div class="definition">
+        <div class="definition-term">Zero Trust Network Access (ZTNA)</div>
+        <div class="definition-body">A security model where users are granted access to specific applications only — never the underlying network. Every request is verified regardless of source location. Replaces the VPN model of broad network access.</div>
+      </div>
+
+      <div class="definition">
+        <div class="definition-term">Least Privilege</div>
+        <div class="definition-body">Users receive only the access they need for their role — nothing more. Minimises the "blast radius" of a compromised credential: an attacker gains access to one specific app, not the entire network.</div>
+      </div>
+
+      <h3>VPN vs ZTNA — the lateral movement problem</h3>
+      <p>A VPN grants a remote user access to the corporate network, from which they can reach many applications. ZTNA grants access only to a specific application. If an attacker compromises a VPN credential, they can move laterally across the network. With ZTNA, a compromised credential only unlocks one door — and nothing else.</p>
+
+      <table class="compare-table">
+        <thead>
+          <tr><th>Feature</th><th>Traditional VPN</th><th>ZTNA (Zscaler)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>What access is granted</td><td>Broad network access</td><td>Specific application only</td></tr>
+          <tr><td>Trust model</td><td>Location-based (inside = trusted)</td><td>Identity-based, continuously verified</td></tr>
+          <tr><td>Lateral movement risk</td><td>High — attacker can roam network</td><td>Eliminated — no network access granted</td></tr>
+          <tr><td>Scales with remote/cloud</td><td>No — degrades as users leave the office</td><td>Yes — cloud-delivered, location agnostic</td></tr>
+          <tr><td>Verification frequency</td><td>One-time at login</td><td>Continuous, per session</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Multi-tenant cloud architecture</h3>
+      <p>Zscaler operates as a multi-tenant cloud platform distributed across enforcement nodes globally. Many organisations share the same underlying infrastructure, but each organisation's policies, data, and configurations are completely isolated. Customers get global scale, elastic capacity, and continuous updates — without building or maintaining their own hardware.</p>
+
+      <div class="definition">
+        <div class="definition-term">Multi-tenancy</div>
+        <div class="definition-body">Multiple organisations share the same cloud infrastructure but remain logically isolated. Shared plumbing, private living spaces. Enables massive scale without per-customer hardware investment.</div>
+      </div>
+
+      <div class="definition">
+        <div class="definition-term">Zscaler Enforcement Nodes (ZENs)</div>
+        <div class="definition-body">Globally distributed cloud nodes that sit inline between users and their destinations. All traffic routes through these nodes for inspection and policy enforcement. Global distribution ensures performance at scale.</div>
+      </div>
+    </div>
+
+    <!-- MENTAL NOTES -->
+    <div class="section-block">
+      <div class="section-label">MENTAL NOTES</div>
+      <h2>Things to remember</h2>
+
+      <div class="callout callout-note">
+        <div class="callout-header"><div class="callout-icon">★</div>MENTAL NOTE</div>
+        <div class="callout-body">The core shift is from <strong>location as the trust signal</strong> to <strong>identity as the trust signal</strong>. Everything about Zero Trust flows from that one swap. When a question describes a traditional perimeter model failing, the answer always involves moving trust to identity.</div>
+      </div>
+
+      <div class="callout callout-note">
+        <div class="callout-header"><div class="callout-icon">★</div>MENTAL NOTE</div>
+        <div class="callout-body">"Continuous verification" is not just login. It means every request, every session, re-evaluated against identity, device posture, and context. This is what "never trust, always verify" actually means operationally — not a one-time gate, but an ongoing check.</div>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-header"><div class="callout-icon">!</div>WATCH OUT</div>
+        <div class="callout-body">Multi-tenancy means shared <em>infrastructure</em>, not shared <em>data or policies</em>. Each customer's configuration is completely isolated. Exam questions may try to imply multi-tenancy creates a privacy risk between customers — it does not. Don't fall for it.</div>
+      </div>
+    </div>
+
+    <!-- ANALOGIES -->
+    <div class="section-block">
+      <div class="section-label">ANALOGIES</div>
+      <h2>Ways to think about it</h2>
+
+      <div class="callout callout-analogy">
+        <div class="callout-header"><div class="callout-icon">⟳</div>THE CASTLE &amp; MOAT</div>
+        <div class="callout-body">Traditional perimeter security is a castle with a moat. Once you cross the drawbridge you're trusted to roam freely inside. But when workers leave the castle and treasures move to the cloud, the moat protects nothing. Zscaler removes the castle entirely — security follows the user and the app, wherever they are.</div>
+      </div>
+
+      <div class="callout callout-analogy">
+        <div class="callout-header"><div class="callout-icon">⟳</div>THE BOUNCER AT EVERY DOOR</div>
+        <div class="callout-body">Zero Trust continuous verification is like a nightclub with a bouncer at every internal door — not just the entrance. Getting past the front door doesn't grant access to the VIP room, the bar, or backstage. Each door requires a fresh check. Authenticating once at login doesn't open everything.</div>
+      </div>
+
+      <div class="callout callout-analogy">
+        <div class="callout-header"><div class="callout-icon">⟳</div>THE APARTMENT BUILDING</div>
+        <div class="callout-body">Multi-tenancy is like an apartment building. All tenants share plumbing, electricity, and lifts — but each apartment is private. You don't access your neighbour's flat because you live in the same building. Zscaler's shared infrastructure works the same way: shared scale, completely isolated configurations.</div>
+      </div>
+    </div>
+
+    <!-- EXAM TIPS -->
+    <div class="section-block">
+      <div class="section-label">EXAM TIPS</div>
+      <h2>What the exam tests</h2>
+
+      <div class="callout callout-tip">
+        <div class="callout-header"><div class="callout-icon">→</div>EXAM TIP</div>
+        <div class="callout-body">Architecture questions often appear as scenario prompts: "A company has moved all apps to SaaS and users are fully remote — which Zscaler capability addresses X?" Anchor your answer in the Zero Trust principle: no network access granted, identity verified, app-specific access only.</div>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-header"><div class="callout-icon">→</div>EXAM TIP</div>
+        <div class="callout-body">VPN vs ZTNA is a classic comparison question. The key differentiator is always <strong>lateral movement</strong> — VPN enables it, ZTNA eliminates it. When you see "lateral movement" in an answer option, it is almost certainly the correct risk being described for VPN.</div>
+      </div>
+
+      <ul class="content-list">
+        <li>Today covers two blueprint domains: Zscaler for Users-Engineer Overview (6%) and Zscaler Architecture (10%) — 16% of the exam combined.</li>
+        <li>Zscaler is a proxy-based architecture — all traffic flows through enforcement nodes for inspection, not around them.</li>
+        <li>Engineer-level scope goes beyond ZIA/ZPA Administrator — expect questions on how components integrate, not just individual configuration steps.</li>
+        <li>Multi-tenant architecture questions may ask why it's preferable to on-premises alternatives — answer: global scale, elasticity, no hardware, continuous updates.</li>
+        <li>ZTNA grants access to applications, never to the network — this distinction will reappear across multiple exam domains.</li>
+      </ul>
+    </div>
+
+  </div><!-- end .main-content -->
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">SUBTOPICS — TICK WHEN DONE</div>
+      <ul class="subtopic-list">
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>Engineer-level scope vs Administrator</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>Multi-tenant cloud architecture &amp; enforcement nodes</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>Zero Trust Network Access (ZTNA) principles</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>Additional Zscaler platform capabilities</span>
+        </li>
+        <li onclick="toggleDone(this)">
+          <div class="subtopic-check"></div>
+          <span>Zscaler API infrastructure overview</span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">QUICK REFERENCE</div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">ZTNA</div>
+        <div class="quick-ref-def">Zero Trust Network Access. Grants access to specific apps only — never the network. Continuously verifies identity and context per session.</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">ZEN</div>
+        <div class="quick-ref-def">Zscaler Enforcement Node. Globally distributed cloud nodes sitting inline between users and destinations to inspect traffic and enforce policy.</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">LEAST PRIVILEGE</div>
+        <div class="quick-ref-def">Users get only the access they need. Minimises blast radius if credentials are compromised.</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">LATERAL MOVEMENT</div>
+        <div class="quick-ref-def">Attacker moving through a network after initial compromise. VPN enables it. ZTNA eliminates it — no network access is ever granted.</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">MULTI-TENANCY</div>
+        <div class="quick-ref-def">Shared infrastructure, isolated policies. Many orgs on one platform — each with completely private configuration and data.</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">MY NOTES FROM SESSION</div>
+      <div class="sidebar-note">I reasoned to Zero Trust from first principles — the castle breaks when users and apps leave the walls. Location can no longer be the trust signal, so identity takes over.</div>
+      <div class="sidebar-note">VPN = key to the whole network. ZTNA = key to one specific room. Compromised ZTNA credential limits an attacker to a single app — not the whole estate.</div>
+      <div class="sidebar-note">Multi-tenancy is not shared data — it's shared infrastructure with isolated tenants. The apartment building analogy: shared lifts, private flats.</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">RELATED DAYS</div>
+      <ul class="subtopic-list">
+        <li style="cursor:default;">
+          <div style="width:14px;height:14px;background:var(--orange-light);border:1px solid var(--orange-border);border-radius:3px;flex-shrink:0;"></div>
+          <span>Day 02 — Identity Services (who gets verified)</span>
+        </li>
+        <li style="cursor:default;">
+          <div style="width:14px;height:14px;background:var(--orange-light);border:1px solid var(--orange-border);border-radius:3px;flex-shrink:0;"></div>
+          <span>Day 03 — Connectivity Services (how users connect)</span>
+        </li>
+        <li style="cursor:default;">
+          <div style="width:14px;height:14px;background:var(--orange-light);border:1px solid var(--orange-border);border-radius:3px;flex-shrink:0;"></div>
+          <span>Day 04 — Platform &amp; Access Control Services</span>
+        </li>
+      </ul>
+    </div>
+
+  </div><!-- end .sidebar -->
+
+</main>
+
+<footer>
+  <div class="footer-left">ZDTE<span>.</span></div>
+  <div class="footer-right">Zscaler Digital Transformation Engineer · Study Guide · Day 01</div>
+</footer>
+
+<script>
+  function setTab(el) {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  function toggleDone(li) {
+    li.classList.toggle('done');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const items = document.querySelectorAll('.subtopic-list li[onclick]');
+    const done  = document.querySelectorAll('.subtopic-list li[onclick].done');
+    const pct   = items.length ? Math.round((done.length / items.length) * 100) : 0;
+    const big   = document.querySelector('.progress-card .big');
+    if (big) big.innerHTML = pct + '<span style="font-size:18px;color:#7a6a55;">%</span>';
+  }
+</script>
+
+</body>
+</html>
