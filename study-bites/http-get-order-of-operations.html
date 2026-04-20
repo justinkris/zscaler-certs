@@ -939,6 +939,9 @@
   });
 
   showStage(0);
+  setTimeout(() => {
+    stages[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 150);
 </script>
 
 </body>
