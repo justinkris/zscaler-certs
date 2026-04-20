@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZDTE Study Bite — HTTP GET Order of Operations</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #fef9f0;
+    --cream-dark: #f5eddb;
+    --ink: #1a1209;
+    --ink-soft: #5a4a35;
+    --ink-muted: #8a7660;
+    --orange: #ff6b35;
+    --orange-light: #fff3ec;
+    --orange-border: #ffd5c0;
+    --amber-light: #fffbe6;
+    --green: #3a7d44;
+    --green-light: #edf7ee;
+    --green-border: #b2dfb4;
+    --purple: #5c35cc;
+    --purple-light: #ece8ff;
+    --purple-border: #c8bbff;
+    --blue-light: #e8f0fb;
+    --blue-border: #b3ccf0;
+    --blue: #1a6bcc;
+    --red-light: #fce8e8;
+    --red-border: #f7c1c1;
+    --red: #a32d2d;
+    --border: #ede5d8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Epilogue', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 40px 60px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    background: var(--cream);
+  }
+
+  .header-left { flex: 1; }
+
+  .breadcrumb {
+    display: flex; align-items: center; gap: 8px;
+    font-size: 11px; color: var(--ink-muted); letter-spacing: 0.08em; margin-bottom: 12px;
+  }
+  .breadcrumb a { color: var(--orange); text-decoration: none; cursor: pointer; }
+  .breadcrumb-sep { color: var(--border); }
+
+  .day-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--ink); color: var(--cream);
+    padding: 5px 14px; border-radius: 20px;
+    font-size: 11px; letter-spacing: 0.1em; margin-bottom: 14px;
+  }
+  .day-badge-dot { width: 5px; height: 5px; background: var(--orange); border-radius: 50%; }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 44px; font-weight: 700; line-height: 1.0;
+    color: var(--ink); margin-bottom: 10px;
+  }
+  h1 em { font-style: italic; font-weight: 400; color: var(--orange); }
+
+  .header-meta-row { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 14px; }
+
+  .tag { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 500; border: 1px solid; display: inline-block; }
+  .tag-zia   { background: var(--blue-light);   color: var(--blue);   border-color: var(--blue-border); }
+  .tag-zpa   { background: var(--green-light);  color: var(--green);  border-color: var(--green-border); }
+  .tag-arch  { background: var(--amber-light);  color: #a07c00;       border-color: #ffe680; }
+  .tag-weight { background: var(--orange-light); color: #cc4a18;      border-color: var(--orange-border); }
+
+  .header-right { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; flex-shrink: 0; }
+  .progress-card { background: var(--ink); color: var(--cream); padding: 14px 20px; border-radius: 14px; text-align: center; min-width: 110px; }
+  .progress-card .big { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; color: var(--orange); line-height: 1; }
+  .progress-card .lbl { font-size: 10px; color: #7a6a55; letter-spacing: 0.1em; margin-top: 4px; }
+
+  /* NAV */
+  .section-nav {
+    display: flex; gap: 0; padding: 0 60px;
+    border-bottom: 1px solid var(--border);
+    background: var(--cream-dark); overflow-x: auto;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-tab {
+    padding: 14px 20px; font-size: 12px; font-weight: 500; color: var(--ink-muted);
+    letter-spacing: 0.06em; cursor: pointer; border-bottom: 2px solid transparent;
+    white-space: nowrap; background: none; border-top: none; border-left: none;
+    border-right: none; font-family: 'Epilogue', sans-serif;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .nav-tab:hover { color: var(--ink); }
+  .nav-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  main { display: grid; grid-template-columns: 1fr 320px; gap: 0; min-height: calc(100vh - 200px); }
+  .main-content { padding: 36px 48px 60px 60px; border-right: 1px solid var(--border); }
+  .sidebar { padding: 36px 28px 60px; background: var(--cream-dark); }
+
+  .section-block { margin-bottom: 40px; }
+  .section-label {
+    font-size: 10px; letter-spacing: 0.2em; color: var(--ink-muted);
+    margin-bottom: 10px; display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  h2 { font-family: 'Fraunces', serif; font-size: 24px; font-weight: 600; color: var(--ink); margin-bottom: 14px; line-height: 1.2; }
+  h3 { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 600; color: var(--ink); margin-bottom: 10px; margin-top: 24px; }
+  p { font-size: 14px; color: var(--ink-soft); line-height: 1.8; margin-bottom: 12px; }
+
+  ul.content-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px; }
+  ul.content-list li { font-size: 14px; color: var(--ink-soft); padding-left: 16px; position: relative; line-height: 1.6; }
+  ul.content-list li::before { content: '·'; position: absolute; left: 2px; color: var(--orange); font-weight: 700; font-size: 18px; line-height: 1.2; }
+
+  .callout { border-radius: 14px; padding: 18px 20px; margin-bottom: 16px; border: 1px solid; }
+  .callout-header { display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 600; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .callout-icon { width: 18px; height: 18px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; }
+  .callout-body { font-size: 14px; line-height: 1.7; }
+
+  .callout-note { background: var(--amber-light); border-color: #ffe680; }
+  .callout-note .callout-header { color: #a07c00; }
+  .callout-note .callout-icon { background: #ffe680; color: #a07c00; }
+  .callout-note .callout-body { color: #7a5e00; }
+
+  .callout-warn { background: var(--red-light); border-color: var(--red-border); }
+  .callout-warn .callout-header { color: var(--red); }
+  .callout-warn .callout-icon { background: var(--red-border); color: var(--red); }
+  .callout-warn .callout-body { color: #6d1e1e; }
+
+  .callout-analogy { background: var(--purple-light); border-color: var(--purple-border); }
+  .callout-analogy .callout-header { color: var(--purple); }
+  .callout-analogy .callout-icon { background: var(--purple-border); color: var(--purple); }
+  .callout-analogy .callout-body { color: #3d1f99; }
+
+  .callout-tip { background: var(--green-light); border-color: var(--green-border); }
+  .callout-tip .callout-header { color: var(--green); }
+  .callout-tip .callout-icon { background: var(--green-border); color: var(--green); }
+  .callout-tip .callout-body { color: #23572a; }
+
+  .key-concept {
+    background: var(--ink); color: var(--cream); padding: 18px 22px;
+    border-radius: 14px; margin-bottom: 16px; font-size: 14px; line-height: 1.7;
+  }
+  .key-concept strong { color: var(--orange); font-weight: 600; }
+
+  .definition { background: var(--orange-light); border-left: 3px solid var(--orange); padding: 12px 18px; margin-bottom: 12px; border-radius: 6px; }
+  .definition-term { font-family: 'Fraunces', serif; font-size: 15px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+  .definition-body { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
+
+  /* ── STAGE CARDS ── */
+  .stage-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 22px 24px;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    gap: 18px;
+    box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+  }
+  .stage-number {
+    font-family: 'Fraunces', serif;
+    font-size: 32px; font-weight: 700; color: var(--orange);
+    line-height: 1; text-align: center; padding-top: 4px;
+  }
+  .stage-body h3 { margin-top: 0; margin-bottom: 6px; font-size: 19px; }
+  .stage-label { font-size: 10px; letter-spacing: 0.15em; color: var(--ink-muted); margin-bottom: 10px; text-transform: uppercase; }
+  .stage-story { background: var(--amber-light); border-left: 3px solid #ffd95c; padding: 10px 14px; border-radius: 6px; margin: 10px 0; font-size: 13px; color: #5a4715; line-height: 1.65; font-style: italic; }
+  .stage-what { font-size: 13.5px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 10px; }
+  .image-slot {
+    background: var(--cream-dark);
+    border: 2px dashed var(--orange-border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 12px;
+    text-align: center;
+    color: var(--ink-muted);
+    font-size: 12px;
+  }
+  .image-slot .img-placeholder {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    height: 140px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink-muted);
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    margin-bottom: 10px;
+  }
+  .image-slot .prompt-label { font-size: 9px; letter-spacing: 0.2em; color: var(--orange); font-weight: 600; margin-bottom: 4px; }
+  .image-slot .prompt-text { font-size: 12px; color: var(--ink-soft); line-height: 1.55; text-align: left; font-style: italic; }
+
+  .compare-table { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13px; }
+  .compare-table th { background: var(--cream-dark); padding: 10px 12px; text-align: left; font-weight: 600; color: var(--ink); border-bottom: 2px solid var(--border); }
+  .compare-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--ink-soft); vertical-align: top; }
+
+  /* SIDEBAR */
+  .sidebar-section { margin-bottom: 32px; }
+  .sidebar-label { font-size: 10px; letter-spacing: 0.2em; color: var(--ink-muted); margin-bottom: 12px; }
+  .subtopic-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .subtopic-list li { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--ink-soft); cursor: pointer; padding: 6px 0; }
+  .subtopic-check { width: 14px; height: 14px; border: 1.5px solid var(--ink-muted); border-radius: 3px; flex-shrink: 0; }
+  .subtopic-list li.done .subtopic-check { background: var(--orange); border-color: var(--orange); }
+  .subtopic-list li.done span { text-decoration: line-through; color: var(--ink-muted); }
+
+  .quick-ref { margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px dashed var(--border); }
+  .quick-ref:last-child { border-bottom: none; }
+  .quick-ref-term { font-size: 11px; font-weight: 600; color: var(--orange); letter-spacing: 0.08em; margin-bottom: 3px; }
+  .quick-ref-def { font-size: 12px; color: var(--ink-soft); line-height: 1.5; }
+
+  .sidebar-note { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; font-size: 12px; color: var(--ink-soft); line-height: 1.6; margin-bottom: 10px; }
+
+  footer {
+    padding: 24px 60px; border-top: 1px solid var(--border); background: var(--cream);
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 11px; color: var(--ink-muted);
+  }
+  .footer-left { font-family: 'Fraunces', serif; font-weight: 700; color: var(--ink); letter-spacing: 0.1em; }
+  .footer-left span { color: var(--orange); }
+
+  @media (max-width: 900px) {
+    header { padding: 24px 20px 20px; flex-direction: column; }
+    h1 { font-size: 30px; }
+    main { grid-template-columns: 1fr; }
+    .main-content { padding: 24px 20px 40px; border-right: none; }
+    .sidebar { padding: 24px 20px 40px; border-top: 1px solid var(--border); }
+    .section-nav { padding: 0 20px; }
+    footer { padding: 20px; flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="breadcrumb">
+      <a href="../index.html">Study Plan</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="../study-bites.html">Study Bites</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>HTTP GET Order of Operations</span>
+    </div>
+    <div class="day-badge">
+      <div class="day-badge-dot"></div>
+      STUDY BITE · MEMORY PALACE
+    </div>
+    <h1>HTTP GET <em>order of operations</em></h1>
+    <div class="header-meta-row">
+      <span class="tag tag-zia">ZIA</span>
+      <span class="tag tag-arch">Architecture</span>
+      <span class="tag tag-weight">10% · Access Control</span>
+      <span class="tag tag-weight">9% · Platform Services</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="progress-card">
+      <div class="big" id="prog-num">0<span style="font-size:18px;color:#7a6a55;">%</span></div>
+      <div class="lbl">LOCKED IN</div>
+    </div>
+  </div>
+</header>
+
+<nav class="section-nav">
+  <button class="nav-tab active" onclick="navTo('section-overview', this)">OVERVIEW</button>
+  <button class="nav-tab" onclick="navTo('section-stages', this)">THE 13 STAGES</button>
+  <button class="nav-tab" onclick="navTo('section-principles', this)">ORDERING PRINCIPLES</button>
+  <button class="nav-tab" onclick="navTo('section-tips', this)">EXAM TIPS</button>
+</nav>
+
+<main>
+  <div class="main-content">
+
+    <!-- OVERVIEW -->
+    <div class="section-block" id="section-overview">
+      <div class="section-label">OVERVIEW</div>
+      <h2>What happens when you send an HTTP GET through ZIA?</h2>
+      <p>
+        When a ZIA Public Service Edge receives outbound web traffic, it doesn't just
+        "inspect the packet" as one big action. It runs the traffic through a precise,
+        ordered pipeline of security engines. Each engine gets its turn — and if any of
+        them blocks the transaction, the rest never run.
+      </p>
+      <p>
+        Understanding this order matters because exam questions love to ask things like:
+        <em>"If the firewall allows Box.net but a web policy blocks it, what happens?"</em>
+        You can only answer that if you know which module runs first and why.
+      </p>
+
+      <div class="key-concept">
+        <strong>The big idea:</strong> ZIA has <strong>two modules</strong> — a Firewall Module
+        and a Web Module. Web traffic hits the firewall module first; if allowed, it's handed
+        to the web module where the full 13-stage pipeline runs. Non-web traffic only touches
+        the firewall module.
+      </div>
+
+      <h3>The two-module model</h3>
+      <p>
+        Every ZIA Public Service Edge runs Single-Scan Multi-Action (SSMA) inspection across
+        two modules. Think of them as two checkpoints:
+      </p>
+
+      <div class="definition">
+        <div class="definition-term">Firewall Module</div>
+        <div class="definition-body">
+          Handles Layer 3/4 controls, FQDN rules, DNS Control, and IPS for non-web traffic.
+          <strong>All traffic</strong> — web and non-web — hits this first.
+        </div>
+      </div>
+
+      <div class="definition">
+        <div class="definition-term">Web Module</div>
+        <div class="definition-body">
+          The proxy. Handles SSL inspection, threat scanning, URL filtering, Cloud App Control,
+          DLP, sandbox, and everything else web-specific. <strong>Only web traffic</strong>
+          reaches this module, and only if the firewall module allowed it through.
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-header">
+          <div class="callout-icon">!</div>
+          WATCH OUT
+        </div>
+        <div class="callout-body">
+          If the firewall module blocks traffic, the web module never sees it — even if
+          a web policy would have allowed it. <strong>The restrictive module always wins.</strong>
+          Example: firewall blocks Box.net → user is blocked, even if Cloud App Control allows Box.net.
+        </div>
+      </div>
+    </div>
+
+    <!-- THE 13 STAGES -->
+    <div class="section-block" id="section-stages">
+      <div class="section-label">THE 13 STAGES — MEMORY PALACE</div>
+      <h2>The full journey, gate by gate</h2>
+      <p>
+        Below is the canonical HTTP GET evaluation order from Zscaler's ZIA order of execution.
+        Each stage pairs the technical function with the memory-palace story, plus an image prompt
+        you can use to generate a visual later.
+      </p>
+
+      <div class="stage-card">
+        <div class="stage-number">01</div>
+        <div class="stage-body">
+          <div class="stage-label">Firewall Module</div>
+          <h3>🔥 Firewall</h3>
+          <div class="stage-what">
+            The very first gate. Evaluates Layer 3/4 rules, FQDNs, and network services.
+            Decides whether traffic is web (ports 80/443) or non-web. Non-web stops here;
+            web is handed to the Web Module.
+          </div>
+          <div class="stage-story">
+            I'm wearing a Fortinet shirt with a Bowser necklace, floating in the clouds.
+            I reach a <strong>huge wall on fire</strong> and see two doors — one covered
+            in spider webs, one without. Non-web traffic goes through the plain door and
+            straight to the internet. I go through the webby one.
+          </div>
+          <div class="image-slot">
+            <img src="../study-bite-images/1-Firewall.png" alt="Stage 01 — Firewall memory palace image" style="width:100%;border-radius:8px;display:block;margin-bottom:10px;">
+            <div class="prompt-label">IMAGE PROMPT</div>
+            <div class="prompt-text">
+              A person in a bright Fortinet-branded t-shirt wearing a Bowser-shell necklace,
+              floating amongst fluffy clouds, approaching a massive wall of roaring fire with
+              two doors — one heavily draped in spider webs, one plain. Cinematic, slightly
+              cartoonish, dramatic lighting.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-card">
+        <div class="stage-number">02</div>
+        <div class="stage-body">
+          <div class="stage-label">Module handoff</div>
+          <h3>🕸️ Web Module entry</h3>
+          <div class="stage-what">
+            Web traffic crosses from the firewall module into the web module. This is where
+            the proxy engines live — everything from here on is SSMA-powered.
+          </div>
+          <div class="stage-story">
+            I push through the <strong>spider-web-covered door</strong> and enter the
+            web module proper.
+          </div>
+          <div class="image-slot">
+            <div class="img-placeholder">[ IMAGE GOES HERE ]</div>
+            <div class="prompt-label">IMAGE PROMPT</div>
+            <div class="prompt-text">
+              A person pushing through an ornate doorway completely covered in thick,
+              dusty spider webs. Beyond the doorway, glowing server racks and proxy
+              machinery can be glimpsed. Moody, slightly eerie atmosphere.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-card">
+        <div class="stage-number">03</div>
+        <div class="stage-body">
+          <div class="stage-label">Decryption gate</div>
+          <h3>🐍 SSL Inspection</h3>
+          <div class="stage-what">
+            Decrypts HTTPS traffic so every downstream engine can actually read and inspect
+            the content. Without SSL inspection, ATP, URL filtering, DLP, and sandbox are
+            all blind to ciphertext.
+          </div>
+          <div class="stage-story">
+            A snake <strong>SSLithers</strong> through and goes: <em>"Open yo pockets boy,
+            keep those pockets out!"</em> He's unzipping encrypted traffic so the rest of
+            the pipeline can see what's inside.
+          </div>
+          <div class="image-slot">
+            <div class="img-placeholder">[ IMAGE GOES HERE ]</div>
+            <div class="prompt-label">IMAGE PROMPT</div>
+            <div class="prompt-text">
+              A large cartoon snake with a mischievous grin, slithering up to the protagonist
+              and gesturing "hands up." The snake wears a tiny security guard hat. Glowing
+              padlocks floating in the air are being unlocked and opening up. Playful,
+              illustrative style.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-card">
+        <div class="stage-number">04</div>
+        <div class="stage-body">
+          <div class="stage-label">Admin override check</div>
+          <h3>🎟️ Security Exceptions</h3>
+          <div class="stage-what">
+            The "escape hatch." Admins can explicitly mark traffic as exempt from further
+            security inspection. This is checked <strong>first</strong> so the bypass actually works —
+            if it ran later, traffic might already be blocked before the exception could apply.
+          </div>
+          <div class="stage-story">
+            Another snake at the <strong>VIP lane</strong> goes: <em>"Nah mate, you're
+            not VIP, move over."</em> I'm not on the exceptions list, so I have to go
+            through every remaining gate.
+          </div>
+          <div class="image-slot">
+            <div class="img-placeholder">[ IMAGE GOES HERE ]</div>
+            <div class="prompt-label">IMAGE PROMPT</div>
+            <div class="prompt-text">
+              A snake in a bouncer's outfit holding a velvet rope next to a neon "VIP" sign.
+              He's waving the protagonist away with a dismissive gesture. A shorter but
+              fancier-dressed crowd queues behind the velvet rope. Nightclub aesthetic, punchy colors.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-card">
+        <div class="stage-number">05</div>
+        <div class="stage-body">
+          <div class="stage-label">Global threat database</div>
+          <h3>🎅 Malicious URLs</h3>
+          <div class="stage-what">
+            Zscaler's global threat intelligence database check. Known-bad URLs get blocked
+            outright. This is the broad "naughty list" — distinct from admin-defined custom
+            blocks (those are handled in URL Filtering later).
+          </div>
+          <div class="stage-story">
+            The snake tells me to go see if I'm on <strong>Santa's naughty list</strong>.
+            Santa goes <em>"Hohoho, I don't see you on the naughty list!"</em> and waves me through.
+          </div>
+          <div class="image-slot">
+            <div class="img-placeholder">[ IMAGE GOES HERE ]</div>
+            <div class="prompt-label">IMAGE PROMPT</div>
+            <div class="prompt-text">
+              Santa Claus at a checkpoint kiosk in a cloud kingdom, holding a massive scrolling
+              parchment labeled "Naughty List." He's giving the protagonist a thumbs up and
+              laughing warmly. Whimsical, festive style with floating cloud platforms.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-card">
+        <div class="stage-number">06</div>
+        <div class="stage-body">
+          <div class="stage-label">App-identity enforcement</div>
+          <h3>☁️ Cloud App Control</h3>
+          <div class="stage-what">
+            Identifies the specific cloud application (Salesforce, Dropbox, personal Gmail
+            vs. corporate Gmail) and applies granular rules — allow, block, isolate, or
+            restrict specific actions like upload/post. More specific than URL Filtering,
+            which is why it runs first.
+          </div>
+          <div class="stage-story">
+            I ride Santa's sleigh up to the clouds where a <strong>big cloud forms a face</strong>
+            and says: <em>"Let me check if the Fortinet application is alright… yes, it's fine!
+            Can I offer you a Cascade Pale Ale?"</em> I say yes — dying for a beer.
+          </div>
+          <div class="image-slot">
+            <div class="img-placeholder">[ IMAGE GOES HERE ]</div>
+            <div class="prompt-label">IMAGE PROMPT</div>
+            <div class="prompt-text">
+              A giant cumulus cloud with a friendly, slowly-forming face hovering over a
+              sky platform, offering a cold can of pale ale to the protagonist. The cloud
+              has kind, wise eyes and puffy cheeks. Dreamlike, soft golden-hour lighting.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-card">
+        <div class="stage-number">07</div>
+        <div class="stage-body">
+          <div class="stage-label">Category-based filter</div>
+          <h3>☁️ URL Filtering</h3>
+          <div class="stage-what">
+            Matches URLs against predefined or custom URL categories (Social Networking,
+            Gambling, Nerd, etc.) and applies allow/block rules. Runs after Cloud App Control
+            because category matching is less granular than app identification.
+          </div>
+          <div class="stage-story">
+            Big cloud introduces me to his <strong>little cloud brother</strong>:
+            <em>"fortinet.net, nerd category, I guess that's fine you nerd."</em>
+          </div>
+          <div class="image-slot">
+            <div class="img-placeholder">[ IMAGE GOES HERE ]</div>
+            <div class="prompt-label">IMAGE PROMPT</div>
+            <div class="prompt-text">
+              A smaller, younger cloud with a face next to the big cloud from the previous
+              scene — wearing comically oversized nerd glasses and holding a clipboard with
+              category labels. He's inspecting a URL floating in midair. Same dreamy sky
+              aesthetic as before.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-card">
+        <div class="stage-number">08</div>
+        <div class="stage-body">
+          <div class="stage-label">Client/browser inspection</div>
+          <h3>🐚 Browser Control</h3>
+          <div class="stage-what">
+            Inspects the client/browser fingerprint — version, plugins, extensions, outdated
+            components. Can block or caution based on risky browser configurations.
+          </div>
+          <div class="stage-story">
+            <em>"Give me your necklace for scanning."</em> The Bowser necklace
+            <strong>transforms like a Transformer</strong> and reveals a secret signature from
+            Mario himself. The cloud says <em>"All good. Welcome to the ATP — Association of
+            Tennis Professionals!"</em>
+          </div>
+          <div class="image-slot">
+            <div class="img-placeholder">[ IMAGE GOES HERE ]</div>
+            <div class="prompt-label">IMAGE PROMPT</div>
+            <div class="prompt-text">
+              A Bowser-shell necklace hovering mid-air, mechanically unfolding and transforming
+              like a Transformer, revealing a glowing signature panel with Mario's handwritten
+              autograph. Scanning beams of light surrounding it. High-energy, dynamic angle.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-card">
+        <div class="stage-number">09</div>
+        <div class="stage-body">
+          <div class="stage-label">GeoIP restriction</div>
+          <h3>🌏 Country-based restrictions</h3>
+          <div class="stage-what">
+            Blocks or allows based on source/destination country via GeoIP lookup. Cheap
+            and fast check — runs before heavier signature-based inspection.
+          </div>
+          <div class="stage-story">
+            I get to the court and a reporter asks if I'm Russian. I joke:
+            <em>"Haha yeah, I am RUSHIN to the court!"</em> They handcuff me momentarily —
+            <em>"Bruv, it's a pun m8!"</em>
+          </div>
+          <div class="image-slot">
+            <div class="img-placeholder">[ IMAGE GOES HERE ]</div>
+            <div class="prompt-label">IMAGE PROMPT</div>
+            <div class="prompt-text">
+              A tennis player being stopped by a reporter with a microphone at the edge of a
+              grand tennis court. The player has his hands raised mid-joke, wearing a sheepish
+              grin, with a pair of handcuffs comically dangling from one wrist. A globe-map
+              backdrop with country flags floating around. Aussie Open atmosphere.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-card">
+        <div class="stage-number">10</div>
+        <div class="stage-body">
+          <div class="stage-label">Deep packet signature scan</div>
+          <h3>✍️ IPS Signatures</h3>
+          <div class="stage-what">
+            Intrusion Prevention System matches traffic against signatures for known
+            exploits, C2 patterns, and attack payloads. Expensive per-packet pattern matching —
+            that's why it runs after cheaper filters like country blocking.
+          </div>
+          <div class="stage-story">
+            At the <strong>Australian Open</strong>, heaps of tennis fans want my
+            <strong>signature (IPS!)</strong>. I'm signing books, shirts, everything.
+          </div>
+          <div class="image-slot">
+            <div class="img-placeholder">[ IMAGE GOES HERE ]</div>
+            <div class="prompt-label">IMAGE PROMPT</div>
+            <div class="prompt-text">
+              A tennis player at the Australian Open surrounded by a crowd of enthusiastic
+              fans thrusting notebooks, tennis balls, and t-shirts forward for autographs.
+              The player is signing rapidly with a Sharpie, overwhelmed but smiling.
+              Stadium lights and blue courts in the background.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-card">
+        <div class="stage-number">11</div>
+        <div class="stage-body">
+          <div class="stage-label">Page Risk Index scoring</div>
+          <h3>📄 Suspicious Content Protection</h3>
+          <div class="stage-what">
+            Uses the Page Risk Index to score pages on behavioural and structural risk signals
+            (obfuscated scripts, risky embeds, etc.). Blocks or cautions if the page exceeds
+            the configured risk threshold.
+          </div>
+          <div class="stage-story">
+            Someone hands me a book to sign — blank pages mostly, but one page is a
+            <strong>bright red glowing book</strong> with the word <em>"RISK"</em> shimmering
+            in light text. I'm like <em>"Nah, that page is risky."</em>
+          </div>
+          <div class="image-slot">
+            <div class="img-placeholder">[ IMAGE GOES HERE ]</div>
+            <div class="prompt-label">IMAGE PROMPT</div>
+            <div class="prompt-text">
+              A single ominous book glowing bright red amongst a stack of normal books being
+              handed to a tennis player for autographs. The open page displays the word "RISK"
+              in shimmering, ethereal light. The player is recoiling slightly. Mysterious,
+              slightly supernatural vibe.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-card">
+        <div class="stage-number">12</div>
+        <div class="stage-body">
+          <div class="stage-label">Peer-to-peer throttle/block</div>
+          <h3>👮 P2P Control</h3>
+          <div class="stage-what">
+            Detects and controls peer-to-peer traffic patterns (BitTorrent, etc.). Blocks or
+            throttles before allocating scarce bandwidth to potentially unwanted traffic.
+          </div>
+          <div class="stage-story">
+            Security guards <strong>control the crowd</strong> around me — it's
+            <em>P2P here</em> (peer-to-peer = person-to-person = crowd control).
+            Think Veigar's E skill: a cage locking the crowd in place.
+          </div>
+          <div class="image-slot">
+            <div class="img-placeholder">[ IMAGE GOES HERE ]</div>
+            <div class="prompt-label">IMAGE PROMPT</div>
+            <div class="prompt-text">
+              Security guards forming a barrier around a tennis player, with a glowing
+              purple magical cage (Veigar-style Event Horizon) surrounding the pressing
+              crowd. The cage has dark-sorcerer energy crackling around it. Fantasy-meets-reality
+              overlay style.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="stage-card">
+        <div class="stage-number">13</div>
+        <div class="stage-body">
+          <div class="stage-label">Traffic shaping (final stage)</div>
+          <h3>🔋 Bandwidth Control</h3>
+          <div class="stage-what">
+            Allocates and shapes bandwidth for traffic that has passed every previous check.
+            Runs last because there's no point reserving bandwidth for traffic that might
+            get blocked by any earlier engine.
+          </div>
+          <div class="stage-story">
+            I'm so tired from traveling up to the clouds, being checked by Santa, chatting
+            with clouds, signing autographs… my <strong>bandwidth has been taken up all day</strong>.
+          </div>
+          <div class="image-slot">
+            <div class="img-placeholder">[ IMAGE GOES HERE ]</div>
+            <div class="prompt-label">IMAGE PROMPT</div>
+            <div class="prompt-text">
+              An exhausted tennis player slumped on a bench after a long day, a visible
+              battery icon hovering above his head at 1% red. Scattered autograph books,
+              a half-empty pale-ale can, and Sharpies litter the ground around him.
+              End-of-day golden light, slightly melancholy tone.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ORDERING PRINCIPLES -->
+    <div class="section-block" id="section-principles">
+      <div class="section-label">ORDERING PRINCIPLES</div>
+      <h2>Why this order? Three guiding rules</h2>
+      <p>
+        The order isn't arbitrary. Three principles govern almost every placement decision
+        in ZIA's pipeline. If you understand these, you can reason your way to the right
+        answer even if you can't remember the exact sequence.
+      </p>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Principle</th>
+            <th>Meaning</th>
+            <th>Example in the pipeline</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Escape hatches first</strong></td>
+            <td>Explicit admin overrides must fire before anything that could block them.</td>
+            <td>Security Exceptions runs before Malicious URL check.</td>
+          </tr>
+          <tr>
+            <td><strong>Cheap before expensive</strong></td>
+            <td>Fast lookups (GeoIP, category match) before heavy deep inspection.</td>
+            <td>Country blocking runs before IPS signature matching.</td>
+          </tr>
+          <tr>
+            <td><strong>Specific before general</strong></td>
+            <td>Granular identification (app) before broad categorization (URL category).</td>
+            <td>Cloud App Control runs before URL Filtering.</td>
+          </tr>
+          <tr>
+            <td><strong>Resource allocation last</strong></td>
+            <td>Only allocate bandwidth to traffic that's been cleared by every security engine.</td>
+            <td>Bandwidth Control is the final stage.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-analogy">
+        <div class="callout-header">
+          <div class="callout-icon">⟳</div>
+          ANALOGY — SPECIALIST BEFORE GP
+        </div>
+        <div class="callout-body">
+          Cloud App Control is the <strong>specialist doctor</strong> — it knows the exact
+          application. URL Filtering is the <strong>GP</strong> — it only knows the general
+          category. You see the specialist first because they have the more precise diagnosis.
+          The GP only weighs in if the specialist didn't make a call.
+        </div>
+      </div>
+
+      <div class="callout callout-analogy">
+        <div class="callout-header">
+          <div class="callout-icon">⟳</div>
+          ANALOGY — DIPLOMATIC PASSPORT
+        </div>
+        <div class="callout-body">
+          Security Exceptions is a <strong>diplomatic passport</strong>. If customs scans it
+          first, you're waved through. But if they dig through your bags before checking the
+          passport, the whole concept of diplomatic immunity is broken. Escape hatches only
+          work when they're the first thing checked.
+        </div>
+      </div>
+
+      <div class="callout callout-analogy">
+        <div class="callout-header">
+          <div class="callout-icon">⟳</div>
+          ANALOGY — SEAT ASSIGNMENT LAST
+        </div>
+        <div class="callout-body">
+          Bandwidth Control is the <strong>concierge assigning your seat on the plane</strong>.
+          You don't get a seat until you've cleared passport control, customs, and security.
+          Same logic: no point reserving bandwidth for traffic that might get killed earlier.
+        </div>
+      </div>
+    </div>
+
+    <!-- EXAM TIPS -->
+    <div class="section-block" id="section-tips">
+      <div class="section-label">EXAM TIPS</div>
+      <h2>What the ZDTE exam tests</h2>
+
+      <div class="callout callout-tip">
+        <div class="callout-header">
+          <div class="callout-icon">→</div>
+          EXAM TIP
+        </div>
+        <div class="callout-body">
+          Expect a scenario like: <em>"Firewall allows Box.net but web Cloud App Control blocks
+          it. What happens?"</em> → <strong>Blocked.</strong> The restrictive module wins, and
+          the web module runs after the firewall module for web traffic.
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-header">
+          <div class="callout-icon">→</div>
+          EXAM TIP
+        </div>
+        <div class="callout-body">
+          If a question asks which logs to check when a URL block happens, remember: the
+          <strong>Firewall Insights</strong> logs show the traffic as <em>allowed</em> (it
+          passed the firewall), but the <strong>Web Insights</strong> logs show it as
+          <em>blocked</em>. Different modules, different log stores.
+        </div>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-header">
+          <div class="callout-icon">→</div>
+          EXAM TIP
+        </div>
+        <div class="callout-body">
+          The Leading Practices Guide lists a shorter 9-stage order (Firewall → SSL → ATP →
+          AV → Cloud App → URL → File Type → DLP → Sandbox). The full ZDTE study guide lists
+          13 policy-level stages. Both are correct — one describes <strong>engines</strong>,
+          the other describes <strong>policy evaluation order</strong>. The 13-stage view is
+          more granular and more likely to appear in detailed scenario questions.
+        </div>
+      </div>
+
+      <ul class="content-list">
+        <li>Know the two-module model (Firewall Module vs. Web Module) cold.</li>
+        <li>Remember non-web traffic (SSH, RDP, DNS) never enters the web module.</li>
+        <li>SSL Inspection is the prerequisite for most downstream engines — no decryption means no deep inspection.</li>
+        <li>Security Exceptions is always first so admin overrides actually override.</li>
+        <li>Bandwidth Control is always last — resource allocation happens after all security decisions.</li>
+        <li>Cloud App Control is more specific than URL Filtering, so it runs first.</li>
+        <li>Cheap filters (country, category) before expensive ones (IPS, sandbox).</li>
+      </ul>
+    </div>
+
+  </div><!-- end .main-content -->
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">THE 13 STAGES — TICK WHEN LOCKED IN</div>
+      <ul class="subtopic-list" id="subtopic-list">
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>01 · Firewall</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>02 · Web Module entry</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>03 · SSL Inspection</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>04 · Security Exceptions</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>05 · Malicious URLs</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>06 · Cloud App Control</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>07 · URL Filtering</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>08 · Browser Control</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>09 · Country-based</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>10 · IPS Signatures</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>11 · Suspicious Content</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>12 · P2P Control</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>13 · Bandwidth</span></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">QUICK REFERENCE</div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">SSMA</div>
+        <div class="quick-ref-def">Single-Scan Multi-Action. All engines inspect packets in parallel from shared memory, not in a chained appliance model.</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">PSE</div>
+        <div class="quick-ref-def">Public Service Edge. The ZIA enforcement node that hosts both the Firewall Module and the Web Module.</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">PAGE RISK INDEX</div>
+        <div class="quick-ref-def">Behavioural/structural risk score used by Suspicious Content Protection to decide whether a page is "too risky."</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">TENANT PROFILES</div>
+        <div class="quick-ref-def">Cloud App Control feature that distinguishes personal vs corporate accounts of the same app (e.g., personal Gmail vs corporate Gmail).</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">URL CASCADING</div>
+        <div class="quick-ref-def">Optional setting that lets Cloud App Control–allowed traffic flow into URL Filtering for further evaluation. Default: disabled.</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">MY NOTES</div>
+      <div class="sidebar-note">
+        <strong>Memory peg:</strong> "Fortinet shirt, Bowser necklace, floating in clouds" →
+        anchors the start of the journey. Never forget the two doors (web vs non-web) at the firewall.
+      </div>
+      <div class="sidebar-note">
+        <strong>Trap to avoid:</strong> Don't confuse the 13-stage policy list
+        with the 9-stage engine list from the Leading Practices Guide. Both are right, different
+        levels of zoom.
+      </div>
+      <div class="sidebar-note">
+        <strong>Exam mantra:</strong> <em>"Restrictive module wins"</em> — if firewall blocks,
+        it doesn't matter what the web policy says.
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">RELATED DAYS</div>
+      <ul class="subtopic-list">
+        <li style="cursor:default;">
+          <div style="width:14px;height:14px;background:var(--orange-light);border:1px solid var(--orange-border);border-radius:3px;flex-shrink:0;"></div>
+          <span>Day 04 — Policy Framework</span>
+        </li>
+        <li style="cursor:default;">
+          <div style="width:14px;height:14px;background:var(--orange-light);border:1px solid var(--orange-border);border-radius:3px;flex-shrink:0;"></div>
+          <span>Day 05 — Cyberthreat Protection</span>
+        </li>
+        <li style="cursor:default;">
+          <div style="width:14px;height:14px;background:var(--orange-light);border:1px solid var(--orange-border);border-radius:3px;flex-shrink:0;"></div>
+          <span>Day 09 — ZIA Deep Dive</span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-left">ZDTE<span>.</span></div>
+  <div class="footer-right">HTTP GET Order of Operations · Memory Palace Edition</div>
+</footer>
+
+<script>
+  function navTo(id, el) {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    el.classList.add('active');
+    const target = document.getElementById(id);
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function toggleDone(li) {
+    li.classList.toggle('done');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const items = document.querySelectorAll('#subtopic-list li');
+    const done  = document.querySelectorAll('#subtopic-list li.done');
+    const pct   = items.length ? Math.round((done.length / items.length) * 100) : 0;
+    const big   = document.getElementById('prog-num');
+    if (big) big.innerHTML = pct + '<span style="font-size:18px;color:#7a6a55;">%</span>';
+  }
+</script>
+
+</body>
+</html>

@@ -121,6 +121,114 @@
   }
   .count-card .lbl { font-size: 10px; color: #7a6a55; letter-spacing: 0.1em; margin-top: 4px; }
 
+  /* ── PROGRESS BAR ── */
+  .progress-bar-section {
+    padding: 20px 60px;
+    background: var(--cream-dark);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .progress-bar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .progress-bar-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--ink-muted);
+  }
+
+  .progress-bar-fraction {
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  .progress-bar-fraction span { color: var(--orange); }
+
+  .progress-score-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 12px;
+  }
+
+  .progress-score-big {
+    font-family: 'Fraunces', serif;
+    font-size: 52px;
+    font-weight: 700;
+    color: var(--orange);
+    line-height: 1;
+  }
+
+  .progress-score-meta {
+    padding-bottom: 6px;
+  }
+
+  .progress-score-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    color: var(--ink-muted);
+    margin-bottom: 3px;
+  }
+
+  .progress-score-source {
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  .progress-bar-track {
+    height: 12px;
+    background: var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 8px;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.6s ease;
+  }
+
+  .progress-bar-fill.score-low    { background: linear-gradient(90deg, #cc4a18 0%, #e06030 100%); }
+  .progress-bar-fill.score-mid    { background: linear-gradient(90deg, #a07c00 0%, #c8a000 100%); }
+  .progress-bar-fill.score-high   { background: linear-gradient(90deg, var(--green) 0%, #52b563 100%); }
+  .progress-bar-fill.score-none   { background: var(--border); width: 0% !important; }
+
+  .progress-bar-steps {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+  }
+
+  .progress-step {
+    font-size: 10px;
+    color: var(--ink-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .progress-step-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--border);
+  }
+
+  .progress-step.done .progress-step-dot { background: var(--green); }
+  .progress-step.done { color: var(--green); font-weight: 600; }
+  .progress-step.latest .progress-step-dot { background: var(--orange); box-shadow: 0 0 0 2px var(--orange-border); }
+  .progress-step.latest { color: var(--orange); font-weight: 600; }
+
+  /* ── MAIN ── */
   .main { max-width: 900px; margin: 0 auto; padding: 48px 60px 80px; }
 
   .category-label {
@@ -170,6 +278,10 @@
   .exam-card.complete:hover {
     background: #d8f0da;
     border-color: var(--green);
+  }
+
+  .exam-card.pending {
+    opacity: 0.72;
   }
 
   .exam-icon {
@@ -230,8 +342,10 @@
   .tag-zia      { background: var(--blue-light);   color: var(--blue);   border-color: var(--blue-border); }
   .tag-zpa      { background: var(--green-light);  color: var(--green);  border-color: var(--green-border); }
   .tag-arch     { background: var(--amber-light);  color: #a07c00;       border-color: #ffe680; }
+  .tag-zdx      { background: var(--purple-light); color: var(--purple); border-color: var(--purple-border); }
   .tag-diag     { background: var(--purple-light); color: var(--purple); border-color: var(--purple-border); }
   .tag-complete { background: var(--green-light);  color: var(--green);  border-color: var(--green-border); font-weight: 600; }
+  .tag-pending  { background: var(--cream-dark);   color: var(--ink-muted); border-color: var(--border); }
 
   .exam-arrow {
     font-size: 16px;
@@ -257,6 +371,7 @@
 
   @media (max-width: 700px) {
     header { padding: 24px 20px 20px; flex-direction: column; }
+    .progress-bar-section { padding: 16px 20px; }
     .main { padding: 32px 20px 60px; }
     .exam-card { flex-wrap: wrap; }
     .exam-meta { align-items: flex-start; }
@@ -278,15 +393,40 @@
       ZDTE — MOCK EXAMS
     </div>
     <h1>Mock <em>Exams</em></h1>
-    <p class="header-sub">Full diagnostic exam sessions. Each mock exam covers all blueprint domains — strong areas identified, gaps flagged for targeted review.</p>
+    <p class="header-sub">Full diagnostic exam sessions after every two study days. Each mock exam covers the domains just studied — strong areas identified, gaps flagged for review.</p>
   </div>
   <div class="header-right">
     <div class="count-card">
-      <div class="big">1</div>
-      <div class="lbl">EXAMS</div>
+      <div class="big">1<span style="font-family:'Epilogue',sans-serif;font-size:18px;color:#7a6a55;font-weight:400;">/6</span></div>
+      <div class="lbl">TAKEN</div>
     </div>
   </div>
 </header>
+
+<div class="progress-bar-section">
+  <div class="progress-bar-header">
+    <span class="progress-bar-label">EXAM READINESS — LATEST SCORE</span>
+    <span class="progress-bar-fraction">Mock Exam <span>#1</span> · 20 Apr 2026</span>
+  </div>
+  <div class="progress-score-row">
+    <div class="progress-score-big" id="latest-score">–</div>
+    <div class="progress-score-meta">
+      <div class="progress-score-label">LATEST MOCK EXAM SCORE</div>
+      <div class="progress-score-source" id="score-source">No scored exam yet — Mock #1 was a diagnostic</div>
+    </div>
+  </div>
+  <div class="progress-bar-track">
+    <div class="progress-bar-fill score-none" id="score-bar" style="width:0%;"></div>
+  </div>
+  <div class="progress-bar-steps">
+    <div class="progress-step latest"><div class="progress-step-dot"></div>#1 Diag.</div>
+    <div class="progress-step"><div class="progress-step-dot"></div>#2</div>
+    <div class="progress-step"><div class="progress-step-dot"></div>#3</div>
+    <div class="progress-step"><div class="progress-step-dot"></div>#4</div>
+    <div class="progress-step"><div class="progress-step-dot"></div>#5</div>
+    <div class="progress-step"><div class="progress-step-dot"></div>#6</div>
+  </div>
+</div>
 
 <div class="main">
 
@@ -297,7 +437,7 @@
       <div class="exam-icon">01</div>
       <div class="exam-body">
         <div class="exam-title">📋 Mock Exam #1 — All Domains Diagnostic</div>
-        <div class="exam-desc">Full blueprint diagnostic · 7 strong areas identified · 5 gaps flagged for Days 3–10 review</div>
+        <div class="exam-desc">All 11 domains · Full blueprint diagnostic · 7 strong areas · 5 gaps flagged · Mon 20 Apr</div>
       </div>
       <div class="exam-meta">
         <div class="exam-tags">
@@ -306,6 +446,92 @@
           <span class="tag tag-zpa">ZPA</span>
           <span class="tag tag-diag">Diagnostic</span>
           <span class="tag tag-complete">✓ Complete</span>
+        </div>
+      </div>
+      <div class="exam-arrow">→</div>
+    </a>
+
+  </div>
+
+  <div class="category-label">UPCOMING</div>
+  <div class="exams-grid">
+
+    <a href="mock-exams/day-04.html" class="exam-card pending">
+      <div class="exam-icon">02</div>
+      <div class="exam-body">
+        <div class="exam-title">📋 Mock Exam #2 — Connectivity &amp; Platform Services</div>
+        <div class="exam-desc">All 11 domains · Days 3–4 emphasis: Connectivity Services + Platform &amp; Access Control · Wed 22 Apr</div>
+      </div>
+      <div class="exam-meta">
+        <div class="exam-tags">
+          <span class="tag tag-zia">ZIA</span>
+          <span class="tag tag-zpa">ZPA</span>
+          <span class="tag tag-pending">Pending</span>
+        </div>
+      </div>
+      <div class="exam-arrow">→</div>
+    </a>
+
+    <a href="mock-exams/day-06.html" class="exam-card pending">
+      <div class="exam-icon">03</div>
+      <div class="exam-body">
+        <div class="exam-title">📋 Mock Exam #3 — Cyberthreat &amp; Data Protection</div>
+        <div class="exam-desc">All 11 domains · Days 5–6 emphasis: Cyberthreat Protection + Data Protection Services · Fri 24 Apr</div>
+      </div>
+      <div class="exam-meta">
+        <div class="exam-tags">
+          <span class="tag tag-zia">ZIA</span>
+          <span class="tag tag-zpa">ZPA</span>
+          <span class="tag tag-pending">Pending</span>
+        </div>
+      </div>
+      <div class="exam-arrow">→</div>
+    </a>
+
+    <a href="mock-exams/day-08.html" class="exam-card pending">
+      <div class="exam-icon">04</div>
+      <div class="exam-body">
+        <div class="exam-title">📋 Mock Exam #4 — Risk Management &amp; Automation</div>
+        <div class="exam-desc">All 11 domains · Days 7–8 emphasis: Risk Management + ZDX + Zero Trust Automation · Sun 26 Apr</div>
+      </div>
+      <div class="exam-meta">
+        <div class="exam-tags">
+          <span class="tag tag-zdx">ZDX</span>
+          <span class="tag tag-arch">Architecture</span>
+          <span class="tag tag-pending">Pending</span>
+        </div>
+      </div>
+      <div class="exam-arrow">→</div>
+    </a>
+
+    <a href="mock-exams/day-10.html" class="exam-card pending">
+      <div class="exam-icon">05</div>
+      <div class="exam-body">
+        <div class="exam-title">📋 Mock Exam #5 — ZIA, ZPA &amp; ZDX Review</div>
+        <div class="exam-desc">All 11 domains · Days 9–10 emphasis: ZIA deep dive + ZPA &amp; ZDX review · Tue 28 Apr</div>
+      </div>
+      <div class="exam-meta">
+        <div class="exam-tags">
+          <span class="tag tag-zia">ZIA</span>
+          <span class="tag tag-zpa">ZPA</span>
+          <span class="tag tag-zdx">ZDX</span>
+          <span class="tag tag-pending">Pending</span>
+        </div>
+      </div>
+      <div class="exam-arrow">→</div>
+    </a>
+
+    <a href="mock-exams/day-12.html" class="exam-card pending">
+      <div class="exam-icon">06</div>
+      <div class="exam-body">
+        <div class="exam-title">📋 Mock Exam #6 — Final Full Simulation</div>
+        <div class="exam-desc">All 11 domains · Final full simulation · Last readiness calibration before 2 May exam · Thu 30 Apr</div>
+      </div>
+      <div class="exam-meta">
+        <div class="exam-tags">
+          <span class="tag tag-arch">Architecture</span>
+          <span class="tag tag-diag">Diagnostic</span>
+          <span class="tag tag-pending">Pending</span>
         </div>
       </div>
       <div class="exam-arrow">→</div>
