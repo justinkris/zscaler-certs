@@ -189,7 +189,7 @@
   .stage-label { font-size: 10px; letter-spacing: 0.15em; color: var(--ink-muted); margin-bottom: 10px; text-transform: uppercase; }
   .stage-story { background: var(--amber-light); border-left: 3px solid #ffd95c; padding: 10px 14px; border-radius: 6px; margin: 10px 0; font-size: 13px; color: #5a4715; line-height: 1.65; font-style: italic; }
   .stage-what { font-size: 13.5px; color: var(--ink-soft); line-height: 1.7; margin-bottom: 10px; }
-  .image-slot { margin-top: 14px; }
+  .image-slot { margin-top: 14px; display: flex; justify-content: center; }
   .image-slot img { width: 50%; display: block; border-radius: 8px; }
 
   /* Stage carousel nav */
@@ -367,15 +367,6 @@
         The canonical HTTP GET evaluation order, gate by gate. Use the arrows to walk through
         each stage — or press ← → on your keyboard.
       </p>
-
-      <div class="carousel-nav">
-        <button class="carousel-btn" id="prev-btn" onclick="prevStage()" disabled>←</button>
-        <div class="carousel-center">
-          <div class="carousel-counter" id="stage-counter">01 / 13</div>
-          <div class="carousel-stage-label" id="stage-label-display">FIREWALL MODULE</div>
-        </div>
-        <button class="carousel-btn" id="next-btn" onclick="nextStage()">→</button>
-      </div>
 
       <div class="stage-card" data-stage="0">
         <div class="stage-number">01</div>
@@ -642,6 +633,15 @@
             <img src="../study-bite-images/13-bandwidth-control.png" alt="Stage 13 — Bandwidth Control">
           </div>
         </div>
+      </div>
+
+      <div class="carousel-nav">
+        <button class="carousel-btn" id="prev-btn" onclick="prevStage()" disabled>←</button>
+        <div class="carousel-center">
+          <div class="carousel-counter" id="stage-counter">01 / 13</div>
+          <div class="carousel-stage-label" id="stage-label-display">FIREWALL MODULE</div>
+        </div>
+        <button class="carousel-btn" id="next-btn" onclick="nextStage()">→</button>
       </div>
     </div>
 
