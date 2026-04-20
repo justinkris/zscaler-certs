@@ -940,7 +940,8 @@
 
   showStage(0);
   setTimeout(() => {
-    stages[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const top = stages[0].getBoundingClientRect().top + window.scrollY - 80;
+    window.scrollTo({ top, behavior: 'smooth' });
   }, 150);
 </script>
 
