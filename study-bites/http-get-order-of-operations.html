@@ -296,6 +296,7 @@
 
 <nav class="section-nav">
   <button class="nav-tab active" onclick="navTo('section-stages', this)">THE 13 STAGES</button>
+  <button class="nav-tab" onclick="navTo('section-fullref', this)">FULL REFERENCE</button>
   <button class="nav-tab" onclick="navTo('section-overview', this)">OVERVIEW</button>
   <button class="nav-tab" onclick="navTo('section-principles', this)">ORDERING PRINCIPLES</button>
   <button class="nav-tab" onclick="navTo('section-tips', this)">EXAM TIPS</button>
@@ -587,6 +588,156 @@
           <div class="carousel-stage-label" id="stage-label-display">FIREWALL MODULE</div>
         </div>
         <button class="carousel-btn" id="next-btn" onclick="nextStage()">→</button>
+      </div>
+    </div>
+
+    <!-- FULL REFERENCE -->
+    <div class="section-block" id="section-fullref">
+      <div class="section-label">FULL REFERENCE — ALL 13 STAGES</div>
+      <h2>All stages, scrollable</h2>
+      <p>Every gate in the pipeline at a glance — no carousel, just the full sequence.</p>
+
+      <div class="stage-card" style="display:grid;">
+        <div class="stage-number" style="padding-top:24px;">01</div>
+        <div class="stage-body">
+          <div class="stage-label">Firewall Module</div>
+          <h3>🔥 Firewall</h3>
+          <div class="stage-what">The very first gate. Evaluates Layer 3/4 rules, FQDNs, and network services. Decides whether traffic is web (ports 80/443) or non-web. Non-web stops here; web is handed to the Web Module.</div>
+          <div class="stage-story">I'm wearing a Fortinet shirt with a Bowser necklace, floating in the clouds. I reach a <strong>huge wall on fire</strong> and see two doors — one covered in spider webs, one without. Non-web traffic goes through the plain door and straight to the internet. I go through the webby one.</div>
+          <div class="image-slot" style="padding-top:14px;"><img src="../study-bite-images/1-Firewall.png" alt="Stage 01" style="width:50%;height:300px;object-fit:cover;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <div class="stage-card" style="display:grid;">
+        <div class="stage-number" style="padding-top:24px;">02</div>
+        <div class="stage-body">
+          <div class="stage-label">Module handoff</div>
+          <h3>🕸️ Web Module entry</h3>
+          <div class="stage-what">Web traffic crosses from the firewall module into the web module. This is where the proxy engines live — everything from here on is SSMA-powered.</div>
+          <div class="stage-story">I push through the <strong>spider-web-covered door</strong> and enter the web module proper.</div>
+          <div class="image-slot" style="padding-top:14px;"><img src="../study-bite-images/2-web-module.png" alt="Stage 02" style="width:50%;height:300px;object-fit:cover;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <div class="stage-card" style="display:grid;">
+        <div class="stage-number" style="padding-top:24px;">03</div>
+        <div class="stage-body">
+          <div class="stage-label">Decryption gate</div>
+          <h3>🐍 SSL Inspection</h3>
+          <div class="stage-what">Decrypts HTTPS traffic so every downstream engine can actually read and inspect the content. Without SSL inspection, ATP, URL filtering, DLP, and sandbox are all blind to ciphertext.</div>
+          <div class="stage-story">A snake <strong>SSLithers</strong> through and goes: <em>"Open yo pockets boy, keep those pockets out!"</em> He's unzipping encrypted traffic so the rest of the pipeline can see what's inside.</div>
+          <div class="image-slot" style="padding-top:14px;"><img src="../study-bite-images/3-ssl-inspection.png" alt="Stage 03" style="width:50%;height:300px;object-fit:cover;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <div class="stage-card" style="display:grid;">
+        <div class="stage-number" style="padding-top:24px;">04</div>
+        <div class="stage-body">
+          <div class="stage-label">Admin override check</div>
+          <h3>🎟️ Security Exceptions</h3>
+          <div class="stage-what">The "escape hatch." Admins can explicitly mark traffic as exempt from further security inspection. Checked first so the bypass actually works.</div>
+          <div class="stage-story">Another snake at the <strong>VIP lane</strong> goes: <em>"Nah mate, you're not VIP, move over."</em> I'm not on the exceptions list, so I go through every remaining gate.</div>
+          <div class="image-slot" style="padding-top:14px;"><img src="../study-bite-images/4-security-exceptions.png" alt="Stage 04" style="width:50%;height:300px;object-fit:cover;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <div class="stage-card" style="display:grid;">
+        <div class="stage-number" style="padding-top:24px;">05</div>
+        <div class="stage-body">
+          <div class="stage-label">Global threat database</div>
+          <h3>🎅 Malicious URLs</h3>
+          <div class="stage-what">Zscaler's global threat intelligence database check. Known-bad URLs get blocked outright — the broad "naughty list."</div>
+          <div class="stage-story">The snake tells me to go see if I'm on <strong>Santa's naughty list</strong>. Santa goes <em>"Hohoho, I don't see you on the naughty list!"</em> and waves me through.</div>
+          <div class="image-slot" style="padding-top:14px;"><img src="../study-bite-images/5-malicious-urls.png" alt="Stage 05" style="width:50%;height:300px;object-fit:cover;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <div class="stage-card" style="display:grid;">
+        <div class="stage-number" style="padding-top:24px;">06</div>
+        <div class="stage-body">
+          <div class="stage-label">App-identity enforcement</div>
+          <h3>☁️ Cloud App Control</h3>
+          <div class="stage-what">Identifies the specific cloud application and applies granular rules — allow, block, isolate, or restrict specific actions. More specific than URL Filtering, which is why it runs first.</div>
+          <div class="stage-story">I ride Santa's sleigh up to the clouds where a <strong>big cloud forms a face</strong> and says: <em>"Let me check if the Fortinet application is alright… yes! Can I offer you a Cascade Pale Ale?"</em></div>
+          <div class="image-slot" style="padding-top:14px;"><img src="../study-bite-images/6-cloud-app-control.png" alt="Stage 06" style="width:50%;height:300px;object-fit:cover;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <div class="stage-card" style="display:grid;">
+        <div class="stage-number" style="padding-top:24px;">07</div>
+        <div class="stage-body">
+          <div class="stage-label">Category-based filter</div>
+          <h3>☁️ URL Filtering</h3>
+          <div class="stage-what">Matches URLs against predefined or custom URL categories and applies allow/block rules. Runs after Cloud App Control because category matching is less granular.</div>
+          <div class="stage-story">Big cloud introduces me to his <strong>little cloud brother</strong>: <em>"fortinet.net, nerd category, I guess that's fine you nerd."</em></div>
+          <div class="image-slot" style="padding-top:14px;"><img src="../study-bite-images/7-url-filter.png" alt="Stage 07" style="width:50%;height:300px;object-fit:cover;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <div class="stage-card" style="display:grid;">
+        <div class="stage-number" style="padding-top:24px;">08</div>
+        <div class="stage-body">
+          <div class="stage-label">Client/browser inspection</div>
+          <h3>🐚 Browser Control</h3>
+          <div class="stage-what">Inspects the client/browser fingerprint — version, plugins, extensions, outdated components. Can block or caution based on risky browser configurations.</div>
+          <div class="stage-story"><em>"Give me your necklace for scanning."</em> The Bowser necklace <strong>transforms like a Transformer</strong> and reveals a secret signature from Mario himself.</div>
+          <div class="image-slot" style="padding-top:14px;"><img src="../study-bite-images/8-browser-control.png" alt="Stage 08" style="width:50%;height:300px;object-fit:cover;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <div class="stage-card" style="display:grid;">
+        <div class="stage-number" style="padding-top:24px;">09</div>
+        <div class="stage-body">
+          <div class="stage-label">GeoIP restriction</div>
+          <h3>🌏 Country-based restrictions</h3>
+          <div class="stage-what">Blocks or allows based on source/destination country via GeoIP lookup. Cheap and fast — runs before heavier signature-based inspection.</div>
+          <div class="stage-story">I get to the court and a reporter asks if I'm Russian. I joke: <em>"Haha yeah, I am RUSHIN to the court!"</em> They handcuff me momentarily — <em>"Bruv, it's a pun m8!"</em></div>
+          <div class="image-slot" style="padding-top:14px;"><img src="../study-bite-images/9-country-based-block.png" alt="Stage 09" style="width:50%;height:300px;object-fit:cover;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <div class="stage-card" style="display:grid;">
+        <div class="stage-number" style="padding-top:24px;">10</div>
+        <div class="stage-body">
+          <div class="stage-label">Deep packet signature scan</div>
+          <h3>✍️ IPS Signatures</h3>
+          <div class="stage-what">Intrusion Prevention System matches traffic against signatures for known exploits, C2 patterns, and attack payloads. Expensive per-packet matching — runs after cheaper filters.</div>
+          <div class="stage-story">At the <strong>Australian Open</strong>, heaps of tennis fans want my <strong>signature (IPS!)</strong>. I'm signing books, shirts, everything.</div>
+          <div class="image-slot" style="padding-top:14px;"><img src="../study-bite-images/10-ips-signatures.png" alt="Stage 10" style="width:50%;height:300px;object-fit:cover;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <div class="stage-card" style="display:grid;">
+        <div class="stage-number" style="padding-top:24px;">11</div>
+        <div class="stage-body">
+          <div class="stage-label">Page Risk Index scoring</div>
+          <h3>📄 Suspicious Content Protection</h3>
+          <div class="stage-what">Uses the Page Risk Index to score pages on behavioural and structural risk signals. Blocks or cautions if the page exceeds the configured risk threshold.</div>
+          <div class="stage-story">Someone hands me a book to sign — blank pages mostly, but one is a <strong>bright red glowing book</strong> with the word <em>"RISK"</em> shimmering in light text. <em>"Nah, that page is risky."</em></div>
+          <div class="image-slot" style="padding-top:14px;"><img src="../study-bite-images/11-suspicious-page.png" alt="Stage 11" style="width:50%;height:300px;object-fit:cover;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <div class="stage-card" style="display:grid;">
+        <div class="stage-number" style="padding-top:24px;">12</div>
+        <div class="stage-body">
+          <div class="stage-label">Peer-to-peer throttle/block</div>
+          <h3>👮 P2P Control</h3>
+          <div class="stage-what">Detects and controls peer-to-peer traffic patterns (BitTorrent, etc.). Blocks or throttles before allocating scarce bandwidth to potentially unwanted traffic.</div>
+          <div class="stage-story">Security guards <strong>control the crowd</strong> around me — P2P here (peer-to-peer = person-to-person = crowd control). Think Veigar's E skill: a cage locking the crowd in place.</div>
+          <div class="image-slot" style="padding-top:14px;"><img src="../study-bite-images/12-p2p-control.png" alt="Stage 12" style="width:50%;height:300px;object-fit:cover;border-radius:8px;"></div>
+        </div>
+      </div>
+
+      <div class="stage-card" style="display:grid;">
+        <div class="stage-number" style="padding-top:24px;">13</div>
+        <div class="stage-body">
+          <div class="stage-label">Traffic shaping (final stage)</div>
+          <h3>🔋 Bandwidth Control</h3>
+          <div class="stage-what">Allocates and shapes bandwidth for traffic that has passed every previous check. Runs last — no point reserving bandwidth for traffic that might get blocked earlier.</div>
+          <div class="stage-story">I'm so tired from traveling up to the clouds, being checked by Santa, chatting with clouds, signing autographs… my <strong>bandwidth has been taken up all day</strong>.</div>
+          <div class="image-slot" style="padding-top:14px;"><img src="../study-bite-images/13-bandwidth-control.png" alt="Stage 13" style="width:50%;height:300px;object-fit:cover;border-radius:8px;"></div>
+        </div>
       </div>
     </div>
 
@@ -940,7 +1091,7 @@
 
   showStage(0);
   setTimeout(() => {
-    const top = stages[0].getBoundingClientRect().top + window.scrollY - 80;
+    const top = stages[0].getBoundingClientRect().top + window.scrollY - 40;
     window.scrollTo({ top, behavior: 'smooth' });
   }, 150);
 </script>
