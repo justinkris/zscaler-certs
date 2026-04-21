@@ -341,10 +341,10 @@
     font-weight: 600;
   }
 
-  /* Two-column order grid */
+  /* Three-column order grid */
   .order-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 14px;
     margin-top: 20px;
   }
@@ -365,6 +365,7 @@
   }
 
   .order-header.get      { background: linear-gradient(135deg, var(--blue) 0%, #114a8f 100%); }
+  .order-header.post     { background: linear-gradient(135deg, #6a2b9b 0%, #4a1a70 100%); }
   .order-header.response { background: linear-gradient(135deg, var(--orange) 0%, #b33a10 100%); }
 
   .order-method {
@@ -475,6 +476,20 @@
   .order-list li.bw      { border-left-color: var(--ink-muted); }
   .order-list li.sandbox { border-left-color: var(--orange); }
   .order-list li.ml      { border-left-color: var(--purple); }
+  .order-list li.post-only { background: var(--purple-light); }
+
+  .post-only-badge {
+    display: inline-block;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    background: var(--purple);
+    color: white;
+    padding: 1px 7px;
+    border-radius: 8px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
 
   /* Legend */
   .legend {
@@ -687,6 +702,7 @@
     <ul class="subtopic-list" id="subtopic-list">
       <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>Two-phase model: SSMA inspection vs ordered enforcement</li>
       <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>GET request — 10-step enforcement order</li>
+      <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>POST request — 14-step enforcement order (4 POST-only extras)</li>
       <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>GET response — 9-step enforcement order</li>
       <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>SSL/CONNECT — pre-decryption policy subset</li>
       <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>CAC fires before URL Filtering; Security Exceptions placement</li>
@@ -745,7 +761,7 @@
     </div>
 
     <p>
-      The enforcement order is <strong>different for GET, POST, and Response</strong>. Below are the authoritative sequences for <strong>GET and Response</strong> from Zscaler documentation (POST will be covered in a separate study bite). ATP's individual checks are spread across both — ATP is not a single step.
+      The enforcement order is <strong>different for GET, POST, and Response</strong>. Below are all three sequences side by side. POST adds 4 extra steps on top of GET — they appear in <strong>purple</strong> in the POST column. ATP's individual checks are spread across each sequence — ATP is not a single step.
     </p>
 
     <div class="legend">
@@ -762,7 +778,7 @@
   <!-- ENFORCEMENT ORDERS -->
   <div class="section-block" id="section-orders">
     <div class="section-label">THE ENFORCEMENT ORDERS</div>
-    <h2>GET · Response — side by side</h2>
+    <h2>GET · POST · Response — side by side</h2>
 
     <div class="order-grid">
 
@@ -842,6 +858,116 @@
             <div>
               <strong>Bandwidth Control</strong>
               Allocates full or reduced bandwidth based on policy and current usage.
+              <span class="engine-tag engine-bw">BANDWIDTH</span>
+            </div>
+          </li>
+        </ol>
+      </div>
+
+      <!-- POST COLUMN -->
+      <div class="order-column">
+        <div class="order-header post">
+          <div class="order-count">14</div>
+          <div class="order-method">HTTP POST</div>
+          <div class="order-title">Request — user submits data</div>
+          <div class="order-sub">14 checks · 4 POST-only extras highlighted</div>
+        </div>
+        <ol class="order-list">
+          <li class="atp">
+            <div>
+              <strong>Custom Malicious URLs</strong>
+              Checks URL against org's custom ATP denylist.
+              <span class="engine-tag engine-atp">ATP</span>
+            </div>
+          </li>
+          <li class="policy">
+            <div>
+              <strong>Cloud App Control</strong>
+              Evaluates SaaS app policy.
+              <span class="engine-tag engine-policy">ACCESS POLICY</span>
+            </div>
+          </li>
+          <li class="policy">
+            <div>
+              <strong>URL Filtering</strong>
+              Evaluates URL category rules.
+              <span class="engine-tag engine-policy">ACCESS POLICY</span>
+            </div>
+          </li>
+          <li class="exc">
+            <div>
+              <strong>Security Exceptions</strong>
+              Allowlist → skips Malware, ATP, Sandbox downstream.
+              <span class="engine-tag engine-exc">ALLOWLIST</span>
+            </div>
+          </li>
+          <li class="browser">
+            <div>
+              <strong>Browser Control</strong>
+              Checks browser + plugins.
+              <span class="engine-tag engine-browser">BROWSER</span>
+            </div>
+          </li>
+          <li class="atp">
+            <div>
+              <strong>Country-Based Blocking</strong>
+              Checks destination server country.
+              <span class="engine-tag engine-atp">ATP</span>
+            </div>
+          </li>
+          <li class="atp post-only">
+            <div>
+              <strong>Malicious URL Block <span class="post-only-badge">POST ONLY</span></strong>
+              Blocks known malicious POST endpoints. Does not fire on GET.
+              <span class="engine-tag engine-atp">ATP</span>
+            </div>
+          </li>
+          <li class="atp">
+            <div>
+              <strong>IPS Signature Detection</strong>
+              Signature-based checks on request payload.
+              <span class="engine-tag engine-atp">ATP</span>
+            </div>
+          </li>
+          <li class="atp">
+            <div>
+              <strong>Suspicious Content Protection</strong>
+              Page Risk score on request content.
+              <span class="engine-tag engine-atp">ATP</span>
+            </div>
+          </li>
+          <li class="data post-only">
+            <div>
+              <strong>Malware Protection <span class="post-only-badge">POST ONLY</span></strong>
+              AV scan of uploaded files in request body.
+              <span class="engine-tag engine-data">MALWARE</span>
+            </div>
+          </li>
+          <li class="data post-only">
+            <div>
+              <strong>File Type Control <span class="post-only-badge">POST ONLY</span></strong>
+              Checks uploaded file types against policy.
+              <span class="engine-tag engine-data">FILE TYPE</span>
+            </div>
+          </li>
+          <li class="data post-only">
+            <div>
+              <strong>DLP <span class="post-only-badge">POST ONLY</span></strong>
+              Data Loss Prevention scan on outbound content.
+              <span class="engine-tag engine-data">DLP</span>
+            </div>
+          </li>
+          <li class="atp">
+            <div>
+              <strong>P2P Control</strong>
+              Checks for prohibited P2P / anonymizer traffic.
+              <span class="engine-tag engine-atp">ATP</span>
+            </div>
+          </li>
+          <li class="bw">
+            <div>
+              <strong>Bandwidth Control</strong>
+              Allocates bandwidth based on policy.
               <span class="engine-tag engine-bw">BANDWIDTH</span>
             </div>
           </li>
@@ -961,7 +1087,7 @@
   <!-- KEY FACTS -->
   <div class="section-block" id="section-facts">
     <div class="section-label">KEY FACTS TO LOCK IN</div>
-    <h2>Patterns across the two flows</h2>
+    <h2>Patterns across the three flows</h2>
 
     <table class="facts-table">
       <thead>
@@ -984,12 +1110,16 @@
           <td>The allowlist only kicks in after access policies. It bypasses Malware, ATP, and Sandbox downstream.</td>
         </tr>
         <tr>
+          <td>POST adds 4 extra steps GET doesn't have</td>
+          <td>Malicious URL Block (step 7), Malware Protection (step 10), File Type Control (step 11), DLP (step 12) — all POST-only.</td>
+        </tr>
+        <tr>
           <td>Sandbox only exists on the Response flow</td>
           <td>Makes sense — there's no file to detonate until data comes back from the server.</td>
         </tr>
         <tr>
-          <td>IPS Signature Detection fires on both GET and Response</td>
-          <td>Request-side (URL/headers) AND response-side (payload) — IPS is the most pervasive check.</td>
+          <td>IPS Signature Detection fires on GET, POST, and Response</td>
+          <td>Request-side (URL/headers/payload) AND response-side (content) — IPS is the most pervasive check.</td>
         </tr>
         <tr>
           <td>ATP checks are distributed, not clustered</td>
