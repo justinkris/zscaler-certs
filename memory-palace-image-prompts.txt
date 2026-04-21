@@ -1,0 +1,46 @@
+MEMORY PALACE — GET + POST
+Image Generation Prompts
+14 scenes in order
+================================================
+
+SCENE 1 — Custom Malicious URLs (Red Santa's Naughty List)
+Whimsical illustration, red-clad Santa Claus at a wooden checkpoint desk flipping through a handwritten ledger, checking a boy in a green Fortinet t-shirt with a green spiky Bowser-shell backpack, snowy North Pole setting, warm red and cream colour palette, storybook style.
+
+SCENE 2 — Cloud App Control (Big Cloud & Cascade Pale Ale)
+A huge friendly cartoon cloud with a warm smile floating in a blue sky, holding a frothy pale ale beer labelled "Cascade Pale Ale", offering it to a small boy in a Fortinet t-shirt on a wooden sleigh, soft blue and cream colour palette, pixar-inspired whimsical illustration style.
+
+SCENE 3 — URL Filtering (Little Cloud & Cloud Cat)
+A small cute cloud character wearing tiny black sunglasses, holding a fluffy cartoon cat made of cloud vapour, checking a clipboard, tropical sky background with small clouds, blue and cream tones, playful storybook illustration.
+
+SCENE 4 — Security Exceptions (VIP Club Bouncer Snake)
+A muscular anthropomorphic snake bouncer wearing a bright orange hi-vis safety vest and dark sunglasses, holding a velvet-rope VIP clipboard, standing in front of a neon-lit nightclub entrance, amber and orange colour palette, cartoon illustration with attitude.
+
+SCENE 5 — Browser Control (Bowser Shell & Mario Signature)
+A large green spiky Bowser-style turtle shell backpack unfolding like a Transformer robot, revealing a glowing red Mario signature stamped inside, at the entrance of a fancy tennis tournament, green colour palette, dynamic action-movie lighting, animated film style.
+
+SCENE 6 — Country-Based Blocking ("Are You Russian?")
+A boy in a Fortinet t-shirt being questioned by a cartoon news reporter holding a red microphone with "country check" on it, Australian Open tennis stadium in background with flags of different countries, red and blue tones, comic-style illustration with a humorous tense mood.
+
+SCENE 7 🌑 — Malicious URL Block / POST ONLY (Mal Meninga's Black Eyes)
+Dark moody scene, Australian former rugby league coach Mal Meninga holding a microphone with pitch-black eyes glowing purple, leaning in intimidatingly toward a boy in a Fortinet t-shirt, deep purple and dark tones, horror-film aesthetic but cartoon style, dramatic lighting.
+
+SCENE 8 — IPS Signature Detection (Fans Swarm for Signatures)
+A young boy being mobbed by excited cartoon fans holding sheets of paper and red permanent markers, asking for autographs, chaotic joyful crowd scene, warm red colour palette, animated movie style, celebrity arrival vibe.
+
+SCENE 9 — Suspicious Content Protection / Page Risk (Glowing Red Book "SCP")
+A single fan holding up an ominous leather-bound book with "22 SCP" embossed in gold on the cover, the book glowing with a bright pulsing red aura, surrounded by slightly blurred background crowd, mysterious magical vibe, deep red colour palette, dark fantasy illustration style.
+
+SCENE 10 🌑 — Malware Protection / POST ONLY (Pat McAfee & Envelope Chase)
+Dark dramatic scene, NFL podcaster Pat McAfee in athletic wear holding up a large manila file folder labelled "CONTRACT" like a shield, a sinister sentient envelope with fangs flying through the air, purple and dark lighting, comic-book action illustration style.
+
+SCENE 11 🌑 — File Type Control / POST ONLY (The Boy Signs the File)
+Dark moody scene, a young boy dramatically signing a large legal-style CONTRACT file with a glowing pen, golden seal at the bottom of the document, Pat McAfee looking on approvingly, deep purple and gold lighting, cinematic legal-drama illustration style.
+
+SCENE 12 🌑 — DLP / POST ONLY (The Data Shield Punt)
+Pat McAfee in full American football kicking pose, punting a sinister envelope sky-high, holding a massive round shield labelled "DATA" in large letters, the envelope bursting through dark purple clouds to reveal bright sunshine, dynamic action illustration, purple-to-gold gradient, heroic comic-book style.
+
+SCENE 13 — P2P Control (Veigar the Crowd-Control Mage)
+The League of Legends character Veigar, a tiny purple-hooded evil-mage wizard in a giant wizard hat, holding a magical glowing staff, casting crowd-control spells on a swarming mob of excited fans grabbing at a boy, dynamic magical effects, red and purple colour palette, game art style.
+
+SCENE 14 — Bandwidth Control (The Exhausted Boy)
+An exhausted young boy slumped in a stadium chair at the Australian Open, green Fortinet t-shirt crumpled, green spiky Bowser shell backpack beside him, golden sunset light over an empty tennis court, peaceful but drained mood, warm amber and grey colour palette, soft storybook illustration style.

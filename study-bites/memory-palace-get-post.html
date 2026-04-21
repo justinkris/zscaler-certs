@@ -1,0 +1,1404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZDTE Study Bite — Memory Palace: HTTP GET + POST</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=Epilogue:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #fef9f0;
+    --cream-dark: #f5eddb;
+    --ink: #1a1209;
+    --ink-soft: #5a4a35;
+    --ink-muted: #8a7660;
+    --orange: #ff6b35;
+    --orange-light: #fff3ec;
+    --orange-border: #ffd5c0;
+    --amber-light: #fffbe6;
+    --green: #3a7d44;
+    --green-light: #edf7ee;
+    --green-border: #b2dfb4;
+    --purple: #5c35cc;
+    --purple-light: #ece8ff;
+    --purple-border: #c8bbff;
+    --blue-light: #e8f0fb;
+    --blue-border: #b3ccf0;
+    --blue: #1a6bcc;
+    --red-light: #fce8e8;
+    --red-border: #f7c1c1;
+    --red: #a32d2d;
+    --border: #ede5d8;
+    --dark-bg: #1a1209;
+    --dark-card: #2a1a0f;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Epilogue', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 36px 56px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--cream);
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 32px;
+  }
+
+  .header-left { flex: 1; }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+
+  .breadcrumb a { color: var(--orange); text-decoration: none; }
+  .breadcrumb-sep { color: var(--border); }
+
+  .day-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--ink);
+    color: var(--cream);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+
+  .day-badge-dot { width: 5px; height: 5px; background: var(--orange); border-radius: 50%; }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.0;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+
+  h1 em { font-style: italic; font-weight: 400; color: var(--orange); }
+
+  .header-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+  }
+
+  .tag {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    border: 1px solid;
+  }
+
+  .tag-zia     { background: var(--blue-light);   color: var(--blue);   border-color: var(--blue-border); }
+  .tag-palace  { background: var(--purple-light); color: var(--purple); border-color: var(--purple-border); }
+  .tag-bite    { background: var(--amber-light);  color: #a07c00;       border-color: #ffe680; }
+  .tag-weight  { background: var(--orange-light); color: #cc4a18;       border-color: var(--orange-border); }
+
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+    flex-shrink: 0;
+  }
+
+  .progress-card {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 14px 20px;
+    border-radius: 14px;
+    text-align: center;
+    min-width: 110px;
+  }
+
+  .progress-card .big {
+    font-family: 'Fraunces', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--orange);
+    line-height: 1;
+  }
+
+  .progress-card .lbl {
+    font-size: 10px;
+    color: #7a6a55;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+
+  .subtopic-list {
+    list-style: none;
+    margin-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .subtopic-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--ink-muted);
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 6px;
+    transition: background 0.1s;
+    user-select: none;
+  }
+
+  .subtopic-list li:hover { background: var(--orange-light); color: var(--ink); }
+  .subtopic-list li.done { color: var(--green); text-decoration: line-through; }
+
+  .subtopic-check {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px;
+    color: transparent;
+    transition: all 0.15s;
+  }
+
+  .subtopic-list li.done .subtopic-check {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+  }
+
+  nav.section-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--cream-dark);
+    border-bottom: 1px solid var(--border);
+    padding: 0 56px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+
+  nav.section-nav button {
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 14px 18px;
+    font-family: 'Epilogue', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--ink-muted);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.15s, border-color 0.15s;
+  }
+
+  nav.section-nav button:hover { color: var(--ink); }
+  nav.section-nav button.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  main {
+    padding: 32px 40px 56px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .section-block { margin-bottom: 32px; }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+
+  p {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.8;
+    margin-bottom: 12px;
+  }
+
+  .intro-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 22px 26px;
+    margin-bottom: 24px;
+  }
+
+  .intro-card h3 {
+    font-family: 'Fraunces', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 14px 0 4px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--ink-soft);
+    padding: 4px 10px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--cream);
+  }
+
+  .legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  /* Scene cards */
+  .scene {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 22px;
+    display: grid;
+    grid-template-columns: 56px 1fr;
+  }
+
+  .scene.dark {
+    background: var(--dark-card);
+    border-color: #3d2a18;
+    color: var(--cream);
+  }
+
+  .scene-num {
+    background: var(--cream-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px 0;
+    gap: 10px;
+    border-right: 1px solid var(--border);
+  }
+
+  .scene.dark .scene-num {
+    background: #1a1209;
+    border-right-color: #3d2a18;
+  }
+
+  .scene-num-big {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+  }
+
+  .scene.dark .scene-num-big { color: var(--orange); }
+
+  .scene-colour-bar {
+    width: 8px;
+    height: 40px;
+    border-radius: 4px;
+    margin-top: 4px;
+  }
+
+  .colour-red    { background: var(--red); }
+  .colour-blue   { background: var(--blue); }
+  .colour-orange { background: #ff9a3c; }
+  .colour-green  { background: var(--green); }
+  .colour-purple { background: var(--purple); }
+  .colour-grey   { background: var(--ink-muted); }
+
+  .scene-body { padding: 20px 24px 22px; }
+
+  .scene-header-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+
+  .scene-titles { flex: 1; min-width: 240px; }
+
+  .scene-room-name {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+
+  .scene.dark .scene-room-name { color: var(--cream); }
+
+  .scene-policy-name {
+    font-size: 12px;
+    color: var(--ink-muted);
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+
+  .scene.dark .scene-policy-name { color: #a8987a; }
+  .scene-policy-name strong { color: var(--orange); }
+
+  .scene-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .scene-tag {
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    border: 1px solid;
+  }
+
+  .scene-tag.get   { background: var(--blue-light);   color: var(--blue);   border-color: var(--blue-border); }
+  .scene-tag.post  { background: var(--purple-light); color: var(--purple); border-color: var(--purple-border); }
+  .scene-tag.dark-only { background: #3d2a18; color: #ffb370; border-color: #5a3d28; }
+
+  .scene.dark .scene-tag.get  { background: #2d3d4d; color: #8dc0ff; border-color: #3d5a7d; }
+  .scene.dark .scene-tag.post { background: #3d2a4d; color: #c8a8ff; border-color: #5a3d7d; }
+
+  .scene-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 14px;
+  }
+
+  .scene-image-slot {
+    background: var(--cream);
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 14px;
+    color: var(--ink-muted);
+    font-size: 12px;
+    line-height: 1.5;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .scene.dark .scene-image-slot {
+    background: #1a1209;
+    border-color: #3d2a18;
+    color: #8a7660;
+  }
+
+  .scene-image-slot img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    position: absolute;
+    top: 0; left: 0;
+  }
+
+  .slot-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .slot-placeholder-icon {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--cream-dark);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+  }
+
+  .scene.dark .slot-placeholder-icon { background: #3d2a18; }
+
+  .scene-text-block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .scene-narrative {
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+
+  .scene.dark .scene-narrative { color: #d9cfbf; }
+  .scene-narrative strong { color: var(--ink); }
+  .scene.dark .scene-narrative strong { color: var(--orange); }
+
+  .prompt-block {
+    background: var(--cream-dark);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    position: relative;
+    margin-top: 6px;
+  }
+
+  .scene.dark .prompt-block {
+    background: #1a1209;
+    border-color: #3d2a18;
+  }
+
+  .prompt-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: var(--ink-muted);
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .scene.dark .prompt-label { color: #a8987a; }
+
+  .prompt-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    line-height: 1.5;
+    color: var(--ink-soft);
+    word-break: break-word;
+    padding-right: 4px;
+  }
+
+  .scene.dark .prompt-text { color: #d9cfbf; }
+
+  .copy-btn {
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    font-family: 'Epilogue', sans-serif;
+    transition: background 0.15s;
+  }
+
+  .copy-btn:hover { background: var(--orange); }
+  .copy-btn.copied { background: var(--green); }
+  .scene.dark .copy-btn { background: var(--orange); color: var(--ink); }
+
+  .hook-box {
+    background: var(--orange-light);
+    border: 1px solid var(--orange-border);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 12px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-top: 4px;
+  }
+
+  .scene.dark .hook-box {
+    background: #3d2a18;
+    border-color: #5a3d28;
+    color: #e8d9bf;
+  }
+
+  .hook-label {
+    font-size: 9px;
+    letter-spacing: 0.15em;
+    color: #cc4a18;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+
+  .scene.dark .hook-label { color: var(--orange); }
+  .hook-box strong { color: var(--ink); }
+  .scene.dark .hook-box strong { color: var(--cream); }
+
+  .image-controls {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    justify-content: center;
+  }
+
+  .image-btn {
+    background: var(--ink);
+    color: var(--cream);
+    border: none;
+    padding: 5px 12px;
+    border-radius: 12px;
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    font-family: 'Epilogue', sans-serif;
+  }
+
+  .image-btn:hover { background: var(--orange); }
+  .scene.dark .image-btn { background: var(--orange); color: var(--ink); }
+
+  /* Summary table */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    margin-top: 14px;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    background: white;
+  }
+
+  .summary-table thead th {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+
+  .summary-table tbody tr:nth-child(even) { background: var(--cream-dark); }
+  .summary-table tbody tr.dark-row { background: #2a1a0f; }
+  .summary-table tbody tr.dark-row td { color: #e8d9bf; border-color: #3d2a18; }
+  .summary-table tbody tr.dark-row td:first-child { color: var(--orange); }
+
+  .summary-table tbody td {
+    padding: 9px 12px;
+    border-top: 1px solid var(--border);
+    color: var(--ink-soft);
+    vertical-align: top;
+  }
+
+  .summary-table tbody td:first-child {
+    font-weight: 700;
+    color: var(--ink);
+    width: 40px;
+    font-family: 'Fraunces', serif;
+    font-size: 14px;
+  }
+
+  .summary-table tbody td.scene-col {
+    font-weight: 600;
+    color: var(--ink);
+    width: 30%;
+  }
+
+  .summary-table tbody tr.dark-row td.scene-col { color: var(--cream); }
+
+  footer {
+    padding: 18px 56px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    color: var(--ink-muted);
+    background: var(--cream-dark);
+    letter-spacing: 0.06em;
+  }
+
+  footer .footer-left {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--ink);
+  }
+
+  footer .footer-left span { color: var(--orange); }
+
+  @media (max-width: 900px) {
+    .scene-content { grid-template-columns: 1fr; }
+    main { padding: 20px; }
+    header { padding: 24px 20px; flex-direction: column; }
+    nav.section-nav { padding: 0 20px; }
+    footer { padding: 18px 20px; flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="breadcrumb">
+      <a href="../index.html">ZDTE</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="../study-bites.html">Study Bites</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Memory Palace — GET + POST</span>
+    </div>
+    <div class="day-badge"><div class="day-badge-dot"></div>STUDY BITE — MEMORY PALACE</div>
+    <h1>The Boy's<br><em>14-stage journey</em></h1>
+    <div class="header-meta-row">
+      <span class="tag tag-zia">ZIA</span>
+      <span class="tag tag-palace">Memory Palace</span>
+      <span class="tag tag-weight">12% Blueprint Weight</span>
+      <span class="tag tag-bite">Study Bite</span>
+    </div>
+
+    <ul class="subtopic-list" id="subtopic-list">
+      <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>How the palace works — narrative + dark scenes explained</li>
+      <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>Scene 1: Custom Malicious URLs — Red Santa's naughty list</li>
+      <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>Scenes 2–3: Cloud App Control + URL Filtering (big/little cloud)</li>
+      <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>Scene 4: Security Exceptions — bouncer snake VIP list</li>
+      <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>Scene 5: Browser Control — Bowser shell + Mario signature</li>
+      <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>Scene 6: Country-Based Blocking — "Are you Russian?"</li>
+      <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>Scene 7 🌑: Malicious URL Block — Mal Meninga's black eyes (POST)</li>
+      <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>Scenes 8–9: IPS Signature Detection + Page Risk (SCP)</li>
+      <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>Scenes 10–12 🌑: Malware Protection + File Type Control + DLP (POST)</li>
+      <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>Scene 13: P2P Control — Veigar the crowd-control mage</li>
+      <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>Scene 14: Bandwidth Control — the exhausted boy</li>
+      <li onclick="toggleDone(this)"><span class="subtopic-check">✓</span>Quick reference — all 14 scenes mapped to policy</li>
+    </ul>
+  </div>
+  <div class="header-right">
+    <div class="progress-card">
+      <div class="big" id="prog-num">0<span style="font-size:18px;color:#7a6a55;">%</span></div>
+      <div class="lbl">REVIEWED</div>
+    </div>
+  </div>
+</header>
+
+<nav class="section-nav">
+  <button class="active" onclick="navTo('section-intro', this)">HOW TO USE</button>
+  <button onclick="navTo('section-scenes-1', this)">SCENES 1–6</button>
+  <button onclick="navTo('section-scenes-7', this)">SCENES 7–14</button>
+  <button onclick="navTo('section-summary', this)">QUICK REFERENCE</button>
+</nav>
+
+<main>
+
+  <!-- INTRO -->
+  <div class="section-block" id="section-intro">
+    <div class="section-label">HOW THIS PALACE WORKS</div>
+    <div class="intro-card">
+      <h3>The narrative</h3>
+      <p>A boy in a Fortinet.net shirt with a Bowser-shell backpack goes on a 14-stage journey through security checkpoints, culminating at the Australian Open tennis tournament. Each scene maps to one ZIA policy-enforcement step. <strong>Scenes 7, 10, 11, and 12 go DARK</strong> — these are the POST-only steps that don't fire on plain GET requests.</p>
+      <h3 style="margin-top:14px;">How to use each scene card</h3>
+      <p>Each scene has an image slot (upload your generated image), the narrative, a memory hook reminding you what it maps to, and a <strong>copyable image-generation prompt</strong> at the bottom. Click the prompt to copy, paste into your favourite image generator.</p>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot colour-red"></div>ATP</div>
+        <div class="legend-item"><div class="legend-dot colour-blue"></div>Access Policy</div>
+        <div class="legend-item"><div class="legend-dot colour-orange"></div>Allowlist</div>
+        <div class="legend-item"><div class="legend-dot colour-green"></div>Browser Control</div>
+        <div class="legend-item"><div class="legend-dot colour-purple"></div>Data / File</div>
+        <div class="legend-item"><div class="legend-dot colour-grey"></div>Bandwidth</div>
+        <div class="legend-item"><div class="legend-dot" style="background:var(--dark-bg);border-radius:3px;"></div>Dark = POST-only</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCENES 1–6 -->
+  <div class="section-block" id="section-scenes-1">
+    <div class="section-label">SCENES 1–6 — GET + POST</div>
+
+    <!-- SCENE 1 -->
+    <div class="scene">
+      <div class="scene-num">
+        <div class="scene-num-big">1</div>
+        <div class="scene-colour-bar colour-red"></div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-header-row">
+          <div class="scene-titles">
+            <div class="scene-room-name">Red Santa &amp; the Naughty List</div>
+            <div class="scene-policy-name">Policy → <strong>Custom Malicious URLs</strong> (ATP)</div>
+          </div>
+          <div class="scene-tags">
+            <span class="scene-tag get">GET</span>
+            <span class="scene-tag post">POST</span>
+          </div>
+        </div>
+        <div class="scene-content">
+          <div class="scene-image-slot" id="slot-1">
+            <img src="../study-bite-images/1-custom-malicious-url.png" alt="Scene 1">
+          </div>
+          <div class="scene-text-block">
+            <div class="scene-narrative">
+              A boy in a <strong>Fortinet.net shirt</strong> and a <strong>Bowser-shell backpack</strong> visits Santa. Santa flips through a handwritten ledger and says <em>"I don't see you on the naughty list"</em> — waves the boy through.
+            </div>
+            <div class="hook-box">
+              <div class="hook-label">HOOK</div>
+              Santa's naughty list = admin-defined <strong>custom denylist of URLs</strong>. If you're on the list, you're blocked immediately. First gate in the pipeline.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 2 -->
+    <div class="scene">
+      <div class="scene-num">
+        <div class="scene-num-big">2</div>
+        <div class="scene-colour-bar colour-blue"></div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-header-row">
+          <div class="scene-titles">
+            <div class="scene-room-name">Big Cloud &amp; the Cascade Pale Ale</div>
+            <div class="scene-policy-name">Policy → <strong>Cloud App Control</strong></div>
+          </div>
+          <div class="scene-tags">
+            <span class="scene-tag get">GET</span>
+            <span class="scene-tag post">POST</span>
+          </div>
+        </div>
+        <div class="scene-content">
+          <div class="scene-image-slot" id="slot-2">
+            <img src="../study-bite-images/2-cloud-app-control.png" alt="Scene 2">
+          </div>
+          <div class="scene-text-block">
+            <div class="scene-narrative">
+              The boy takes Santa's sleigh to a big friendly cloud. The cloud booms <em>"Ahh the Fortinet Application — that's fine. Would you like a <strong>Cascade Pale Ale</strong>?"</em> Boy says yes. The cloud says <em>"Okay, you have to talk to my lil bro."</em>
+            </div>
+            <div class="hook-box">
+              <div class="hook-label">HOOK</div>
+              Big cloud = <strong>Cloud App Control</strong> checks the SaaS app. <strong>Cascade Pale Ale</strong> = the "<em>Cascading to URL Filtering</em>" setting. By default CAC allows and URL Filtering is skipped — hence being passed to "lil bro" URL Filtering.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 3 -->
+    <div class="scene">
+      <div class="scene-num">
+        <div class="scene-num-big">3</div>
+        <div class="scene-colour-bar colour-blue"></div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-header-row">
+          <div class="scene-titles">
+            <div class="scene-room-name">Little Cloud &amp; the Cloud Cat</div>
+            <div class="scene-policy-name">Policy → <strong>URL Filtering</strong></div>
+          </div>
+          <div class="scene-tags">
+            <span class="scene-tag get">GET</span>
+            <span class="scene-tag post">POST</span>
+          </div>
+        </div>
+        <div class="scene-content">
+          <div class="scene-image-slot" id="slot-3">
+            <img src="../study-bite-images/3-url-filtering.png" alt="Scene 3">
+          </div>
+          <div class="scene-text-block">
+            <div class="scene-narrative">
+              A little cloud wearing sunglasses holds a fluffy <strong>cloud-cat</strong>. The little cloud checks a clipboard and says <em>"IT Services category — allowed. Go through."</em>
+            </div>
+            <div class="hook-box">
+              <div class="hook-label">HOOK</div>
+              Little cloud = <strong>URL Filtering</strong>. Cloud-<strong>cat</strong> = URL <strong>category</strong>. Checks which category the URL belongs to and applies the admin's URL Filtering rule for that category.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 4 -->
+    <div class="scene">
+      <div class="scene-num">
+        <div class="scene-num-big">4</div>
+        <div class="scene-colour-bar colour-orange"></div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-header-row">
+          <div class="scene-titles">
+            <div class="scene-room-name">The VIP Club Bouncer Snake</div>
+            <div class="scene-policy-name">Policy → <strong>Security Exceptions</strong> (allowlist)</div>
+          </div>
+          <div class="scene-tags">
+            <span class="scene-tag get">GET</span>
+            <span class="scene-tag post">POST</span>
+          </div>
+        </div>
+        <div class="scene-content">
+          <div class="scene-image-slot" id="slot-4">
+            <img src="../study-bite-images/4-sec-exceptions.png" alt="Scene 4">
+          </div>
+          <div class="scene-text-block">
+            <div class="scene-narrative">
+              The boy arrives at an exclusive VIP club. A muscular <strong>bouncer snake in an orange hi-vis vest and sunglasses</strong> checks a velvet-rope list and says <em>"Not on the list, sorry — you don't get to skip the checks."</em>
+            </div>
+            <div class="hook-box">
+              <div class="hook-label">HOOK</div>
+              VIP list = <strong>Security Exceptions allowlist</strong>. If you're on it, you skip downstream Malware, ATP, and Sandbox. The boy isn't on it, so he has to go through all the threat engines ahead.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 5 -->
+    <div class="scene">
+      <div class="scene-num">
+        <div class="scene-num-big">5</div>
+        <div class="scene-colour-bar colour-green"></div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-header-row">
+          <div class="scene-titles">
+            <div class="scene-room-name">The Bowser Shell &amp; the Mario Signature</div>
+            <div class="scene-policy-name">Policy → <strong>Browser Control</strong></div>
+          </div>
+          <div class="scene-tags">
+            <span class="scene-tag get">GET</span>
+            <span class="scene-tag post">POST</span>
+          </div>
+        </div>
+        <div class="scene-content">
+          <div class="scene-image-slot" id="slot-5">
+            <img src="../study-bite-images/5-browser-control.png" alt="Scene 5">
+          </div>
+          <div class="scene-text-block">
+            <div class="scene-narrative">
+              A guard at the ATP (Association of Tennis Professionals) gate demands <em>"Show me your Bowser Shell is legit."</em> The boy chucks the shell — it transforms like a Transformer, unfolding to reveal a glowing <strong>Mario signature</strong> stamped inside.
+            </div>
+            <div class="hook-box">
+              <div class="hook-label">HOOK</div>
+              <strong>Bowser shell = Browser</strong>. The shell opening to reveal Mario's signature = <strong>Browser Control</strong> verifying the browser is legitimate (signed, current version, no malicious plugins). This scene also opens the tennis / ATP part of the palace.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 6 -->
+    <div class="scene">
+      <div class="scene-num">
+        <div class="scene-num-big">6</div>
+        <div class="scene-colour-bar colour-red"></div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-header-row">
+          <div class="scene-titles">
+            <div class="scene-room-name">"Are You Russian?" at the Aus Open</div>
+            <div class="scene-policy-name">Policy → <strong>Country-Based Blocking</strong> (ATP)</div>
+          </div>
+          <div class="scene-tags">
+            <span class="scene-tag get">GET</span>
+            <span class="scene-tag post">POST</span>
+          </div>
+        </div>
+        <div class="scene-content">
+          <div class="scene-image-slot" id="slot-6">
+            <img src="../study-bite-images/6-country-based-block.png" alt="Scene 6">
+          </div>
+          <div class="scene-text-block">
+            <div class="scene-narrative">
+              At the Australian Open, a reporter with a red microphone shoves it in the boy's face: <em>"Are you Russian?"</em> Boy says <em>"Yeah I'm rushin' haha."</em> Gets arrested instantly. Boy shouts <em>"It's a pun m8! I'm rushin' to the court!"</em>
+            </div>
+            <div class="hook-box">
+              <div class="hook-label">HOOK</div>
+              Russian / rushin' = <strong>Country-Based Blocking</strong>. ATP blocks requests to servers in suspicious countries. The Australian Open setting = geography matters.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCENES 7–14 -->
+  <div class="section-block" id="section-scenes-7">
+    <div class="section-label">SCENES 7–14 — DARK SCENES AHEAD (POST-ONLY: 7, 10, 11, 12)</div>
+
+    <!-- SCENE 7 — DARK -->
+    <div class="scene dark">
+      <div class="scene-num">
+        <div class="scene-num-big">7</div>
+        <div class="scene-colour-bar colour-red"></div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-header-row">
+          <div class="scene-titles">
+            <div class="scene-room-name">Mal Meninga's Black Eyes</div>
+            <div class="scene-policy-name">Policy → <strong>Malicious URL Block</strong> (ATP) · POST only</div>
+          </div>
+          <div class="scene-tags">
+            <span class="scene-tag dark-only">🌑 POST-ONLY</span>
+          </div>
+        </div>
+        <div class="scene-content">
+          <div class="scene-image-slot" id="slot-7">
+            <img src="../study-bite-images/7-malware-url.png" alt="Scene 7">
+          </div>
+          <div class="scene-text-block">
+            <div class="scene-narrative">
+              The scene plunges into a <strong>purple dark</strong>. Former rugby league coach <strong>Mal Meninga</strong> appears as a reporter. His eyes flash pitch black. He leans in and asks, deadly serious: <em>"Is your Fortinet.net shirt on the global naughty list?"</em> A beat later, his eyes snap back to normal and he's cheerful again — as if briefly possessed.
+            </div>
+            <div class="hook-box">
+              <div class="hook-label">HOOK — ONLY ON POST</div>
+              <strong>Mal</strong>icious URL Block checks the URL against Zscaler's <strong>global</strong> threat intel database (different from Santa's <strong>custom</strong> list in scene 1). Only fires on POSTs, hence the dark scene.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 8 -->
+    <div class="scene">
+      <div class="scene-num">
+        <div class="scene-num-big">8</div>
+        <div class="scene-colour-bar colour-red"></div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-header-row">
+          <div class="scene-titles">
+            <div class="scene-room-name">Fans Swarm for Signatures</div>
+            <div class="scene-policy-name">Policy → <strong>IPS Signature Detection</strong> (ATP)</div>
+          </div>
+          <div class="scene-tags">
+            <span class="scene-tag get">GET</span>
+            <span class="scene-tag post">POST</span>
+          </div>
+        </div>
+        <div class="scene-content">
+          <div class="scene-image-slot" id="slot-8">
+            <img src="../study-bite-images/8-IPS-Signatures.png" alt="Scene 8">
+          </div>
+          <div class="scene-text-block">
+            <div class="scene-narrative">
+              Scene floods back to light. The boy is suddenly swarmed by cheering fans holding out paper and <strong>red sharpies</strong>, demanding his signature on page after page after page.
+            </div>
+            <div class="hook-box">
+              <div class="hook-label">HOOK</div>
+              Fans wanting <strong>signatures</strong> = <strong>IPS Signature Detection</strong>. Pattern-matching traffic against known-bad signatures (botnets, XSS, phishing, malicious active content). Red sharpies = ATP (red).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 9 -->
+    <div class="scene">
+      <div class="scene-num">
+        <div class="scene-num-big">9</div>
+        <div class="scene-colour-bar colour-red"></div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-header-row">
+          <div class="scene-titles">
+            <div class="scene-room-name">The Glowing Red Book "SCP"</div>
+            <div class="scene-policy-name">Policy → <strong>Suspicious Content Protection / Page Risk</strong> (ATP)</div>
+          </div>
+          <div class="scene-tags">
+            <span class="scene-tag get">GET</span>
+            <span class="scene-tag post">POST</span>
+          </div>
+        </div>
+        <div class="scene-content">
+          <div class="scene-image-slot" id="slot-9">
+            <img src="../study-bite-images/9-sus-content-protection.png" alt="Scene 9">
+          </div>
+          <div class="scene-text-block">
+            <div class="scene-narrative">
+              One fan steps forward offering a <strong>bright glowing red book</strong> with the numbers <strong>"22 SCP"</strong> emblazoned on the cover. The book pulses with an ominous red light — getting brighter the more the boy stares at it.
+            </div>
+            <div class="hook-box">
+              <div class="hook-label">HOOK</div>
+              <strong>SCP = Suspicious Content Protection</strong>. The book's brightness = the <strong>Page Risk score</strong>. If the score exceeds the admin's threshold, content is blocked. ML-driven — catches zero-day and novel threats.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 10 — DARK -->
+    <div class="scene dark">
+      <div class="scene-num">
+        <div class="scene-num-big">10</div>
+        <div class="scene-colour-bar colour-purple"></div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-header-row">
+          <div class="scene-titles">
+            <div class="scene-room-name">Pat McAfee &amp; the Envelope Chase</div>
+            <div class="scene-policy-name">Policy → <strong>Malware Protection</strong> · POST only</div>
+          </div>
+          <div class="scene-tags">
+            <span class="scene-tag dark-only">🌑 POST-ONLY</span>
+          </div>
+        </div>
+        <div class="scene-content">
+          <div class="scene-image-slot" id="slot-10">
+            <img src="../study-bite-images/10-malware protection.png" alt="Scene 10">
+          </div>
+          <div class="scene-text-block">
+            <div class="scene-narrative">
+              Scene goes dark again. A sinister <strong>envelope</strong> pops out of the glowing red book and starts chasing the boy. He runs — and <strong>Pat McAfee</strong> appears out of nowhere, clutching a big file labelled "<em>CONTRACT</em>" ready to intercept.
+            </div>
+            <div class="hook-box">
+              <div class="hook-label">HOOK — ONLY ON POST</div>
+              Pat <strong>McAfee</strong> (the AV icon) = <strong>Malware Protection</strong>. AV + anti-spyware signature scanning on files being uploaded. Dedicated threads for files over 10 MB.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 11 — DARK -->
+    <div class="scene dark">
+      <div class="scene-num">
+        <div class="scene-num-big">11</div>
+        <div class="scene-colour-bar colour-purple"></div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-header-row">
+          <div class="scene-titles">
+            <div class="scene-room-name">The Boy Signs the File</div>
+            <div class="scene-policy-name">Policy → <strong>File Type Control</strong> · POST only</div>
+          </div>
+          <div class="scene-tags">
+            <span class="scene-tag dark-only">🌑 POST-ONLY</span>
+          </div>
+        </div>
+        <div class="scene-content">
+          <div class="scene-image-slot" id="slot-11">
+            <img src="../study-bite-images/11-file-type-control.png" alt="Scene 11">
+          </div>
+          <div class="scene-text-block">
+            <div class="scene-narrative">
+              Scene stays dark. The boy grabs a pen and <strong>signs the contract file</strong> Pat holds out — checking its type, verifying its magic bytes, confirming it's the right kind of file.
+            </div>
+            <div class="hook-box">
+              <div class="hook-label">HOOK — ONLY ON POST</div>
+              Signing = validating. <strong>File Type Control</strong> uses magic bytes to confirm the true file type matches what's being claimed. Only fires on POST (where uploads happen).
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 12 — DARK -->
+    <div class="scene dark">
+      <div class="scene-num">
+        <div class="scene-num-big">12</div>
+        <div class="scene-colour-bar colour-purple"></div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-header-row">
+          <div class="scene-titles">
+            <div class="scene-room-name">The Data Shield Punt</div>
+            <div class="scene-policy-name">Policy → <strong>DLP (Data Loss Prevention)</strong> · POST only</div>
+          </div>
+          <div class="scene-tags">
+            <span class="scene-tag dark-only">🌑 POST-ONLY</span>
+          </div>
+        </div>
+        <div class="scene-content">
+          <div class="scene-image-slot" id="slot-12">
+            <img src="../study-bite-images/12-DLP.png" alt="Scene 12">
+          </div>
+          <div class="scene-text-block">
+            <div class="scene-narrative">
+              Pat McAfee produces a massive shield emblazoned with the word <strong>"DATA"</strong>. He rears back and <strong>punts the sinister envelope</strong> sky-high — it hurtles up, collides with the dark clouds, and bursts them apart. Sunshine floods back into the scene.
+            </div>
+            <div class="hook-box">
+              <div class="hook-label">HOOK — ONLY ON POST</div>
+              Shield labelled DATA = <strong>DLP (Data Loss Prevention)</strong>. DLP inspects POST bodies for sensitive data leaving the org (credit cards, SSNs, source code, PII). Punting the envelope away = blocking the outbound data leak. Scene returns to light after this.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 13 -->
+    <div class="scene">
+      <div class="scene-num">
+        <div class="scene-num-big">13</div>
+        <div class="scene-colour-bar colour-red"></div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-header-row">
+          <div class="scene-titles">
+            <div class="scene-room-name">Veigar the Crowd-Control Mage</div>
+            <div class="scene-policy-name">Policy → <strong>P2P Control</strong> (ATP)</div>
+          </div>
+          <div class="scene-tags">
+            <span class="scene-tag get">GET</span>
+            <span class="scene-tag post">POST</span>
+          </div>
+        </div>
+        <div class="scene-content">
+          <div class="scene-image-slot" id="slot-13">
+            <img src="../study-bite-images/13-p2p-control.png" alt="Scene 13">
+          </div>
+          <div class="scene-text-block">
+            <div class="scene-narrative">
+              With the scene bright again, fans suddenly swarm the boy in chaos — a riot of <strong>peer-to-peer</strong> grabbing hands. <strong>Veigar</strong> (the tiny evil-mage security guard) appears, magical staff raised, casting crowd-control spells to contain the peer-to-peer mob.
+            </div>
+            <div class="hook-box">
+              <div class="hook-label">HOOK</div>
+              Peer-to-peer crowd = <strong>P2P Control</strong>. Blocks P2P file sharing, anonymizers (Tor, proxy bypass), and P2P VoIP apps — risk-exposure traffic that would bypass normal controls.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 14 -->
+    <div class="scene">
+      <div class="scene-num">
+        <div class="scene-num-big">14</div>
+        <div class="scene-colour-bar colour-grey"></div>
+      </div>
+      <div class="scene-body">
+        <div class="scene-header-row">
+          <div class="scene-titles">
+            <div class="scene-room-name">The Exhausted Boy</div>
+            <div class="scene-policy-name">Policy → <strong>Bandwidth Control</strong></div>
+          </div>
+          <div class="scene-tags">
+            <span class="scene-tag get">GET</span>
+            <span class="scene-tag post">POST</span>
+          </div>
+        </div>
+        <div class="scene-content">
+          <div class="scene-image-slot" id="slot-14">
+            <img src="../study-bite-images/14-bandwidth-control.png" alt="Scene 14">
+          </div>
+          <div class="scene-text-block">
+            <div class="scene-narrative">
+              After the long, eventful day, the boy is utterly drained. His <strong>bandwidth is spent</strong>. He slumps into a chair, Bowser shell beside him, Fortinet shirt crumpled, completely exhausted as the sun sets.
+            </div>
+            <div class="hook-box">
+              <div class="hook-label">HOOK</div>
+              Boy's energy spent = <strong>Bandwidth Control</strong>. The final gate — once every other engine has approved the traffic, Bandwidth Control allocates how much throughput the transaction gets. Always the last step in the pipeline.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- QUICK REFERENCE -->
+  <div class="section-block" id="section-summary">
+    <div class="section-label">QUICK REFERENCE</div>
+    <h2>All 14 scenes mapped</h2>
+
+    <table class="summary-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Scene</th>
+          <th>Policy</th>
+          <th>GET</th>
+          <th>POST</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1</td>
+          <td class="scene-col">Red Santa's Naughty List</td>
+          <td>Custom Malicious URLs (ATP)</td>
+          <td>✓</td>
+          <td>✓</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td class="scene-col">Big Cloud &amp; Cascade Pale Ale</td>
+          <td>Cloud App Control</td>
+          <td>✓</td>
+          <td>✓</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td class="scene-col">Little Cloud &amp; Cloud Cat</td>
+          <td>URL Filtering</td>
+          <td>✓</td>
+          <td>✓</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td class="scene-col">VIP Club Bouncer Snake</td>
+          <td>Security Exceptions (allowlist)</td>
+          <td>✓</td>
+          <td>✓</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td class="scene-col">Bowser Shell &amp; Mario Signature</td>
+          <td>Browser Control</td>
+          <td>✓</td>
+          <td>✓</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td class="scene-col">"Are You Russian?"</td>
+          <td>Country-Based Blocking (ATP)</td>
+          <td>✓</td>
+          <td>✓</td>
+        </tr>
+        <tr class="dark-row">
+          <td>7</td>
+          <td class="scene-col">Mal Meninga's Black Eyes 🌑</td>
+          <td>Malicious URL Block (ATP)</td>
+          <td>—</td>
+          <td>✓</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td class="scene-col">Fans Swarm for Signatures</td>
+          <td>IPS Signature Detection (ATP)</td>
+          <td>✓</td>
+          <td>✓</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td class="scene-col">Glowing Red Book "SCP"</td>
+          <td>Suspicious Content Protection / Page Risk (ATP)</td>
+          <td>✓</td>
+          <td>✓</td>
+        </tr>
+        <tr class="dark-row">
+          <td>10</td>
+          <td class="scene-col">Pat McAfee &amp; Envelope Chase 🌑</td>
+          <td>Malware Protection</td>
+          <td>—</td>
+          <td>✓</td>
+        </tr>
+        <tr class="dark-row">
+          <td>11</td>
+          <td class="scene-col">The Boy Signs the File 🌑</td>
+          <td>File Type Control</td>
+          <td>—</td>
+          <td>✓</td>
+        </tr>
+        <tr class="dark-row">
+          <td>12</td>
+          <td class="scene-col">The Data Shield Punt 🌑</td>
+          <td>DLP (Data Loss Prevention)</td>
+          <td>—</td>
+          <td>✓</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td class="scene-col">Veigar the Crowd-Control Mage</td>
+          <td>P2P Control (ATP)</td>
+          <td>✓</td>
+          <td>✓</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td class="scene-col">The Exhausted Boy</td>
+          <td>Bandwidth Control</td>
+          <td>✓</td>
+          <td>✓</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</main>
+
+<footer>
+  <div class="footer-left">ZDTE<span>.</span></div>
+  <div class="footer-right">Zscaler Digital Transformation Engineer · Study Bite — Memory Palace GET + POST</div>
+</footer>
+
+<script>
+  function navTo(id, el) {
+    const target = document.getElementById(id);
+    if (!target) return;
+    const top = target.getBoundingClientRect().top + window.scrollY - 60;
+    window.scrollTo({ top, behavior: 'smooth' });
+    document.querySelectorAll('nav.section-nav button').forEach(b => b.classList.remove('active'));
+    if (el) el.classList.add('active');
+  }
+
+  function toggleDone(li) {
+    li.classList.toggle('done');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const items = document.querySelectorAll('#subtopic-list li');
+    const done = document.querySelectorAll('#subtopic-list li.done').length;
+    const pct = items.length ? Math.round((done / items.length) * 100) : 0;
+    const el = document.getElementById('prog-num');
+    if (el) el.innerHTML = pct + '<span style="font-size:18px;color:#7a6a55;">%</span>';
+  }
+
+  function copyPrompt(btn, num) {
+    const text = document.getElementById('prompt-' + num).textContent.trim();
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'COPIED';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = 'COPY';
+        btn.classList.remove('copied');
+      }, 2000);
+    });
+  }
+
+  function loadImg(input, num) {
+    if (!input.files || !input.files[0]) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const slot = document.getElementById('slot-' + num);
+      slot.innerHTML = '<img src="' + e.target.result + '" alt="Scene ' + num + '">';
+    };
+    reader.readAsDataURL(input.files[0]);
+  }
+</script>
+
+</body>
+</html>
