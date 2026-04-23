@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZDTE Study Bite — Zscaler Deception Technology</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --cream: #fef9f0;
+    --cream-dark: #f5eddb;
+    --ink: #1a1209;
+    --ink-soft: #5a4a35;
+    --ink-muted: #8a7660;
+    --orange: #ff6b35;
+    --orange-light: #fff3ec;
+    --orange-border: #ffd5c0;
+    --amber-light: #fffbe6;
+    --green: #3a7d44;
+    --green-light: #edf7ee;
+    --green-border: #b2dfb4;
+    --purple: #5c35cc;
+    --purple-light: #ece8ff;
+    --purple-border: #c8bbff;
+    --blue-light: #e8f0fb;
+    --blue-border: #b3ccf0;
+    --blue: #1a6bcc;
+    --red-light: #fce8e8;
+    --red-border: #f7c1c1;
+    --red: #a32d2d;
+    --border: #ede5d8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Epilogue', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  header {
+    padding: 40px 60px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 32px;
+    background: var(--cream);
+  }
+
+  .header-left { flex: 1; }
+
+  .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: var(--ink-muted);
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .breadcrumb a { color: var(--orange); text-decoration: none; }
+  .breadcrumb-sep { color: var(--border); }
+
+  .bite-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--purple);
+    color: var(--cream);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+  .bite-badge-dot { width: 5px; height: 5px; background: #c8bbff; border-radius: 50%; }
+
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.0;
+    color: var(--ink);
+    margin-bottom: 10px;
+  }
+  h1 em { font-style: italic; font-weight: 400; color: var(--orange); }
+
+  .header-sub {
+    font-size: 13px;
+    color: var(--ink-muted);
+    margin-top: 8px;
+    line-height: 1.6;
+  }
+
+  .header-meta-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    margin-top: 14px;
+  }
+
+  .tag {
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 500;
+    border: 1px solid;
+    display: inline-block;
+  }
+  .tag-zia    { background: var(--blue-light);   color: var(--blue);   border-color: var(--blue-border); }
+  .tag-weight { background: var(--orange-light); color: #cc4a18;       border-color: var(--orange-border); }
+  .tag-bite   { background: var(--purple-light); color: var(--purple); border-color: var(--purple-border); }
+
+  .header-right { display: flex; flex-direction: column; gap: 10px; align-items: flex-end; flex-shrink: 0; }
+  .progress-card { background: var(--ink); color: var(--cream); padding: 14px 20px; border-radius: 14px; text-align: center; min-width: 110px; }
+  .progress-card .big { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 700; color: var(--orange); line-height: 1; }
+  .progress-card .lbl { font-size: 10px; color: #7a6a55; letter-spacing: 0.1em; margin-top: 4px; }
+
+  nav.section-nav {
+    display: flex; gap: 0; padding: 0 60px;
+    border-bottom: 1px solid var(--border);
+    background: var(--cream-dark); overflow-x: auto;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .nav-tab {
+    padding: 14px 20px; font-size: 12px; font-weight: 500; color: var(--ink-muted);
+    letter-spacing: 0.06em; cursor: pointer; border-bottom: 2px solid transparent;
+    white-space: nowrap; background: none; border-top: none; border-left: none;
+    border-right: none; font-family: 'Epilogue', sans-serif;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .nav-tab:hover { color: var(--ink); }
+  .nav-tab.active { color: var(--orange); border-bottom-color: var(--orange); }
+
+  main {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    gap: 0;
+    min-height: calc(100vh - 180px);
+  }
+
+  .main-content {
+    padding: 36px 48px 60px 60px;
+    border-right: 1px solid var(--border);
+  }
+
+  .sidebar {
+    padding: 36px 28px 60px;
+    background: var(--cream-dark);
+  }
+
+  .section-block { margin-bottom: 48px; }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 24px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 14px;
+    line-height: 1.2;
+  }
+
+  p {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.8;
+    margin-bottom: 12px;
+  }
+
+  /* ── KEY CONCEPT ── */
+  .key-concept {
+    background: var(--ink);
+    color: var(--cream);
+    border-radius: 12px;
+    padding: 16px 20px;
+    font-size: 13.5px;
+    line-height: 1.7;
+    margin: 20px 0;
+  }
+  .key-concept strong { color: var(--orange); }
+
+  /* ── ATTACK FLOW ── */
+  .attack-flow {
+    margin: 24px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .flow-step {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    position: relative;
+  }
+
+  .flow-step:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 19px;
+    top: 40px;
+    width: 2px;
+    height: calc(100% - 8px);
+    background: var(--border);
+  }
+
+  .flow-num {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+  .flow-num.attacker { background: var(--red-light);   color: var(--red);   border: 1px solid var(--red-border); }
+  .flow-num.zscaler  { background: var(--green-light); color: var(--green); border: 1px solid var(--green-border); }
+  .flow-num.dns      { background: var(--blue-light);  color: var(--blue);  border: 1px solid var(--blue-border); }
+
+  .flow-body { padding: 8px 0 24px; }
+
+  .flow-body strong {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 4px;
+  }
+
+  .flow-body span {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+  }
+
+  .flow-body .code {
+    display: inline-block;
+    background: var(--ink);
+    color: var(--orange);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 12px;
+    margin-top: 4px;
+  }
+
+  /* ── TABLE ── */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0 28px;
+    font-size: 13px;
+  }
+  .compare-table th {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 10px 16px;
+    text-align: left;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+  }
+  .compare-table th:first-child { border-radius: 8px 0 0 0; }
+  .compare-table th:last-child  { border-radius: 0 8px 0 0; }
+  .compare-table td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--ink-soft);
+    vertical-align: top;
+    line-height: 1.6;
+  }
+  .compare-table tr:last-child td { border-bottom: none; }
+  .compare-table tr:nth-child(even) td { background: var(--cream-dark); }
+  .compare-table td:first-child { font-weight: 600; color: var(--ink); width: 28%; }
+
+  /* ── CALLOUTS ── */
+  .callout {
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 16px;
+    border: 1px solid;
+  }
+  .callout-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    margin-bottom: 8px;
+  }
+  .callout-icon {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    flex-shrink: 0;
+  }
+  .callout-body { font-size: 13px; line-height: 1.7; color: var(--ink-soft); }
+
+  .callout-analogy { background: var(--amber-light); border-color: #ffe680; }
+  .callout-analogy .callout-header { color: #a07c00; }
+  .callout-analogy .callout-icon   { background: #ffe680; color: #a07c00; }
+  .callout-analogy .callout-body   { color: #7a5c00; }
+
+  .callout-note { background: var(--purple-light); border-color: var(--purple-border); }
+  .callout-note .callout-header { color: var(--purple); }
+  .callout-note .callout-icon   { background: var(--purple-border); color: var(--purple); }
+  .callout-note .callout-body   { color: #3a1f8a; }
+
+  .callout-tip { background: var(--green-light); border-color: var(--green-border); }
+  .callout-tip .callout-header { color: var(--green); }
+  .callout-tip .callout-icon   { background: var(--green-border); color: var(--green); }
+  .callout-tip .callout-body   { color: #2a5c32; }
+
+  .callout-warn { background: var(--orange-light); border-color: var(--orange-border); }
+  .callout-warn .callout-header { color: #cc4a18; }
+  .callout-warn .callout-icon   { background: var(--orange-border); color: #cc4a18; }
+  .callout-warn .callout-body   { color: #7a3010; }
+
+  /* ── SIDEBAR ── */
+  .sidebar-section { margin-bottom: 28px; }
+
+  .sidebar-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    color: var(--ink-muted);
+    margin-bottom: 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .subtopic-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+
+  .subtopic-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--ink-soft);
+    cursor: pointer;
+    padding: 8px 10px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: background 0.1s;
+    line-height: 1.5;
+  }
+  .subtopic-list li:hover { background: var(--cream); border-color: var(--border); }
+
+  .subtopic-check {
+    width: 16px; height: 16px;
+    border: 1.5px solid var(--border);
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    background: var(--cream);
+    transition: background 0.15s, border-color 0.15s;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  .subtopic-list li.done { color: var(--ink-muted); }
+  .subtopic-list li.done .subtopic-check { background: var(--green); border-color: var(--green); }
+  .subtopic-list li.done .subtopic-check::after { content: '✓'; font-size: 10px; color: white; font-weight: 700; }
+  .subtopic-list li.done span { text-decoration: line-through; }
+
+  .quick-ref {
+    background: var(--ink);
+    border-radius: 12px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .quick-ref-term { font-size: 11px; font-weight: 600; color: var(--orange); letter-spacing: 0.06em; margin-bottom: 4px; }
+  .quick-ref-def  { font-size: 12px; color: #9a8070; line-height: 1.6; }
+
+  .sidebar-note {
+    background: var(--amber-light);
+    border: 1px solid #ffe680;
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 12px;
+    color: #7a5c00;
+    line-height: 1.6;
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+
+  .related-bite {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 12px;
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    text-decoration: none;
+    color: inherit;
+    margin-bottom: 8px;
+    transition: background 0.15s, border-color 0.15s;
+  }
+  .related-bite:hover { background: var(--orange-light); border-color: var(--orange-border); }
+  .related-bite-icon { font-size: 18px; flex-shrink: 0; }
+  .related-bite-body { flex: 1; }
+  .related-bite-title { font-size: 12px; font-weight: 600; color: var(--ink); line-height: 1.3; margin-bottom: 2px; }
+  .related-bite-desc  { font-size: 11px; color: var(--ink-muted); line-height: 1.4; }
+  .related-bite-arrow { font-size: 13px; color: var(--orange); opacity: 0.5; flex-shrink: 0; }
+  .related-bite:hover .related-bite-arrow { opacity: 1; }
+
+  footer {
+    padding: 20px 60px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--cream-dark);
+  }
+  .footer-left { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 700; }
+  .footer-left span { color: var(--orange); }
+  .footer-right { font-size: 11px; color: var(--ink-muted); letter-spacing: 0.06em; }
+
+  @media (max-width: 900px) {
+    header { padding: 24px 20px 20px; flex-direction: column; }
+    main { grid-template-columns: 1fr; }
+    .main-content { padding: 24px 20px 40px; border-right: none; }
+    .sidebar { padding: 24px 20px 40px; border-top: 1px solid var(--border); }
+    footer { padding: 20px; flex-direction: column; gap: 8px; text-align: center; }
+    h1 { font-size: 28px; }
+    .header-right { display: none; }
+    nav.section-nav { padding: 0 16px; }
+  }
+
+  @media (max-width: 480px) {
+    h1 { font-size: 22px; }
+    header { padding: 16px; }
+    .main-content { padding: 16px 16px 32px; }
+    .sidebar { padding: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <div class="breadcrumb">
+      <a href="../index.html">Study Plan</a>
+      <span class="breadcrumb-sep">›</span>
+      <a href="../study-bites.html">Study Bites</a>
+      <span class="breadcrumb-sep">›</span>
+      <span>Zscaler Deception</span>
+    </div>
+    <div class="bite-badge">
+      <div class="bite-badge-dot"></div>
+      STUDY BITE
+    </div>
+    <h1>Zscaler <em>Deception</em></h1>
+    <p class="header-sub">Lures, decoys, and the zero false-positive trap.</p>
+    <div class="header-meta-row">
+      <span class="tag tag-zia">ZIA</span>
+      <span class="tag tag-weight">Cyberthreat Protection · 12%</span>
+      <span class="tag tag-bite">Study Bite</span>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="progress-card">
+      <div class="big" id="prog-num">0<span style="font-size:18px;color:#7a6a55;">%</span></div>
+      <div class="lbl">LOCKED IN</div>
+    </div>
+  </div>
+</header>
+
+<nav class="section-nav">
+  <button class="nav-tab active" onclick="navTo('section-principle', this)">CORE PRINCIPLE</button>
+  <button class="nav-tab" onclick="navTo('section-how', this)">HOW IT WORKS</button>
+  <button class="nav-tab" onclick="navTo('section-assets', this)">ASSET TYPES</button>
+  <button class="nav-tab" onclick="navTo('section-exam', this)">EXAM</button>
+</nav>
+
+<main>
+
+  <div class="main-content">
+
+    <!-- CORE PRINCIPLE -->
+    <div class="section-block" id="section-principle">
+      <div class="section-label">CORE PRINCIPLE</div>
+      <h2>Why deception is different</h2>
+
+      <p>Every other threat control — ATP, IPS, Sandbox — has to <em>judge</em> whether something is malicious. Deception doesn't need to judge. Legitimate users and systems have no reason to ever touch a decoy. Interaction with a lure or decoy is proof of malicious intent by definition.</p>
+
+      <div class="key-concept">
+        <strong>The rule:</strong> Nothing legitimate ever touches a decoy. Therefore, anything that does is an attacker — zero false positives.
+      </div>
+
+      <p>Deception is designed for attackers who have <strong>already gotten past perimeter controls</strong> and are moving laterally inside the network — hunting for credentials, servers, databases, and admin accounts. All the other controls failed. Deception is the net that catches what slips through.</p>
+
+      <div class="callout callout-analogy">
+        <div class="callout-header">
+          <div class="callout-icon">⟳</div>
+          ANALOGY
+        </div>
+        <div class="callout-body">
+          Think of a museum that's been broken into. The burglar bypassed the front door alarm. Now they're inside, looking for the vault. Deception is the museum planting fake vault doors throughout the building — any burglar who tries to open one instantly reveals themselves, their location, and their method.
+        </div>
+      </div>
+    </div>
+
+    <!-- HOW IT WORKS -->
+    <div class="section-block" id="section-how">
+      <div class="section-label">THE ATTACK — STEP BY STEP</div>
+      <h2>From the attacker's point of view</h2>
+
+      <div class="attack-flow">
+
+        <div class="flow-step">
+          <div class="flow-num attacker">1</div>
+          <div class="flow-body">
+            <strong>Attacker compromises an endpoint</strong>
+            <span>A phishing email, a malicious download — somehow they have a foothold on a real user's machine inside the network.</span>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-num attacker">2</div>
+          <div class="flow-body">
+            <strong>Attacker does reconnaissance</strong>
+            <span>They scan for IPs, check credential stores, read saved browser passwords, look for network shares — standard lateral movement behaviour.</span>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-num attacker">3</div>
+          <div class="flow-body">
+            <strong>Attacker finds a fake saved credential (a Lure)</strong>
+            <span>Zscaler has planted a fake credential on this endpoint. It looks completely real:</span>
+            <div class="code">\\finance-server-01 · admin · Sup3rS3cure!</div>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-num dns">4</div>
+          <div class="flow-body">
+            <strong>Attacker tries to connect — DNS resolves the decoy</strong>
+            <span>Zscaler has injected DNS records for all fake hostnames. When the attacker's machine queries <strong>finance-server-01</strong>, DNS returns an address pointing to Zscaler's deception cloud — not a real server.</span>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-num zscaler">5</div>
+          <div class="flow-body">
+            <strong>Connection reaches the Decoy in Zscaler's cloud</strong>
+            <span>The decoy looks convincingly real — it presents a login prompt, responds like a Windows server, lets the attacker think they're making progress.</span>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="flow-num zscaler">6</div>
+          <div class="flow-body">
+            <strong>Zscaler fires an alert — attacker is fully identified</strong>
+            <span>Every interaction is recorded. The security team now knows: which endpoint was compromised, which user account, which lure was picked up, what technique was used, and precise timing for incident response.</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="callout callout-note">
+        <div class="callout-header">
+          <div class="callout-icon">★</div>
+          MENTAL NOTE
+        </div>
+        <div class="callout-body">
+          <strong>Lures are planted to be found. Decoys are the destinations lures point to.</strong> Lures live on real endpoints. Decoys live in Zscaler's cloud. DNS is the glue that routes attacker traffic from one to the other.
+        </div>
+      </div>
+
+      <p>The moment an attacker touches a decoy, Zscaler captures: the compromised endpoint, the associated user account, which lure was used, the attack technique (RDP, SMB, SSH), and precise timing. All from a single interaction — with zero false positives.</p>
+    </div>
+
+    <!-- ASSET TYPES -->
+    <div class="section-block" id="section-assets">
+      <div class="section-label">ASSET TAXONOMY</div>
+      <h2>Types of lures and decoys</h2>
+
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>What it is</th>
+            <th>Where it lives</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Lures</td>
+            <td>Fake credentials, saved passwords, network shortcuts planted on real endpoints</td>
+            <td>Real user machines — the breadcrumbs</td>
+          </tr>
+          <tr>
+            <td>Decoys</td>
+            <td>Fake servers, applications, and network resources that lures point to</td>
+            <td>Zscaler deception cloud</td>
+          </tr>
+          <tr>
+            <td>AD Decoys</td>
+            <td>Fake Active Directory objects — service accounts, users, groups</td>
+            <td>Customer's Active Directory</td>
+          </tr>
+          <tr>
+            <td>Honey Tokens</td>
+            <td>Fake files and documents with embedded beacons that phone home when opened</td>
+            <td>File shares, endpoints</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-warn">
+        <div class="callout-header">
+          <div class="callout-icon">!</div>
+          WATCH OUT
+        </div>
+        <div class="callout-body">
+          Deception is a <strong>post-breach</strong> detection control — not a prevention control. It does not stop the initial compromise. Its value is catching attackers who have already gotten inside and are moving laterally. Don't confuse it with perimeter controls like ATP or IPS.
+        </div>
+      </div>
+    </div>
+
+    <!-- EXAM -->
+    <div class="section-block" id="section-exam">
+      <div class="section-label">EXAM</div>
+      <h2>What the exam tests</h2>
+
+      <div class="callout callout-tip">
+        <div class="callout-header">
+          <div class="callout-icon">→</div>
+          EXAM TIP
+        </div>
+        <div class="callout-body">
+          If a scenario describes an attacker already inside the network doing lateral movement — the answer is Deception. If it asks why deception has zero false positives — the answer is that no legitimate user or system ever touches a decoy, so any interaction is definitionally malicious.
+        </div>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-header">
+          <div class="callout-icon">!</div>
+          COMMON TRAP
+        </div>
+        <div class="callout-body">
+          The exam may describe a scenario involving lateral movement and ask which control detects it. Deception is the specific answer — not ATP, not IPS, not Sandbox. Those are perimeter/inline controls. Deception is the post-breach internal detection layer.
+        </div>
+      </div>
+
+      <div class="callout callout-note">
+        <div class="callout-header">
+          <div class="callout-icon">★</div>
+          MENTAL NOTE
+        </div>
+        <div class="callout-body">
+          Remember the three-part chain: <strong>Lure</strong> (found on real endpoint) → <strong>DNS</strong> (Zscaler-injected record routes the traffic) → <strong>Decoy</strong> (fake server in deception cloud captures the attacker). The chain only works because DNS is under Zscaler's control.
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end .main-content -->
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">TOPICS — TICK WHEN LOCKED IN</div>
+      <ul class="subtopic-list" id="subtopic-list">
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>Zero false positives — legitimate systems never touch decoys</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>Post-breach detection, not perimeter prevention</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>Lures planted on real endpoints to attract attackers</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>Decoys hosted in Zscaler's deception cloud</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>DNS injection routes attacker traffic to decoys</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>AD Decoys — fake AD objects attract identity attacks</span></li>
+        <li onclick="toggleDone(this)"><div class="subtopic-check"></div><span>Honey Tokens — beaconing fake files on shares</span></li>
+      </ul>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">QUICK REFERENCE</div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">LURE</div>
+        <div class="quick-ref-def">Fake credential or asset planted on a real endpoint. Designed to be found by an attacker doing reconnaissance.</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">DECOY</div>
+        <div class="quick-ref-def">Fake server or resource in Zscaler's deception cloud. The destination lures point to. Looks real to the attacker.</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">AD DECOY</div>
+        <div class="quick-ref-def">Fake Active Directory object — users, service accounts, groups — planted to attract attackers enumerating AD.</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">HONEY TOKEN</div>
+        <div class="quick-ref-def">Fake file with an embedded beacon. Opens normally but silently alerts when accessed.</div>
+      </div>
+
+      <div class="quick-ref">
+        <div class="quick-ref-term">DNS INTEGRATION</div>
+        <div class="quick-ref-def">Zscaler injects DNS records for fake hostnames so attacker queries resolve to the deception cloud, not real servers.</div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">MY NOTES</div>
+      <div class="sidebar-note">Deception = post-breach. If the scenario involves lateral movement inside the network — this is the control, not ATP or IPS.</div>
+      <div class="sidebar-note">Zero false positives because the decoys are invisible to legitimate users — only an attacker doing recon will find and use them.</div>
+      <div class="sidebar-note">Lure → DNS → Decoy. The three-step chain. DNS is what makes the deception cloud reachable from the attacker's compromised machine.</div>
+    </div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">RELATED BITES</div>
+
+      <a href="studybite-zcc-gre-tunnel.html" class="related-bite">
+        <div class="related-bite-icon">⚡</div>
+        <div class="related-bite-body">
+          <div class="related-bite-title">ZCC + GRE Coexistence</div>
+          <div class="related-bite-desc">Network-level forwarding and inspection</div>
+        </div>
+        <div class="related-bite-arrow">→</div>
+      </a>
+
+      <a href="pipeline-scenarios.html" class="related-bite">
+        <div class="related-bite-icon">⚖</div>
+        <div class="related-bite-body">
+          <div class="related-bite-title">3 Pipeline Outcomes</div>
+          <div class="related-bite-desc">What perimeter controls catch before Deception is needed</div>
+        </div>
+        <div class="related-bite-arrow">→</div>
+      </a>
+
+    </div>
+
+  </div><!-- end .sidebar -->
+
+</main>
+
+<footer>
+  <div class="footer-left">ZDTE<span>.</span></div>
+  <div class="footer-right">Cyberthreat Protection · Study Bite · Zscaler Deception</div>
+</footer>
+
+<script>
+  function navTo(id, el) {
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    if (el) el.classList.add('active');
+    const section = document.getElementById(id);
+    if (section) {
+      const top = section.getBoundingClientRect().top + window.scrollY - 60;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }
+
+  function toggleDone(li) {
+    li.classList.toggle('done');
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const items = document.querySelectorAll('#subtopic-list li');
+    const done  = document.querySelectorAll('#subtopic-list li.done').length;
+    const pct   = items.length ? Math.round((done / items.length) * 100) : 0;
+    document.getElementById('prog-num').innerHTML = pct + '<span style="font-size:18px;color:#7a6a55;">%</span>';
+  }
+</script>
+
+</body>
+</html>
