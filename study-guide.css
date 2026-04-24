@@ -259,6 +259,33 @@ code { background: var(--cream-dark); padding: 1px 6px; border-radius: 4px; font
 .pipeline-body strong { display: block; font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
 .pipeline-body span { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
 
+/* ── PALACE ROOMS (DLP memory palace nibble) ── */
+.palace-grid { display: flex; flex-direction: column; gap: 14px; margin-bottom: 24px; }
+.palace-room { border-radius: 14px; border: 1px solid var(--border); padding: 18px 20px; display: grid; grid-template-columns: 56px 1fr; gap: 16px; align-items: start; background: #fff; }
+.room-icon { width: 56px; height: 56px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 26px; flex-shrink: 0; }
+.room-icon.door   { background: var(--orange-light); }
+.room-icon.office { background: var(--blue-light); }
+.room-icon.vault  { background: var(--purple-light); }
+.room-icon.desk   { background: var(--green-light); }
+.room-title    { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; color: var(--ink); margin-bottom: 4px; }
+.room-subtitle { font-size: 11px; letter-spacing: 0.08em; color: var(--ink-muted); margin-bottom: 8px; }
+.room-desc     { font-size: 13px; color: var(--ink-soft); line-height: 1.6; }
+.room-tags     { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+.room-tag      { font-size: 10px; font-weight: 600; letter-spacing: 0.06em; padding: 3px 10px; border-radius: 20px; border: 1px solid; }
+.rt-motion  { background: var(--orange-light);  color: #cc4a18;       border-color: var(--orange-border); }
+.rt-rest    { background: var(--blue-light);    color: var(--blue);   border-color: var(--blue-border); }
+.rt-device  { background: var(--green-light);   color: var(--green);  border-color: var(--green-border); }
+.rt-posture { background: var(--purple-light);  color: var(--purple); border-color: var(--purple-border); }
+.rt-realtime{ background: var(--red-light);     color: var(--red);    border-color: var(--red-border); }
+.rt-after   { background: var(--amber-light);   color: #a07c00;       border-color: #ffe680; }
+
+/* ── SCENARIO BOXES (dark, DLP palace) ── */
+.scenario { background: var(--ink); color: var(--cream); border-radius: 14px; padding: 20px 22px; margin-bottom: 16px; }
+.scenario-label { font-size: 10px; letter-spacing: 0.15em; color: var(--orange); margin-bottom: 10px; font-weight: 600; }
+.scenario-q { font-size: 13px; color: #d4c8b8; line-height: 1.7; margin-bottom: 12px; }
+.scenario-a { font-size: 13px; color: var(--cream); line-height: 1.7; border-top: 1px solid #3a3020; padding-top: 10px; }
+.scenario-a strong { color: var(--orange); }
+
 /* ── PLACEHOLDER (pending exam pages) ── */
 main.main-full { display: block; padding: 60px; max-width: 860px; margin: 0 auto; }
 .placeholder { text-align: center; padding: 60px 40px; max-width: 620px; margin: 0 auto; }
