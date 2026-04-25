@@ -427,6 +427,24 @@
     font-style: normal;
   }
 
+  .podcast-details summary {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    list-style: none;
+    user-select: none;
+    padding: 2px 0 8px;
+    color: var(--orange);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+  }
+  .podcast-details summary::-webkit-details-marker { display: none; }
+  .podcast-details summary:hover { opacity: 0.8; }
+  .podcast-chevron { display: inline-block; transition: transform 0.2s ease; font-size: 9px; margin-left: auto; }
+  .podcast-details[open] .podcast-chevron { transform: rotate(90deg); }
+
   .copy-btn {
     display: inline-flex;
     align-items: center;
@@ -718,11 +736,14 @@
     <div class="podcast-content">
       <div class="podcast-label">PODCAST GENERATION PROMPT — DAYS 1 &amp; 2</div>
       <div class="podcast-title">Episode 1: Zscaler Architecture &amp; Identity Services</div>
-      <div class="podcast-prompt" id="pod1">
-        <strong>Prompt to generate audio podcast:</strong><br>
-        "Create an engaging, conversational audio podcast script (~15–20 minutes) covering: (1) Zscaler's multi-tenant cloud architecture, Zero Trust Network Access principles, and API infrastructure; (2) Zidentity architecture, the SAML authentication workflow, step-up authentication, and configuring external identity providers. Use a host-and-expert dialogue format. Include real-world analogies, exam-relevant key terms, and end with a 5-question rapid-fire quiz. Tone: confident, clear, slightly informal."
-      </div>
-      <button class="copy-btn" onclick="copyPod('pod1',this)">⎘ Copy prompt</button>
+      <details class="podcast-details">
+        <summary>⎘ Show prompt <span class="podcast-chevron">▸</span></summary>
+        <div class="podcast-prompt" id="pod1">
+          <strong>Prompt to generate audio podcast:</strong><br>
+          "Create an engaging, conversational audio podcast script (~15–20 minutes) covering: (1) Zscaler's multi-tenant cloud architecture, Zero Trust Network Access principles, and API infrastructure; (2) Zidentity architecture, the SAML authentication workflow, step-up authentication, and configuring external identity providers. Use a host-and-expert dialogue format. Include real-world analogies, exam-relevant key terms, and end with a 5-question rapid-fire quiz. Tone: confident, clear, slightly informal."
+        </div>
+        <button class="copy-btn" onclick="copyPod('pod1',this)">⎘ Copy prompt</button>
+      </details>
     </div>
   </div>
 
@@ -800,11 +821,14 @@
     <div class="podcast-content">
       <div class="podcast-label">PODCAST GENERATION PROMPT — DAYS 3 &amp; 4</div>
       <div class="podcast-title">Episode 2: Connectivity, Platform Services &amp; Access Control</div>
-      <div class="podcast-prompt" id="pod2">
-        <strong>Prompt to generate audio podcast:</strong><br>
-        "Create a 15–20 minute conversational podcast covering: (1) Zscaler Client Connector, Branch Connector, Browser Access, and SD-WAN integration; (2) Private Service Edges (ZPA PSE and ZIA PISE), the Policy Framework hierarchy, Firewall and DNS Control, Tenant Restrictions, and Conditional Access. Use a dialogue format between a host and a Zscaler engineer. Include configuration gotchas, exam tips, and end with a rapid-fire 5-question quiz."
-      </div>
-      <button class="copy-btn" onclick="copyPod('pod2',this)">⎘ Copy prompt</button>
+      <details class="podcast-details">
+        <summary>⎘ Show prompt <span class="podcast-chevron">▸</span></summary>
+        <div class="podcast-prompt" id="pod2">
+          <strong>Prompt to generate audio podcast:</strong><br>
+          "Create a 15–20 minute conversational podcast covering: (1) Zscaler Client Connector, Branch Connector, Browser Access, and SD-WAN integration; (2) Private Service Edges (ZPA PSE and ZIA PISE), the Policy Framework hierarchy, Firewall and DNS Control, Tenant Restrictions, and Conditional Access. Use a dialogue format between a host and a Zscaler engineer. Include configuration gotchas, exam tips, and end with a rapid-fire 5-question quiz."
+        </div>
+        <button class="copy-btn" onclick="copyPod('pod2',this)">⎘ Copy prompt</button>
+      </details>
     </div>
   </div>
 
@@ -883,11 +907,14 @@
     <div class="podcast-content">
       <div class="podcast-label">PODCAST GENERATION PROMPT — DAYS 5 &amp; 6</div>
       <div class="podcast-title">Episode 3: Cyberthreat &amp; Data Protection</div>
-      <div class="podcast-prompt" id="pod3">
-        <strong>Prompt to generate audio podcast:</strong><br>
-        "Create a 15–20 minute podcast on: (1) Zscaler's cyberthreat protection stack — ATP, Cloud Sandbox, IPS, Browser Isolation, Deception, ITDR, and Private Access AppProtection; (2) Data protection — SSL inspection, inline DLP, CASB inline vs API, BYOD SaaS access, and incident management. Use a host-and-expert format. Highlight what distinguishes each technology and when to use it. End with 5 exam-style scenario questions."
-      </div>
-      <button class="copy-btn" onclick="copyPod('pod3',this)">⎘ Copy prompt</button>
+      <details class="podcast-details">
+        <summary>⎘ Show prompt <span class="podcast-chevron">▸</span></summary>
+        <div class="podcast-prompt" id="pod3">
+          <strong>Prompt to generate audio podcast:</strong><br>
+          "Create a 15–20 minute podcast on: (1) Zscaler's cyberthreat protection stack — ATP, Cloud Sandbox, IPS, Browser Isolation, Deception, ITDR, and Private Access AppProtection; (2) Data protection — SSL inspection, inline DLP, CASB inline vs API, BYOD SaaS access, and incident management. Use a host-and-expert format. Highlight what distinguishes each technology and when to use it. End with 5 exam-style scenario questions."
+        </div>
+        <button class="copy-btn" onclick="copyPod('pod3',this)">⎘ Copy prompt</button>
+      </details>
     </div>
   </div>
 
@@ -966,11 +993,14 @@
     <div class="podcast-content">
       <div class="podcast-label">PODCAST GENERATION PROMPT — DAYS 7 &amp; 8</div>
       <div class="podcast-title">Episode 4: Risk Management, ZDX &amp; Zero Trust Automation</div>
-      <div class="podcast-prompt" id="pod4">
-        <strong>Prompt to generate audio podcast:</strong><br>
-        "Create a 15–20 minute podcast covering: (1) Zscaler Risk Management — Risk360, Unified Vulnerability Management, Deception posture, EASM, and Breach Predictor; (2) ZDX — metrics, probes, diagnostics, alerts, RBAC, ZDX Dashboard, hosted monitoring, AI influence; (3) Zero Trust Automation with OneAPI — framework architecture, capabilities, and configuration. Use a host-and-expert dialogue, real-world troubleshooting scenarios, and end with 5 exam-style questions."
-      </div>
-      <button class="copy-btn" onclick="copyPod('pod4',this)">⎘ Copy prompt</button>
+      <details class="podcast-details">
+        <summary>⎘ Show prompt <span class="podcast-chevron">▸</span></summary>
+        <div class="podcast-prompt" id="pod4">
+          <strong>Prompt to generate audio podcast:</strong><br>
+          "Create a 15–20 minute podcast covering: (1) Zscaler Risk Management — Risk360, Unified Vulnerability Management, Deception posture, EASM, and Breach Predictor; (2) ZDX — metrics, probes, diagnostics, alerts, RBAC, ZDX Dashboard, hosted monitoring, AI influence; (3) Zero Trust Automation with OneAPI — framework architecture, capabilities, and configuration. Use a host-and-expert dialogue, real-world troubleshooting scenarios, and end with 5 exam-style questions."
+        </div>
+        <button class="copy-btn" onclick="copyPod('pod4',this)">⎘ Copy prompt</button>
+      </details>
     </div>
   </div>
 
@@ -1046,11 +1076,14 @@
     <div class="podcast-content">
       <div class="podcast-label">PODCAST GENERATION PROMPT — DAYS 9 &amp; 10</div>
       <div class="podcast-title">Episode 5: ZIA, ZPA &amp; ZDX Deep Dive Review</div>
-      <div class="podcast-prompt" id="pod5">
-        <strong>Prompt to generate audio podcast:</strong><br>
-        "Create a 20-minute exam-prep podcast reviewing: (1) ZIA — SSL inspection, URL filtering, DLP, Cloud App Control, Firewall, and malware protection; (2) ZPA — App Connectors, App Segments, access and inspection policies, Privileged Remote Access; (3) ZDX — end-to-end troubleshooting from device to application. Focus on distinguishing concepts that are commonly confused. Use scenario-based questions throughout and end with a 10-question rapid-fire quiz covering all three."
-      </div>
-      <button class="copy-btn" onclick="copyPod('pod5',this)">⎘ Copy prompt</button>
+      <details class="podcast-details">
+        <summary>⎘ Show prompt <span class="podcast-chevron">▸</span></summary>
+        <div class="podcast-prompt" id="pod5">
+          <strong>Prompt to generate audio podcast:</strong><br>
+          "Create a 20-minute exam-prep podcast reviewing: (1) ZIA — SSL inspection, URL filtering, DLP, Cloud App Control, Firewall, and malware protection; (2) ZPA — App Connectors, App Segments, access and inspection policies, Privileged Remote Access; (3) ZDX — end-to-end troubleshooting from device to application. Focus on distinguishing concepts that are commonly confused. Use scenario-based questions throughout and end with a 10-question rapid-fire quiz covering all three."
+        </div>
+        <button class="copy-btn" onclick="copyPod('pod5',this)">⎘ Copy prompt</button>
+      </details>
     </div>
   </div>
 
@@ -1125,11 +1158,14 @@
     <div class="podcast-content">
       <div class="podcast-label">PODCAST GENERATION PROMPT — DAYS 11 &amp; 12</div>
       <div class="podcast-title">Episode 6: Final Exam Cram &amp; Confidence Boost</div>
-      <div class="podcast-prompt" id="pod6">
-        <strong>Prompt to generate audio podcast:</strong><br>
-        "Create a 15-minute exam-eve podcast that: (1) Rapidly reviews the most exam-critical concepts across all 10 ZDTE domains; (2) Highlights the top 5 commonly confused concept pairs (e.g. ZIA vs ZPA traffic flows, inline CASB vs API CASB, PSE vs standard enforcement); (3) Gives exam-taking strategy tips for 60-question, 90-minute proctored exams; (4) Ends with an encouraging, motivating close. Tone: calm, confident, supportive."
-      </div>
-      <button class="copy-btn" onclick="copyPod('pod6',this)">⎘ Copy prompt</button>
+      <details class="podcast-details">
+        <summary>⎘ Show prompt <span class="podcast-chevron">▸</span></summary>
+        <div class="podcast-prompt" id="pod6">
+          <strong>Prompt to generate audio podcast:</strong><br>
+          "Create a 15-minute exam-eve podcast that: (1) Rapidly reviews the most exam-critical concepts across all 10 ZDTE domains; (2) Highlights the top 5 commonly confused concept pairs (e.g. ZIA vs ZPA traffic flows, inline CASB vs API CASB, PSE vs standard enforcement); (3) Gives exam-taking strategy tips for 60-question, 90-minute proctored exams; (4) Ends with an encouraging, motivating close. Tone: calm, confident, supportive."
+        </div>
+        <button class="copy-btn" onclick="copyPod('pod6',this)">⎘ Copy prompt</button>
+      </details>
     </div>
   </div>
 
