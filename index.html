@@ -45,12 +45,61 @@
     padding: 48px 60px 36px;
     border-bottom: 1px solid var(--border);
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
     gap: 32px;
   }
 
-  .header-left {}
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+
+
+  .countdown-large {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--ink);
+    padding: 28px 36px;
+    border-radius: 20px;
+    text-align: center;
+    flex-shrink: 0;
+    transition: background 0.25s ease, border-color 0.25s ease;
+    cursor: default;
+  }
+  .countdown-large:hover {
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .countdown-large .days {
+    font-family: 'Fraunces', serif;
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--orange);
+    line-height: 1;
+  }
+  .countdown-large .label {
+    font-size: 12px;
+    color: var(--ink-muted);
+    letter-spacing: 0.12em;
+    margin-top: 6px;
+    transition: color 0.25s ease;
+  }
+  .countdown-large:hover .label {
+    color: #7a6a55;
+  }
+  .countdown-large .date {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 8px;
+    font-weight: 300;
+    transition: color 0.25s ease;
+  }
+  .countdown-large:hover .date {
+    color: var(--cream);
+    opacity: 0.7;
+  }
 
   .header-eyebrow {
     display: inline-flex;
@@ -334,6 +383,81 @@
     box-shadow: 0 8px 24px rgba(26,18,9,0.18);
   }
 
+  /* Hover-expand nav button */
+  .nav-hub {
+    position: relative;
+  }
+  .nav-hub-trigger {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 16px 24px;
+    border-radius: 16px;
+    text-align: center;
+    width: 200px;
+    cursor: pointer;
+    user-select: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .nav-hub-trigger .icon {
+    font-size: 32px;
+    line-height: 1;
+    color: var(--orange);
+  }
+  .nav-hub-trigger .label {
+    font-size: 11px;
+    color: #7a6a55;
+    letter-spacing: 0.1em;
+    margin-top: 4px;
+  }
+  .nav-hub-trigger .hint {
+    font-size: 11px;
+    color: var(--cream);
+    margin-top: 6px;
+    font-weight: 300;
+    opacity: 0.6;
+  }
+  .nav-hub:hover .nav-hub-trigger {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 8px 24px rgba(26,18,9,0.18);
+    border-radius: 16px 16px 0 0;
+  }
+  .nav-hub-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 200px;
+    background: var(--ink);
+    border-radius: 0 0 16px 16px;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 100;
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-hub:hover .nav-hub-dropdown {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateY(0);
+  }
+  .nav-hub-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 20px;
+    color: var(--cream);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    font-weight: 500;
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    transition: background 0.15s;
+  }
+  .nav-hub-item:last-child { border-bottom: none; }
+  .nav-hub-item:hover { background: rgba(255,107,53,0.15); color: var(--orange); }
+  .nav-hub-item .nav-icon { font-size: 18px; flex-shrink: 0; }
+
   /* Mock exam row */
   .mock-exam-row {
     background: #f0ecff;
@@ -543,9 +667,9 @@
     header, main, footer, .stats-bar, .legend, .progress-bar { padding-left: 16px; padding-right: 16px; }
     header { padding-top: 24px; padding-bottom: 20px; flex-direction: column; align-items: flex-start; gap: 16px; }
     h1 { font-size: 34px; }
-    .header-meta { flex-direction: row; flex-wrap: wrap; gap: 8px; width: 100%; }
-    .exam-countdown { min-width: 0; flex: 1; }
-    .exam-countdown .days { font-size: 28px; }
+    .header-left { flex-direction: column; align-items: flex-start; gap: 16px; }
+    .countdown-large { padding: 18px 24px; }
+    .countdown-large .days { font-size: 48px; }
     .stats-bar { flex-wrap: wrap; gap: 12px; }
     .stat { flex: 1 1 calc(50% - 12px); border-right: none; margin-right: 0; padding: 0; }
     .table-header { display: none; }
@@ -558,9 +682,9 @@
 
   @media (max-width: 480px) {
     h1 { font-size: 28px; }
-    .exam-countdown .days { font-size: 22px; }
-    .exam-countdown { padding: 10px 12px; }
-    .exam-countdown .date { font-size: 10px; }
+    .countdown-large .days { font-size: 36px; }
+    .countdown-large { padding: 14px 18px; }
+    .countdown-large .date { font-size: 10px; }
     .topic-title { font-size: 13px; }
     .topic-bullets li { font-size: 11px; }
     .guide-btn { font-size: 10px; padding: 6px 12px; }
@@ -571,40 +695,31 @@
 
 <header>
   <div class="header-left">
-    <div class="header-eyebrow"><span class="dot-live"></span> Active Study Plan</div>
-    <h1>ZDTE<br>Exam <em>Prep.</em></h1>
-    <p style="font-size:13px;color:var(--ink-muted);margin-top:10px;max-width:340px;line-height:1.7;">Zscaler Digital Transformation Engineer · 60 questions · 90 minutes. Each day includes a Socratic session and HTML output for this tracker.</p>
-  </div>
-  <div class="header-meta" style="display:flex;gap:12px;align-items:flex-start;">
-    <div class="exam-countdown">
+    <div>
+      <div class="header-eyebrow"><span class="dot-live"></span> Active Study Plan</div>
+      <h1>ZDTE<br>Exam <em>Prep.</em></h1>
+      <p style="font-size:13px;color:var(--ink-muted);margin-top:10px;max-width:340px;line-height:1.7;">Zscaler Digital Transformation Engineer · 60 questions · 90 minutes. Each day includes a Socratic session and HTML output for this tracker.</p>
+    </div>
+    <div class="countdown-large">
       <div class="days" id="daysLeft">–</div>
       <div class="label">DAYS TO EXAM</div>
       <div class="date">Saturday, 2 May 2026</div>
     </div>
-    <div class="exam-countdown" style="cursor:pointer;" onclick="window.location.href='study-guides.html'">
-      <div style="font-size:42px;line-height:1;color:var(--orange);">📖</div>
-      <div class="label">STUDY GUIDES</div>
-      <div class="date">Click to open</div>
-    </div>
-    <div class="exam-countdown" style="cursor:pointer;" onclick="window.location.href='memory-palaces.html'">
-      <div style="font-size:42px;line-height:1;">🧠</div>
-      <div class="label">MEMORY PALACES</div>
-      <div class="date">Click to open</div>
-    </div>
-    <div class="exam-countdown" style="cursor:pointer;" onclick="window.location.href='study-bites.html'">
-      <div style="font-size:42px;line-height:1;">🍐</div>
-      <div class="label">STUDY BITES</div>
-      <div class="date">Click to open</div>
-    </div>
-    <div class="exam-countdown" style="cursor:pointer;" onclick="window.location.href='study-nibbles.html'">
-      <div style="font-size:42px;line-height:1;">🍔</div>
-      <div class="label">STUDY NIBBLES</div>
-      <div class="date">Click to open</div>
-    </div>
-    <div class="exam-countdown" style="cursor:pointer;" onclick="window.location.href='mock-exams.html'">
-      <div style="font-size:42px;line-height:1;">📋</div>
-      <div class="label">MOCK EXAMS</div>
-      <div class="date">Click to open</div>
+  </div>
+  <div class="header-meta" style="display:flex;gap:12px;align-items:flex-start;">
+    <div class="nav-hub">
+      <div class="nav-hub-trigger">
+        <div class="icon">📚</div>
+        <div class="label">STUDY MATERIALS</div>
+        <div class="hint">hover to explore</div>
+      </div>
+      <div class="nav-hub-dropdown">
+        <a class="nav-hub-item" href="study-guides.html"><span class="nav-icon">📖</span> STUDY GUIDES</a>
+        <a class="nav-hub-item" href="memory-palaces.html"><span class="nav-icon">🧠</span> MEMORY PALACES</a>
+        <a class="nav-hub-item" href="study-bites.html"><span class="nav-icon">🍐</span> STUDY BITES</a>
+        <a class="nav-hub-item" href="study-nibbles.html"><span class="nav-icon">🍔</span> STUDY NIBBLES</a>
+        <a class="nav-hub-item" href="mock-exams.html"><span class="nav-icon">📋</span> MOCK EXAMS</a>
+      </div>
     </div>
   </div>
 </header>

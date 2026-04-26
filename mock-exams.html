@@ -121,6 +121,42 @@
   }
   .count-card .lbl { font-size: 10px; color: #7a6a55; letter-spacing: 0.1em; margin-top: 4px; }
 
+  .nav-hub { position: relative; }
+  .nav-hub-trigger {
+    background: var(--ink); color: var(--cream);
+    padding: 16px 24px; border-radius: 16px;
+    text-align: center; width: 200px;
+    cursor: pointer; user-select: none;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .nav-hub-trigger .icon { font-size: 32px; line-height: 1; color: var(--orange); }
+  .nav-hub-trigger .label { font-size: 11px; color: #7a6a55; letter-spacing: 0.1em; margin-top: 4px; }
+  .nav-hub-trigger .hint { font-size: 11px; color: var(--cream); margin-top: 6px; font-weight: 300; opacity: 0.6; }
+  .nav-hub:hover .nav-hub-trigger {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 8px 24px rgba(26,18,9,0.18);
+    border-radius: 16px 16px 0 0;
+  }
+  .nav-hub-dropdown {
+    position: absolute; top: 100%; left: 0; width: 200px;
+    background: var(--ink); border-radius: 0 0 16px 16px;
+    overflow: hidden; opacity: 0; pointer-events: none;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+    z-index: 100; border-top: 1px solid rgba(255,255,255,0.08);
+  }
+  .nav-hub:hover .nav-hub-dropdown { opacity: 1; pointer-events: all; transform: translateY(0); }
+  .nav-hub-item {
+    display: flex; align-items: center; gap: 12px;
+    padding: 13px 20px; color: var(--cream);
+    font-size: 12px; letter-spacing: 0.08em; font-weight: 500;
+    text-decoration: none; border-bottom: 1px solid rgba(255,255,255,0.06);
+    transition: background 0.15s;
+  }
+  .nav-hub-item:last-child { border-bottom: none; }
+  .nav-hub-item:hover { background: rgba(255,107,53,0.15); color: var(--orange); }
+  .nav-hub-item .nav-icon { font-size: 18px; flex-shrink: 0; }
+
   /* ── PROGRESS BAR ── */
   .progress-bar-section {
     padding: 20px 60px;
@@ -399,6 +435,20 @@
     <div class="count-card">
       <div class="big">3<span style="font-family:'Epilogue',sans-serif;font-size:18px;color:#7a6a55;font-weight:400;">/6</span></div>
       <div class="lbl">TAKEN</div>
+    </div>
+    <div class="nav-hub">
+      <div class="nav-hub-trigger">
+        <div class="icon">📚</div>
+        <div class="label">STUDY MATERIALS</div>
+        <div class="hint">hover to explore</div>
+      </div>
+      <div class="nav-hub-dropdown">
+        <a class="nav-hub-item" href="study-guides.html"><span class="nav-icon">📖</span> STUDY GUIDES</a>
+        <a class="nav-hub-item" href="memory-palaces.html"><span class="nav-icon">🧠</span> MEMORY PALACES</a>
+        <a class="nav-hub-item" href="study-bites.html"><span class="nav-icon">🍐</span> STUDY BITES</a>
+        <a class="nav-hub-item" href="study-nibbles.html"><span class="nav-icon">🍔</span> STUDY NIBBLES</a>
+        <a class="nav-hub-item" href="mock-exams.html"><span class="nav-icon">📋</span> MOCK EXAMS</a>
+      </div>
     </div>
   </div>
 </header>
