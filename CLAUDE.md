@@ -2,6 +2,8 @@
 
 Static HTML study site for the Zscaler Digital Transformation Engineer (ZDTE) certification exam. No build system — all files are plain HTML/CSS/JS.
 
+**Sort trigger:** When the user says "sort" (or any variation like "sort this", "sort it"), immediately sort everything currently in the `sort/` folder without asking for clarification.
+
 ---
 
 ## Project Structure
