@@ -82,30 +82,39 @@
   .cert-card {
     position: relative;
     background: var(--cream);
-    border: 1.5px solid var(--border);
-    border-radius: 20px;
-    padding: 28px 28px 24px;
+    border: 2px solid var(--border);
+    border-radius: 24px;
+    padding: 36px 32px 30px;
     overflow: hidden;
     cursor: pointer;
     transition:
-      transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-      box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-      border-color 0.3s ease;
+      transform 0.5s cubic-bezier(0.15, 0.85, 0.2, 1.2),
+      box-shadow 0.5s cubic-bezier(0.15, 0.85, 0.2, 1),
+      border-color 0.35s ease,
+      background 0.35s ease;
     display: flex;
     flex-direction: column;
     text-decoration: none;
     color: inherit;
+    will-change: transform;
   }
 
-  /* Sheen sweep */
+  /* Wide sheen sweep */
   .cert-card::before {
     content: '';
     position: absolute;
-    top: 0; left: -100%;
-    width: 60%; height: 100%;
-    background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
-    transform: skewX(-20deg);
-    transition: left 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
+    top: -20%; left: -120%;
+    width: 80%; height: 140%;
+    background: linear-gradient(
+      110deg,
+      transparent 0%,
+      rgba(255,255,255,0.0) 30%,
+      rgba(255,255,255,0.75) 50%,
+      rgba(255,255,255,0.0) 70%,
+      transparent 100%
+    );
+    transform: skewX(-15deg);
+    transition: left 0.65s cubic-bezier(0.25, 0.8, 0.25, 1);
     pointer-events: none;
     z-index: 2;
   }
@@ -114,27 +123,35 @@
   .cert-card::after {
     content: '';
     position: absolute;
-    inset: 0;
-    border-radius: 20px;
-    box-shadow: 0 0 0 0 rgba(255,107,53,0);
-    transition: box-shadow 0.45s ease;
+    inset: -2px;
+    border-radius: 26px;
+    transition: box-shadow 0.5s ease, opacity 0.5s ease;
     pointer-events: none;
+    opacity: 0;
   }
+  .cert-card:hover::after { opacity: 1; }
 
   .cert-card:hover {
-    transform: translateY(-14px) scale(1.03);
-    box-shadow: 0 32px 64px -16px rgba(26,18,9,0.3);
+    transform: translateY(-28px) scale(1.06) rotate(-0.5deg);
+    box-shadow: 0 50px 100px -20px rgba(26,18,9,0.45), 0 20px 40px -10px rgba(26,18,9,0.15);
+    background: #fff;
   }
-  .cert-card:hover::before { left: 140%; }
+  .cert-card:hover::before { left: 130%; }
 
-  .cert-card.status-complete:hover { border-color: var(--green-border); }
-  .cert-card.status-complete:hover::after { box-shadow: 0 0 0 5px rgba(58,125,68,0.14), 0 0 60px 0 rgba(58,125,68,0.28); }
+  .cert-card.status-complete:hover { border-color: var(--green); }
+  .cert-card.status-complete:hover::after {
+    box-shadow: 0 0 0 6px rgba(58,125,68,0.18), 0 0 80px 20px rgba(58,125,68,0.35);
+  }
 
-  .cert-card.status-progress:hover { border-color: var(--orange-border); }
-  .cert-card.status-progress:hover::after { box-shadow: 0 0 0 5px rgba(255,107,53,0.16), 0 0 60px 0 rgba(255,107,53,0.32); }
+  .cert-card.status-progress:hover { border-color: var(--orange); }
+  .cert-card.status-progress:hover::after {
+    box-shadow: 0 0 0 6px rgba(255,107,53,0.22), 0 0 80px 20px rgba(255,107,53,0.42);
+  }
 
-  .cert-card.status-soon:hover { border-color: #d6cab8; }
-  .cert-card.status-soon:hover::after { box-shadow: 0 0 0 5px rgba(138,118,96,0.12), 0 0 60px 0 rgba(138,118,96,0.22); }
+  .cert-card.status-soon:hover { border-color: #c4b8a8; }
+  .cert-card.status-soon:hover::after {
+    box-shadow: 0 0 0 6px rgba(138,118,96,0.15), 0 0 80px 20px rgba(138,118,96,0.28);
+  }
 
   /* ── CARD CONTENT ── */
   .card-content { position: relative; z-index: 3; display: flex; flex-direction: column; }
@@ -142,10 +159,14 @@
   /* Default visible: code + edu + name */
   .cert-code {
     font-family: 'Fraunces', serif;
-    font-size: 36px; font-weight: 700;
-    line-height: 1; letter-spacing: -0.01em;
-    margin-bottom: 3px;
-    transition: color 0.3s ease;
+    font-size: 48px; font-weight: 700;
+    line-height: 1; letter-spacing: -0.02em;
+    margin-bottom: 4px;
+    transition: color 0.35s ease, transform 0.5s cubic-bezier(0.15, 0.85, 0.2, 1.2), letter-spacing 0.4s ease;
+  }
+  .cert-card:hover .cert-code {
+    transform: scale(1.08);
+    letter-spacing: 0.02em;
   }
   .cert-card.status-complete .cert-code { color: var(--ink); }
   .cert-card.status-progress .cert-code { color: var(--ink); }
@@ -171,15 +192,19 @@
     overflow: hidden;
     max-height: 0;
     opacity: 0;
+    transform: translateY(10px);
     transition:
-      max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
-      opacity 0.3s ease;
+      max-height 0.5s cubic-bezier(0.15, 0.85, 0.2, 1),
+      opacity 0.4s ease 0.08s,
+      transform 0.45s cubic-bezier(0.15, 0.85, 0.2, 1) 0.05s,
+      margin-top 0.4s ease;
     margin-top: 0;
   }
   .cert-card:hover .card-details {
     max-height: 160px;
     opacity: 1;
-    margin-top: 20px;
+    transform: translateY(0);
+    margin-top: 24px;
   }
 
   /* ── STATUS BADGE ── */
@@ -274,6 +299,7 @@
         <div class="cert-name">Zscaler Digital Transformation — Administrator</div>
         <div class="card-details">
           <div class="status-badge"><span class="status-dot"></span>Complete</div>
+          <div class="exam-date" style="margin-bottom:12px;">Issued <strong>March 27, 2026</strong></div>
           <div>
             <span class="credly-link">
               View on Credly
@@ -294,16 +320,9 @@
         <div class="cert-code">ZDTE</div>
         <div class="cert-edu">EDU-202</div>
         <div class="cert-name">Zscaler Digital Transformation — Engineer</div>
-
-        <div class="status-row">
-          <div class="status-badge">
-            <span class="status-dot"></span>
-            In Progress
-          </div>
-        </div>
-
-        <div class="exam-date" style="margin-top:18px;">
-          Exam <strong>May 2, 2026</strong>
+        <div class="card-details">
+          <div class="status-badge"><span class="status-dot"></span>In Progress</div>
+          <div class="exam-date">Exam <strong>May 2, 2026</strong></div>
         </div>
       </div>
     </div>
@@ -314,16 +333,9 @@
         <div class="cert-code">ZDDC</div>
         <div class="cert-edu">EDU-302</div>
         <div class="cert-name">Zscaler Digital Delivery Consultant</div>
-
-        <div class="status-row">
-          <div class="status-badge">
-            <span class="status-dot"></span>
-            Coming Soon
-          </div>
-        </div>
-
-        <div class="exam-date" style="margin-top:18px;">
-          Exam <strong>May 30, 2026</strong>
+        <div class="card-details">
+          <div class="status-badge"><span class="status-dot"></span>Coming Soon</div>
+          <div class="exam-date">Exam <strong>May 30, 2026</strong></div>
         </div>
       </div>
     </div>
