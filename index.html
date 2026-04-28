@@ -165,7 +165,7 @@
     transition: color 0.35s ease, transform 0.5s cubic-bezier(0.15, 0.85, 0.2, 1.2), letter-spacing 0.4s ease;
   }
   .cert-card:hover .cert-code {
-    transform: scale(1.08);
+    transform: scale(1.08) translateX(10px);
     letter-spacing: 0.02em;
   }
   .cert-card.status-complete .cert-code { color: var(--ink); }
@@ -205,6 +205,35 @@
     opacity: 1;
     transform: translateY(0);
     margin-top: 24px;
+    transition:
+      max-height 0.7s cubic-bezier(0.15, 0.85, 0.2, 1),
+      opacity 0.7s ease 0.3s,
+      transform 0.65s cubic-bezier(0.15, 0.85, 0.2, 1) 0.25s,
+      margin-top 0.5s ease;
+  }
+
+  /* ZDTA — date and credly fade in extra slowly */
+  .status-complete .card-details .exam-date,
+  .status-complete .card-details .credly-link,
+  .status-progress .card-details .exam-date,
+  .status-progress .card-details .credly-link,
+  .status-soon .card-details .exam-date {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.1s ease, transform 0.1s ease;
+  }
+  .status-complete:hover .card-details .exam-date,
+  .status-progress:hover .card-details .exam-date,
+  .status-soon:hover .card-details .exam-date {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 1.0s ease 0.65s, transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.6s;
+  }
+  .status-complete:hover .card-details .credly-link,
+  .status-progress:hover .card-details .credly-link {
+    opacity: 1;
+    transform: translateX(0);
+    transition: opacity 1.0s ease 0.95s, transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) 0.9s;
   }
 
   /* ── STATUS BADGE ── */
@@ -248,6 +277,7 @@
     transition: all 0.25s ease;
   }
   .credly-link:hover { background: var(--green); color: var(--cream); }
+  .status-progress .credly-link:hover { background: var(--orange); color: var(--cream); border-color: var(--orange); }
   .credly-link svg { transition: transform 0.25s ease; }
   .credly-link:hover svg { transform: translateX(2px); }
 
@@ -299,8 +329,8 @@
         <div class="cert-name">Zscaler Digital Transformation — Administrator</div>
         <div class="card-details">
           <div class="status-badge"><span class="status-dot"></span>Complete</div>
-          <div class="exam-date" style="margin-bottom:12px;">Issued <strong>March 27, 2026</strong></div>
-          <div>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:4px;">
+            <div class="exam-date">Issued <strong>March 27, 2026</strong></div>
             <span class="credly-link">
               View on Credly
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -322,7 +352,16 @@
         <div class="cert-name">Zscaler Digital Transformation — Engineer</div>
         <div class="card-details">
           <div class="status-badge"><span class="status-dot"></span>In Progress</div>
-          <div class="exam-date">Exam <strong>May 2, 2026</strong></div>
+          <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
+            <div class="exam-date">Exam <strong>May 2, 2026</strong></div>
+            <a href="study-plan/study-plan-zdte.html" class="credly-link" style="border-color:var(--orange-border);color:#cc4a18;" onclick="event.stopPropagation()">
+              View Study Plan
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </a>
+          </div>
         </div>
       </div>
     </div>
