@@ -31,11 +31,16 @@
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
+  @keyframes pageEnter {
+    0%   { opacity: 0; transform: scale(1.06) translateY(-30px); }
+    100% { opacity: 1; transform: scale(1) translateY(0); }
+  }
   body {
     font-family: 'Epilogue', sans-serif;
     background: var(--cream);
     color: var(--ink);
     min-height: 100vh;
+    animation: pageEnter 0.7s cubic-bezier(0.15, 0.85, 0.2, 1.1) forwards;
   }
 
   /* Header */
@@ -1101,5 +1106,6 @@
   }
 </script>
 
+<script src="../transitions.js"></script>
 </body>
 </html>

@@ -75,7 +75,7 @@
     grid-template-columns: repeat(3, 1fr);
     gap: 28px;
     width: 100%;
-    max-width: 1200px;
+    max-width: 1500px;
   }
 
   /* ── CARD ── */
@@ -148,7 +148,7 @@
     box-shadow: 0 0 0 6px rgba(255,107,53,0.22), 0 0 80px 20px rgba(255,107,53,0.42);
   }
 
-  .cert-card.status-soon:hover { border-color: #c4b8a8; }
+  .cert-card.status-soon:hover { border-color: #1a6bcc; }
   .cert-card.status-soon:hover::after {
     box-shadow: 0 0 0 6px rgba(138,118,96,0.15), 0 0 80px 20px rgba(138,118,96,0.28);
   }
@@ -170,9 +170,10 @@
   }
   .cert-card.status-complete .cert-code { color: var(--ink); }
   .cert-card.status-progress .cert-code { color: var(--ink); }
-  .cert-card.status-soon     .cert-code { color: var(--ink-soft); }
+  .cert-card.status-soon     .cert-code { color: #000; }
   .cert-card:hover .cert-code { color: var(--orange); }
   .cert-card.status-complete:hover .cert-code { color: var(--green); }
+  .cert-card.status-soon:hover .cert-code { color: #1a6bcc; }
 
   .cert-edu {
     font-size: 11px; letter-spacing: 0.12em;
@@ -185,7 +186,34 @@
     font-style: italic; font-weight: 400;
     font-size: 17px; color: var(--ink-soft);
     line-height: 1.35;
+    display: flex; align-items: baseline;
+    white-space: nowrap; overflow: hidden;
   }
+  .cert-prefix {
+    display: inline-block;
+    overflow: hidden; white-space: nowrap;
+    max-width: 0; transition: none;
+  }
+  .cert-suffix {
+    display: inline-block; flex-shrink: 0;
+    transition: color 0.4s ease;
+  }
+
+  /* Prefix expand on hover */
+  .status-complete:hover .cert-prefix, .status-progress:hover .cert-prefix {
+    max-width: 400px;
+    transition: max-width 1.8s steps(34, end) 0.3s;
+  }
+  .status-soon .cert-prefix { color: #000; }
+  .status-soon:hover .cert-prefix {
+    max-width: 230px;
+    transition: max-width 1.6s steps(28, end) 0.3s;
+  }
+
+  /* Suffix colour on hover */
+  .status-complete:hover .cert-suffix { color: var(--green); }
+  .status-progress:hover .cert-suffix { color: var(--orange); }
+  .status-soon:hover     .cert-suffix { color: #1a6bcc; }
 
   /* ── DETAILS — hidden by default, revealed on hover ── */
   .card-details {
@@ -305,6 +333,13 @@
     body { padding: 60px 24px; }
   }
 </style>
+<style>
+@keyframes pageEnter {
+  from { opacity: 0; transform: scale(1.05) translateY(-25px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+body { animation: pageEnter 0.6s cubic-bezier(0.15, 0.85, 0.2, 1.08) both; }
+</style>
 </head>
 <body>
 
@@ -326,7 +361,7 @@
       <div class="card-content">
         <div class="cert-code">ZDTA</div>
         <div class="cert-edu">EDU-200</div>
-        <div class="cert-name">Zscaler Digital Transformation — Administrator</div>
+        <div class="cert-name"><span class="cert-prefix">Zscaler Digital Transformation&nbsp;—&nbsp;</span><span class="cert-suffix">Administrator</span></div>
         <div class="card-details">
           <div class="status-badge"><span class="status-dot"></span>Complete</div>
           <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:4px;">
@@ -349,7 +384,7 @@
       <div class="card-content">
         <div class="cert-code">ZDTE</div>
         <div class="cert-edu">EDU-202</div>
-        <div class="cert-name">Zscaler Digital Transformation — Engineer</div>
+        <div class="cert-name"><span class="cert-prefix">Zscaler Digital Transformation&nbsp;—&nbsp;</span><span class="cert-suffix">Engineer</span></div>
         <div class="card-details">
           <div class="status-badge"><span class="status-dot"></span>In Progress</div>
           <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap;">
@@ -371,11 +406,11 @@
       <div class="card-content">
         <div class="cert-code">ZDDC</div>
         <div class="cert-edu">EDU-302</div>
-        <div class="cert-name">Zscaler Digital Delivery Consultant</div>
+        <div class="cert-name"><span class="cert-prefix">Zscaler Digital Delivery&nbsp;-&nbsp;</span><span class="cert-suffix">Consultant</span></div>
         <div class="card-details">
           <div class="status-badge"><span class="status-dot"></span>Coming Soon</div>
+          <div class="exam-date" style="margin-bottom:6px;">Study Starts: <strong>Star Wars Day — May 4th</strong> 🌟</div>
           <div class="exam-date">Exam <strong>May 30, 2026</strong></div>
-          <div class="exam-date" style="margin-top:8px;font-style:italic;">Study Starts: <strong>Star Wars Day — May 4th</strong> 🌟</div>
         </div>
       </div>
     </div>
@@ -386,5 +421,6 @@
     Three certs<span>.</span> One mission<span>.</span>
   </footer>
 
+<script src="transitions.js"></script>
 </body>
 </html>

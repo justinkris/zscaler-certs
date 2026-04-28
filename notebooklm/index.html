@@ -86,6 +86,13 @@
     footer { padding: 16px; flex-direction: column; gap: 8px; text-align: center; }
   }
 </style>
+<style>
+@keyframes pageEnter {
+  from { opacity: 0; transform: scale(1.05) translateY(-25px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+body { animation: pageEnter 0.6s cubic-bezier(0.15, 0.85, 0.2, 1.08) both; }
+</style>
 </head>
 <body>
 
@@ -280,5 +287,6 @@
   }
 </script>
 
+<script src="../transitions.js"></script>
 </body>
 </html>

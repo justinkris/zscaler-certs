@@ -458,3 +458,10 @@ footer { padding: 20px 60px; border-top: 1px solid var(--border); display: flex;
   nav.section-nav button, .nav-tab { padding: 12px 10px; font-size: 10px; }
   .scene-room-name { font-size: 16px; }
 }
+
+/* ── PAGE TRANSITION — entry ── */
+@keyframes pageEnter {
+  from { opacity: 0; transform: scale(1.05) translateY(-25px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0); }
+}
+body { animation: pageEnter 0.6s cubic-bezier(0.15, 0.85, 0.2, 1.08) both; }
