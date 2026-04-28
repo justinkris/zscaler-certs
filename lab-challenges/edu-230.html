@@ -5,156 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EDU-230 Lab Challenges — Cyberthreat Protection</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="zddc-page-template.css">
+<link rel="stylesheet" href="lab-challenges.css">
 <style>
-  .lab-grid { display: flex; flex-direction: column; gap: 0; }
-
-  .lab-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--border);
-    border-radius: 12px;
-    margin-bottom: 20px;
-    overflow: hidden;
-    transition: box-shadow 0.15s;
-  }
-  .lab-card:hover { box-shadow: 0 2px 16px rgba(26,109,204,0.07); }
-  .lab-card.difficulty-easy    { border-left-color: var(--green); }
-  .lab-card.difficulty-medium  { border-left-color: var(--amber); }
-  .lab-card.difficulty-hard    { border-left-color: var(--red); }
-
-  .lab-card-header {
-    display: flex; align-items: center; gap: 18px;
-    padding: 20px 24px; background: var(--surface);
-    border-bottom: 1px solid transparent;
-    cursor: pointer; user-select: none; transition: background 0.15s;
-  }
-  .lab-card.open .lab-card-header { border-bottom-color: var(--border); background: var(--surface-2); }
-  .lab-card-header:hover { background: var(--surface-2); }
-
-  .lab-num {
-    background: var(--text); color: #93c5fd;
-    font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700;
-    min-width: 46px; height: 46px; border-radius: 10px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0; letter-spacing: -0.02em;
-  }
-
-  .lab-title-block { flex: 1; min-width: 0; display: flex; flex-direction: column; justify-content: center; }
-  .lab-title-block h3 { font-family: 'Fraunces', serif; font-size: 19px; font-weight: 500; color: var(--text); line-height: 1.1; margin: 0; }
-  .lab-title-block .lab-subtitle { font-size: 11px; color: var(--text-muted); letter-spacing: 0.07em; margin-top: 4px; }
-
-  .lab-progress { font-size: 11px; color: var(--text-muted); white-space: nowrap; flex-shrink: 0; font-variant-numeric: tabular-nums; min-width: 48px; text-align: right; }
-
-  .lab-tags { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
-  .lab-tag { font-size: 10px; letter-spacing: 0.07em; padding: 3px 9px; border-radius: 12px; font-weight: 600; }
-  .tag-zia     { background: #dbeafe; color: #1a6dcc; border: 1px solid #bfdbfe; }
-  .tag-zpa     { background: #ece8ff; color: #5c35cc; border: 1px solid #c8bbff; }
-  .tag-zdx     { background: #d4f0e0; color: #1a7c4a; border: 1px solid #a7e0c0; }
-  .tag-zid     { background: #fef9c3; color: #b45309; border: 1px solid #fde68a; }
-  .tag-sdc     { background: #fce7f3; color: #9d174d; border: 1px solid #f9a8d4; }
-  .tag-hard    { background: var(--red-light);   color: var(--red);   border: 1px solid var(--red-border);   font-weight: 700; }
-  .tag-medium  { background: #fef9c3;             color: #b45309;     border: 1px solid #fde68a;             font-weight: 700; }
-  .tag-easy    { background: var(--green-light);  color: var(--green); border: 1px solid var(--green-border); font-weight: 700; }
-
-  .expand-icon { font-size: 16px; color: var(--border); transition: transform 0.2s, color 0.15s; flex-shrink: 0; }
-  .lab-card-header:hover .expand-icon { color: var(--blue); }
-  .lab-card.open .expand-icon { transform: rotate(180deg); color: var(--blue); }
-
-  .lab-card-body { display: none; padding: 28px 28px 24px; border-top: 2px solid var(--border-dim); }
-  .lab-card.open .lab-card-body { display: block; }
-
-  .challenge-block { margin-bottom: 28px; }
-  .challenge-block:last-child { margin-bottom: 0; }
-
-  .challenge-label {
-    font-size: 9px; letter-spacing: 0.2em; font-weight: 700;
-    color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .challenge-label::after { content: ''; flex: 1; height: 1px; background: var(--border-dim); }
-
-  .requirement-list { list-style: none; padding: 0; margin: 0; border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
-  .requirement-list li {
-    display: flex; align-items: flex-start; gap: 12px;
-    padding: 11px 14px; border-bottom: 1px solid var(--border-dim);
-    font-size: 13px; line-height: 1.55; color: var(--text-soft);
-    cursor: pointer; transition: background 0.12s;
-  }
-  .requirement-list li:hover { background: var(--surface-2); }
-  .requirement-list li:last-child { border-bottom: none; }
-  .requirement-list li.done { background: rgba(26,124,74,0.04); }
-  .req-check {
-    width: 18px; height: 18px; border: 2px solid var(--blue-dim); border-radius: 4px;
-    flex-shrink: 0; margin-top: 1px; cursor: pointer; transition: background 0.15s, border-color 0.15s;
-  }
-  .req-check.checked {
-    background: var(--blue); border-color: var(--blue);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6l3 3 5-5' stroke='white' stroke-width='1.8' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: center;
-  }
-  .requirement-list li.done > span { text-decoration: line-through; opacity: 0.45; }
-
-  .naming-table { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 4px; border-radius: 10px; overflow: hidden; border: 1px solid var(--border); }
-  .naming-table th { background: var(--text); color: rgba(255,255,255,0.7); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 9px 14px; text-align: left; border: none; border-right: 1px solid rgba(255,255,255,0.08); }
-  .naming-table th:last-child { border-right: none; }
-  .naming-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); border-right: 1px solid var(--border-dim); color: var(--text-soft); vertical-align: top; }
-  .naming-table td:last-child { border-right: none; }
-  .naming-table tr:last-child td { border-bottom: none; }
-  .naming-table tr:nth-child(even) td { background: var(--surface-2); }
-  .naming-table code { background: var(--blue-glow); border: 1px solid var(--blue-dim); padding: 2px 7px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 12px; color: var(--blue); }
-
-  .hint-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  @media (max-width: 700px) { .hint-grid { grid-template-columns: 1fr; } }
-
-  .hint-card { background: var(--surface-2); border: 1px solid var(--border); border-left: 3px solid var(--blue-dim); border-radius: 0 8px 8px 0; padding: 12px 14px; display: flex; gap: 10px; align-items: flex-start; }
-  .hint-card .hint-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
-  .hint-card p { font-size: 12px; color: var(--text-soft); line-height: 1.6; margin: 0; }
-
-  .success-bar { background: var(--green-light); border: 1px solid var(--green-border); border-left: 4px solid var(--green); border-radius: 0 10px 10px 0; padding: 14px 18px; font-size: 13px; color: #0f4a28; display: flex; align-items: flex-start; gap: 10px; margin-top: 24px; line-height: 1.6; }
-  .success-bar::before { content: '✓'; font-weight: 700; flex-shrink: 0; background: var(--green); color: #fff; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-top: 1px; }
-
-  .header-stats { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; align-items: flex-start; }
-  .header-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 16px 22px; text-align: center; min-width: 88px; cursor: default; transition: background 0.18s, border-color 0.18s; }
-  .header-stat:hover { background: var(--text); border-color: var(--text); }
-  .header-stat-num { font-family: 'Fraunces', serif; font-size: 28px; font-weight: 700; color: var(--blue); line-height: 1; display: block; transition: color 0.18s; }
-  .header-stat:hover .header-stat-num { color: #93c5fd; }
-  .header-stat-lbl { font-size: 10px; letter-spacing: 0.1em; color: var(--text-muted); margin-top: 5px; text-transform: uppercase; display: block; transition: color 0.18s; }
-  .header-stat:hover .header-stat-lbl { color: #5a7a99; }
-
-  .toggle-all-btn { align-self: center; margin-right: 12px; padding: 6px 14px; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; font-family: 'Epilogue', sans-serif; color: var(--blue); background: var(--blue-glow); border: 1px solid var(--blue-dim); border-radius: 20px; cursor: pointer; white-space: nowrap; transition: background 0.15s, border-color 0.15s, color 0.15s; flex-shrink: 0; }
-  .toggle-all-btn:hover { background: var(--blue-dim); border-color: var(--blue); }
-  .toggle-all-btn.expanded { background: var(--text); color: #93c5fd; border-color: var(--text); }
-  .toggle-all-btn.expanded:hover { background: #1e3a5c; }
-
-  .progress-header { display: flex; align-items: center; gap: 14px; }
-  .progress-bar-track { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; background: var(--blue); border-radius: 3px; transition: width 0.3s; width: 0%; }
-  .progress-pct { font-size: 12px; color: var(--text-muted); min-width: 36px; }
-
-  .topo-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; align-items: start; }
-  @media (max-width: 900px) { .topo-grid { grid-template-columns: 1fr 1fr; } }
-  @media (max-width: 500px) { .topo-grid { grid-template-columns: 1fr; } }
-
-  .topo-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-  .topo-card-header { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: var(--surface-2); cursor: pointer; user-select: none; transition: background 0.15s; }
-  .topo-card-header:hover { background: #e8f0fb; }
-  .topo-card.open .topo-card-header { border-bottom: 1px solid var(--border); }
-  .topo-icon { font-size: 18px; flex-shrink: 0; }
-  .topo-card-title { font-family: 'Fraunces', serif; font-size: 13px; font-weight: 700; color: var(--text); line-height: 1.2; flex: 1; }
-  .topo-card-sub { font-size: 11px; color: var(--text-muted); margin-top: 2px; letter-spacing: 0.04em; }
-  .topo-chevron { font-size: 11px; color: var(--border); transition: transform 0.2s, color 0.15s; flex-shrink: 0; }
-  .topo-card-header:hover .topo-chevron { color: var(--blue); }
-  .topo-card.open .topo-chevron { transform: rotate(180deg); color: var(--blue); }
-  .topo-rows { display: none; flex-direction: column; }
-  .topo-card.open .topo-rows { display: flex; }
-  .topo-row { display: flex; flex-direction: column; gap: 3px; padding: 9px 14px; border-bottom: 1px solid var(--border-dim); font-size: 13px; }
-  .topo-row:last-child { border-bottom: none; }
-  .topo-key { color: var(--text-muted); font-size: 10px; letter-spacing: 0.1em; font-weight: 600; text-transform: uppercase; }
-  .topo-val { background: var(--blue-glow); border: 1px solid var(--blue-dim); padding: 3px 8px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 12px; color: var(--blue); display: inline-block; word-break: break-all; }
-  .topo-val-warn { background: rgba(180,83,9,0.08); border-color: rgba(180,83,9,0.25); color: var(--amber); }
-
-  .sdc-callout { background: #fdf2f8; border: 1px solid #fbcfe8; border-left: 4px solid #db2777; border-radius: 0 10px 10px 0; padding: 12px 16px; font-size: 13px; color: #831843; margin-bottom: 18px; line-height: 1.6; }
+  /* EDU-230 page-specific: 3-column topo grid */
+  .topo-grid { grid-template-columns: repeat(3, 1fr); }
 </style>
 </head>
 <body>
@@ -353,7 +207,6 @@
             <span class="lab-tag tag-zid">ZIdentity</span>
             <span class="lab-tag tag-easy">Easy</span>
           </div>
-          <span class="lab-progress" id="prog-lab-1"></span>
           <div class="expand-icon">▾</div>
         </div>
         <div class="lab-card-body">
@@ -364,9 +217,9 @@
           <div class="challenge-block">
             <div class="challenge-label">Requirements</div>
             <ul class="requirement-list">
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>Log into Corp: Client PC → open ZIdentity landing page → sign in as <code style="font-family:monospace;font-size:12px;">student@&lt;StudentFQDN&gt;</code> and verify access to ZIA, ZPA, ZDX tiles</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Without logging into ZCC</strong> — visit <code style="font-family:monospace;font-size:12px;">securitypreview.zscaler.com</code> → run "Test your cyber risk posture" → note how many tests fail</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>Visit <code style="font-family:monospace;font-size:12px;">https://www.testmydefenses.com</code> → Ransomware Risk Assessment → "Test My Ransomware Defenses" → note the results</span></li>
+              <li><div class="req-check"></div><span>Log into Corp: Client PC → open ZIdentity landing page → sign in as <code style="font-family:monospace;font-size:12px;">student@&lt;StudentFQDN&gt;</code> and verify access to ZIA, ZPA, ZDX tiles</span></li>
+              <li><div class="req-check"></div><span><strong>Without logging into ZCC</strong> — visit <code style="font-family:monospace;font-size:12px;">securitypreview.zscaler.com</code> → run "Test your cyber risk posture" → note how many tests fail</span></li>
+              <li><div class="req-check"></div><span>Visit <code style="font-family:monospace;font-size:12px;">https://www.testmydefenses.com</code> → Ransomware Risk Assessment → "Test My Ransomware Defenses" → note the results</span></li>
             </ul>
           </div>
           <div class="success-bar">Lab 1 done when: you have a clear before-picture — how many security tests fail without Zscaler protection. You'll revisit these same sites in Lab 4.6 to see the improvement.</div>
@@ -385,7 +238,6 @@
             <span class="lab-tag tag-zia">ZIA</span>
             <span class="lab-tag tag-hard">Hard</span>
           </div>
-          <span class="lab-progress" id="prog-lab-2"></span>
           <div class="expand-icon">▾</div>
         </div>
         <div class="lab-card-body">
@@ -413,37 +265,37 @@
           <div class="challenge-block">
             <div class="challenge-label">Task 2.1 — Configure Forwarding Options</div>
             <ul class="requirement-list">
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>ZCC Portal → Administration → Forwarding Profile → Add Forwarding Profile named <code style="font-family:monospace;font-size:12px;">HandsOnLab</code></span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>Windows Driver: <strong>Packet Filter Based</strong> · ZIA On-Trusted: <strong>Tunnel</strong> · Tunnel version: <strong>Z-Tunnel 2.0</strong></span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>System Proxy: <strong>Enforce</strong> (all sub-options unchecked) · VPN-Trusted &amp; Off-Trusted: Same as On-Trusted (for both ZIA and ZPA)</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>App Profiles → Windows → Add Windows Policy named <code style="font-family:monospace;font-size:12px;">HandsOnLab</code> → link <code style="font-family:monospace;font-size:12px;">HandsOnLab</code> Forwarding Profile → Install Zscaler SSL Certificate: <strong>On</strong> → Groups: All</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>Log into ZCC as <code style="font-family:monospace;font-size:12px;">student@&lt;StudentFQDN&gt;</code> → confirm Internet Security <strong>ON</strong> and Private Access <strong>ON</strong> → Update Policy</span></li>
+              <li><div class="req-check"></div><span>ZCC Portal → Administration → Forwarding Profile → Add Forwarding Profile named <code style="font-family:monospace;font-size:12px;">HandsOnLab</code></span></li>
+              <li><div class="req-check"></div><span>Windows Driver: <strong>Packet Filter Based</strong> · ZIA On-Trusted: <strong>Tunnel</strong> · Tunnel version: <strong>Z-Tunnel 2.0</strong></span></li>
+              <li><div class="req-check"></div><span>System Proxy: <strong>Enforce</strong> (all sub-options unchecked) · VPN-Trusted &amp; Off-Trusted: Same as On-Trusted (for both ZIA and ZPA)</span></li>
+              <li><div class="req-check"></div><span>App Profiles → Windows → Add Windows Policy named <code style="font-family:monospace;font-size:12px;">HandsOnLab</code> → link <code style="font-family:monospace;font-size:12px;">HandsOnLab</code> Forwarding Profile → Install Zscaler SSL Certificate: <strong>On</strong> → Groups: All</span></li>
+              <li><div class="req-check"></div><span>Log into ZCC as <code style="font-family:monospace;font-size:12px;">student@&lt;StudentFQDN&gt;</code> → confirm Internet Security <strong>ON</strong> and Private Access <strong>ON</strong> → Update Policy</span></li>
             </ul>
           </div>
 
           <div class="challenge-block">
             <div class="challenge-label">Task 2.2 — Enable SSL Inspection</div>
             <ul class="requirement-list">
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>Pre-check (Incognito): <code style="font-family:monospace;font-size:12px;">https://x.com</code> → cert is from the real server (not Zscaler)</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>ZIA → Policy → Web → Access Control → SSL Inspection → Add SSL Inspection Rule → <code style="font-family:monospace;font-size:12px;">Enable SSL</code> · Order 1 · Action: <strong>Inspect</strong> → Save → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>Post-check (new Incognito): <code style="font-family:monospace;font-size:12px;">https://x.com</code> → cert is now signed by <strong>Zscaler Intermediate Root CA</strong></span></li>
+              <li><div class="req-check"></div><span>Pre-check (Incognito): <code style="font-family:monospace;font-size:12px;">https://x.com</code> → cert is from the real server (not Zscaler)</span></li>
+              <li><div class="req-check"></div><span>ZIA → Policy → Web → Access Control → SSL Inspection → Add SSL Inspection Rule → <code style="font-family:monospace;font-size:12px;">Enable SSL</code> · Order 1 · Action: <strong>Inspect</strong> → Save → Activate</span></li>
+              <li><div class="req-check"></div><span>Post-check (new Incognito): <code style="font-family:monospace;font-size:12px;">https://x.com</code> → cert is now signed by <strong>Zscaler Intermediate Root CA</strong></span></li>
             </ul>
           </div>
 
           <div class="challenge-block">
             <div class="challenge-label">Task 2.3 — Enable SSL Exemption</div>
             <ul class="requirement-list">
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>Pre-check: <code style="font-family:monospace;font-size:12px;">https://health.com</code> → cert says Zscaler (currently being inspected)</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>Add SSL rule <code style="font-family:monospace;font-size:12px;">SSL Bypass for Health Care</code> · Order 1 · URL Category: <strong>Health</strong> · Action: <strong>Do Not Inspect</strong> → Save → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>Post-check (new Incognito): <code style="font-family:monospace;font-size:12px;">https://health.com</code> → cert is from the real server again (bypass working)</span></li>
+              <li><div class="req-check"></div><span>Pre-check: <code style="font-family:monospace;font-size:12px;">https://health.com</code> → cert says Zscaler (currently being inspected)</span></li>
+              <li><div class="req-check"></div><span>Add SSL rule <code style="font-family:monospace;font-size:12px;">SSL Bypass for Health Care</code> · Order 1 · URL Category: <strong>Health</strong> · Action: <strong>Do Not Inspect</strong> → Save → Activate</span></li>
+              <li><div class="req-check"></div><span>Post-check (new Incognito): <code style="font-family:monospace;font-size:12px;">https://health.com</code> → cert is from the real server again (bypass working)</span></li>
             </ul>
           </div>
 
           <div class="challenge-block">
             <div class="challenge-label">Task 2.4 — Verify Zscaler CA Installation</div>
             <ul class="requirement-list">
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>On Corp: Client PC → run <code style="font-family:monospace;font-size:12px;">certmgr</code> → Console Root → Trusted Root Certification Authorities → Certificates → confirm Zscaler Root CA is present and not expired</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>Alternatively: Chrome → <code style="font-family:monospace;font-size:12px;">chrome://certificate-manager/</code> → Local Certificates → View imported from Windows → confirm Zscaler cert visible</span></li>
+              <li><div class="req-check"></div><span>On Corp: Client PC → run <code style="font-family:monospace;font-size:12px;">certmgr</code> → Console Root → Trusted Root Certification Authorities → Certificates → confirm Zscaler Root CA is present and not expired</span></li>
+              <li><div class="req-check"></div><span>Alternatively: Chrome → <code style="font-family:monospace;font-size:12px;">chrome://certificate-manager/</code> → Local Certificates → View imported from Windows → confirm Zscaler cert visible</span></li>
             </ul>
           </div>
 
@@ -451,14 +303,14 @@
             <div class="challenge-label">Task 2.5 — Resolve Certificate Pinning Errors</div>
             <p style="font-size:13px;color:var(--text-soft);line-height:1.6;margin-bottom:12px;">Certificate pinning means an app hardcodes which CA it trusts. Zscaler's MITM cert won't match — the app refuses to connect. The fix is always a <strong>Do Not Inspect</strong> SSL bypass rule for that app or domain. Two methods are shown here — one using a Cloud App selector, one using a custom URL category.</p>
             <ul class="requirement-list">
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Signal (Cloud App method):</strong> Download and try to install Signal → observe the SSL connection error</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>ZIA → SSL Inspection → Add rule <code style="font-family:monospace;font-size:12px;">Enable Signal</code> · Order 1 · Cloud Applications: <strong>Signal</strong> (under Instant Messaging) · Action: <strong>Do Not Inspect</strong> → Save → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>Kill Signal in Task Manager → re-run SignalSetup → installs successfully</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>ZIA → Analytics → Web Insights → Logs tab → Timeframe: Current Day → Add Filter: <strong>SSL Inspected and Bypassed Transaction</strong> → Apply → confirm both inspect and bypass events visible</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Adobe (Custom URL Category method):</strong> Download Adobe Reader → observe the error during installation</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>ZIA → Administration → Resources → URL Categories → Add URL Category → Name: <code style="font-family:monospace;font-size:12px;">Adobe URL List</code> → paste Adobe-hosted domains (copy from Adobe Product Support page, without *) → Save → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>ZIA → SSL Inspection → Add rule <code style="font-family:monospace;font-size:12px;">Enable Adobe</code> · Order 1 · URL Category: <strong>Adobe URL List</strong> (User-Defined) · Action: <strong>Do Not Inspect</strong> → Save → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>Kill Adobe Download Manager in Task Manager → re-run Reader installer → installs successfully</span></li>
+              <li><div class="req-check"></div><span><strong>Signal (Cloud App method):</strong> Download and try to install Signal → observe the SSL connection error</span></li>
+              <li><div class="req-check"></div><span>ZIA → SSL Inspection → Add rule <code style="font-family:monospace;font-size:12px;">Enable Signal</code> · Order 1 · Cloud Applications: <strong>Signal</strong> (under Instant Messaging) · Action: <strong>Do Not Inspect</strong> → Save → Activate</span></li>
+              <li><div class="req-check"></div><span>Kill Signal in Task Manager → re-run SignalSetup → installs successfully</span></li>
+              <li><div class="req-check"></div><span>ZIA → Analytics → Web Insights → Logs tab → Timeframe: Current Day → Add Filter: <strong>SSL Inspected and Bypassed Transaction</strong> → Apply → confirm both inspect and bypass events visible</span></li>
+              <li><div class="req-check"></div><span><strong>Adobe (Custom URL Category method):</strong> Download Adobe Reader → observe the error during installation</span></li>
+              <li><div class="req-check"></div><span>ZIA → Administration → Resources → URL Categories → Add URL Category → Name: <code style="font-family:monospace;font-size:12px;">Adobe URL List</code> → paste Adobe-hosted domains (copy from Adobe Product Support page, without *) → Save → Activate</span></li>
+              <li><div class="req-check"></div><span>ZIA → SSL Inspection → Add rule <code style="font-family:monospace;font-size:12px;">Enable Adobe</code> · Order 1 · URL Category: <strong>Adobe URL List</strong> (User-Defined) · Action: <strong>Do Not Inspect</strong> → Save → Activate</span></li>
+              <li><div class="req-check"></div><span>Kill Adobe Download Manager in Task Manager → re-run Reader installer → installs successfully</span></li>
             </ul>
           </div>
 
@@ -497,7 +349,6 @@
             <span class="lab-tag tag-zia">ZIA</span>
             <span class="lab-tag tag-medium">Medium</span>
           </div>
-          <span class="lab-progress" id="prog-lab-3"></span>
           <div class="expand-icon">▾</div>
         </div>
         <div class="lab-card-body">
@@ -525,11 +376,11 @@
           <div class="challenge-block">
             <div class="challenge-label">Requirements</div>
             <ul class="requirement-list">
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 3.1:</strong> ZCC Portal → App Profiles → Windows → edit <code style="font-family:monospace;font-size:12px;">HandsOnLab</code> → Traffic Steering → DNS tab → Domain Inclusion: type <code style="font-family:monospace;font-size:12px;">*</code> → Create "*" → Save → Select More → Update Policy</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 3.2 pre-check:</strong> CMD → <code style="font-family:monospace;font-size:12px;">nslookup www.gambling.com 8.8.8.8</code> → resolves (no block yet)</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 3.2:</strong> ZIA → Policy → Firewall → DNS Control → Add DNS Filtering Rule → configure <code style="font-family:monospace;font-size:12px;">Block Gambling</code> with all settings above → Save → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 3.2 verify:</strong> CMD → <code style="font-family:monospace;font-size:12px;">nslookup www.sdxcentral.com 8.8.8.8</code> → resolves ✓ · then <code style="font-family:monospace;font-size:12px;">ipconfig /flushdns</code> · then <code style="font-family:monospace;font-size:12px;">nslookup www.gambling.com 8.8.8.8</code> → times out ✓</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 3.3:</strong> ZIA → Analytics → Insights → DNS Insights → Logs → Timeframe: Current Day → Add Filter: Rule Name = <code style="font-family:monospace;font-size:12px;">Block Gambling</code> → Apply Filters → confirm block entries visible</span></li>
+              <li><div class="req-check"></div><span><strong>Task 3.1:</strong> ZCC Portal → App Profiles → Windows → edit <code style="font-family:monospace;font-size:12px;">HandsOnLab</code> → Traffic Steering → DNS tab → Domain Inclusion: type <code style="font-family:monospace;font-size:12px;">*</code> → Create "*" → Save → Select More → Update Policy</span></li>
+              <li><div class="req-check"></div><span><strong>Task 3.2 pre-check:</strong> CMD → <code style="font-family:monospace;font-size:12px;">nslookup www.gambling.com 8.8.8.8</code> → resolves (no block yet)</span></li>
+              <li><div class="req-check"></div><span><strong>Task 3.2:</strong> ZIA → Policy → Firewall → DNS Control → Add DNS Filtering Rule → configure <code style="font-family:monospace;font-size:12px;">Block Gambling</code> with all settings above → Save → Activate</span></li>
+              <li><div class="req-check"></div><span><strong>Task 3.2 verify:</strong> CMD → <code style="font-family:monospace;font-size:12px;">nslookup www.sdxcentral.com 8.8.8.8</code> → resolves ✓ · then <code style="font-family:monospace;font-size:12px;">ipconfig /flushdns</code> · then <code style="font-family:monospace;font-size:12px;">nslookup www.gambling.com 8.8.8.8</code> → times out ✓</span></li>
+              <li><div class="req-check"></div><span><strong>Task 3.3:</strong> ZIA → Analytics → Insights → DNS Insights → Logs → Timeframe: Current Day → Add Filter: Rule Name = <code style="font-family:monospace;font-size:12px;">Block Gambling</code> → Apply Filters → confirm block entries visible</span></li>
             </ul>
           </div>
 
@@ -556,7 +407,6 @@
             <span class="lab-tag tag-zia">ZIA</span>
             <span class="lab-tag tag-hard">Hard</span>
           </div>
-          <span class="lab-progress" id="prog-lab-4"></span>
           <div class="expand-icon">▾</div>
         </div>
         <div class="lab-card-body">
@@ -581,14 +431,14 @@
           <div class="challenge-block">
             <div class="challenge-label">Requirements — Task by Task</div>
             <ul class="requirement-list">
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 4.1:</strong> ZIA → Policy → Malware Protection → review vs Recommended Policy · ZIA → Policy → Advanced Threat Protection → review · note Page Risk Score Index · ZIA → Analytics → Configuration Risk Report → click each category (Web-Based, File-Based, Network-Based, Uninspected Encrypted) → drill into highest-risk category</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 4.2:</strong> ZIA → Policy → URL &amp; Cloud App Control → URL Filtering tab → Add <code style="font-family:monospace;font-size:12px;">Block Website</code> (News and Media, all request methods/protocols, Block) → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 4.2:</strong> Add <code style="font-family:monospace;font-size:12px;">Block YouTube</code> (Video Streaming, Block) → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 4.3:</strong> On Client PC → visit <code style="font-family:monospace;font-size:12px;">bbc.com</code> → blocked ✓ · visit <code style="font-family:monospace;font-size:12px;">youtube.com</code> → blocked ✓</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 4.4:</strong> Cloud App Control tab → Add → Streaming Media → configure <code style="font-family:monospace;font-size:12px;">Allow YouTube</code> with Viewing/Listening: Allow, Uploading: Block → Save → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 4.4:</strong> Cloud App Control tab → Add → AI &amp; ML Applications → configure <code style="font-family:monospace;font-size:12px;">ChatGPT Permissions</code> with App Access: Allow, Chatting: Allow, Downloading: Block, all other actions: Block → Save → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 4.5:</strong> Visit <code style="font-family:monospace;font-size:12px;">youtube.com</code> → loads despite URL filter block (Cloud App Control wins) ✓ · Visit <code style="font-family:monospace;font-size:12px;">chatgpt.com</code> → type "what is cybersecurity" → responds ✓ · try to attach/upload a file → blocked ✓</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 4.6:</strong> Revisit <code style="font-family:monospace;font-size:12px;">securitypreview.zscaler.com</code> → rerun risk posture test → compare improved pass count vs Lab 1 baseline · revisit <code style="font-family:monospace;font-size:12px;">testmydefenses.com</code> → rerun ransomware test → compare results</span></li>
+              <li><div class="req-check"></div><span><strong>Task 4.1:</strong> ZIA → Policy → Malware Protection → review vs Recommended Policy · ZIA → Policy → Advanced Threat Protection → review · note Page Risk Score Index · ZIA → Analytics → Configuration Risk Report → click each category (Web-Based, File-Based, Network-Based, Uninspected Encrypted) → drill into highest-risk category</span></li>
+              <li><div class="req-check"></div><span><strong>Task 4.2:</strong> ZIA → Policy → URL &amp; Cloud App Control → URL Filtering tab → Add <code style="font-family:monospace;font-size:12px;">Block Website</code> (News and Media, all request methods/protocols, Block) → Activate</span></li>
+              <li><div class="req-check"></div><span><strong>Task 4.2:</strong> Add <code style="font-family:monospace;font-size:12px;">Block YouTube</code> (Video Streaming, Block) → Activate</span></li>
+              <li><div class="req-check"></div><span><strong>Task 4.3:</strong> On Client PC → visit <code style="font-family:monospace;font-size:12px;">bbc.com</code> → blocked ✓ · visit <code style="font-family:monospace;font-size:12px;">youtube.com</code> → blocked ✓</span></li>
+              <li><div class="req-check"></div><span><strong>Task 4.4:</strong> Cloud App Control tab → Add → Streaming Media → configure <code style="font-family:monospace;font-size:12px;">Allow YouTube</code> with Viewing/Listening: Allow, Uploading: Block → Save → Activate</span></li>
+              <li><div class="req-check"></div><span><strong>Task 4.4:</strong> Cloud App Control tab → Add → AI &amp; ML Applications → configure <code style="font-family:monospace;font-size:12px;">ChatGPT Permissions</code> with App Access: Allow, Chatting: Allow, Downloading: Block, all other actions: Block → Save → Activate</span></li>
+              <li><div class="req-check"></div><span><strong>Task 4.5:</strong> Visit <code style="font-family:monospace;font-size:12px;">youtube.com</code> → loads despite URL filter block (Cloud App Control wins) ✓ · Visit <code style="font-family:monospace;font-size:12px;">chatgpt.com</code> → type "what is cybersecurity" → responds ✓ · try to attach/upload a file → blocked ✓</span></li>
+              <li><div class="req-check"></div><span><strong>Task 4.6:</strong> Revisit <code style="font-family:monospace;font-size:12px;">securitypreview.zscaler.com</code> → rerun risk posture test → compare improved pass count vs Lab 1 baseline · revisit <code style="font-family:monospace;font-size:12px;">testmydefenses.com</code> → rerun ransomware test → compare results</span></li>
             </ul>
           </div>
 
@@ -623,7 +473,6 @@
             <span class="lab-tag tag-zia">ZIA</span>
             <span class="lab-tag tag-hard">Hard</span>
           </div>
-          <span class="lab-progress" id="prog-lab-5"></span>
           <div class="expand-icon">▾</div>
         </div>
         <div class="lab-card-body">
@@ -652,13 +501,13 @@
           <div class="challenge-block">
             <div class="challenge-label">Requirements</div>
             <ul class="requirement-list">
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 5.1:</strong> ZIA → Administration → Browser Isolation → Add Profile → configure <code style="font-family:monospace;font-size:12px;">Render Only</code> — Root Cert: Zscaler Root Certificate · Security: default · Regions: Any → Save</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 5.2:</strong> ZIA → Policy → URL &amp; Cloud App Control → URL Filtering tab → Add → configure <code style="font-family:monospace;font-size:12px;">Isolate Test</code> with Social Networking + Social Networking Adult categories, HTTP/HTTPS protocols, Chrome/Firefox/Edge/Safari user agents, Action: <strong>Isolate</strong> → Profile: Render Only → Save → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 5.3:</strong> Cloud App Control tab → Add → Social Networking → configure <code style="font-family:monospace;font-size:12px;">Social_Networking_2</code> · apps: Twitter + Reddit · User agents as required · Action: <strong>Isolate</strong> → Profile: Render Only → Save → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 5.3 verify:</strong> Visit <code style="font-family:monospace;font-size:12px;">reddit.com</code> or <code style="font-family:monospace;font-size:12px;">twitter.com</code> → opens in an isolated session (pixel stream, no copy/paste, no download)</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 5.4 pre-check:</strong> Open Incognito → visit <code style="font-family:monospace;font-size:12px;">https://work-nutjobber.store</code> → note it loads normally (no isolation yet)</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 5.4:</strong> ZIA → Policy → Secure Browsing → Smart Isolate tab → Enable <strong>"Enable AI/ML based Smart Browser Isolation"</strong> → Save → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 5.4 verify:</strong> Open Incognito again → visit <code style="font-family:monospace;font-size:12px;">https://work-nutjobber.store</code> → URL is now automatically isolated (AI/ML flagged it as suspicious)</span></li>
+              <li><div class="req-check"></div><span><strong>Task 5.1:</strong> ZIA → Administration → Browser Isolation → Add Profile → configure <code style="font-family:monospace;font-size:12px;">Render Only</code> — Root Cert: Zscaler Root Certificate · Security: default · Regions: Any → Save</span></li>
+              <li><div class="req-check"></div><span><strong>Task 5.2:</strong> ZIA → Policy → URL &amp; Cloud App Control → URL Filtering tab → Add → configure <code style="font-family:monospace;font-size:12px;">Isolate Test</code> with Social Networking + Social Networking Adult categories, HTTP/HTTPS protocols, Chrome/Firefox/Edge/Safari user agents, Action: <strong>Isolate</strong> → Profile: Render Only → Save → Activate</span></li>
+              <li><div class="req-check"></div><span><strong>Task 5.3:</strong> Cloud App Control tab → Add → Social Networking → configure <code style="font-family:monospace;font-size:12px;">Social_Networking_2</code> · apps: Twitter + Reddit · User agents as required · Action: <strong>Isolate</strong> → Profile: Render Only → Save → Activate</span></li>
+              <li><div class="req-check"></div><span><strong>Task 5.3 verify:</strong> Visit <code style="font-family:monospace;font-size:12px;">reddit.com</code> or <code style="font-family:monospace;font-size:12px;">twitter.com</code> → opens in an isolated session (pixel stream, no copy/paste, no download)</span></li>
+              <li><div class="req-check"></div><span><strong>Task 5.4 pre-check:</strong> Open Incognito → visit <code style="font-family:monospace;font-size:12px;">https://work-nutjobber.store</code> → note it loads normally (no isolation yet)</span></li>
+              <li><div class="req-check"></div><span><strong>Task 5.4:</strong> ZIA → Policy → Secure Browsing → Smart Isolate tab → Enable <strong>"Enable AI/ML based Smart Browser Isolation"</strong> → Save → Activate</span></li>
+              <li><div class="req-check"></div><span><strong>Task 5.4 verify:</strong> Open Incognito again → visit <code style="font-family:monospace;font-size:12px;">https://work-nutjobber.store</code> → URL is now automatically isolated (AI/ML flagged it as suspicious)</span></li>
             </ul>
           </div>
 
@@ -696,7 +545,6 @@
             <span class="lab-tag tag-zia">ZIA</span>
             <span class="lab-tag tag-hard">Hard</span>
           </div>
-          <span class="lab-progress" id="prog-lab-6"></span>
           <div class="expand-icon">▾</div>
         </div>
         <div class="lab-card-body">
@@ -724,15 +572,15 @@
           <div class="challenge-block">
             <div class="challenge-label">Requirements</div>
             <ul class="requirement-list">
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 6.1–6.2:</strong> On Corp: Win Svr 2016 → ZPA Portal → copy OnPrem provisioning key → save to Desktop as <code style="font-family:monospace;font-size:12px;">provision_key</code> in Notepad (use quotes to prevent .txt extension)</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 6.2:</strong> On Corp: ZPA Connector VM → <code style="font-family:monospace;font-size:12px;">sudo systemctl start sshd</code> → from Win Svr: WinSCP session <strong>ZPA Connector</strong> (10.0.0.2) → upload provision_key to <code style="font-family:monospace;font-size:12px;">/home/admin/</code> → close WinSCP → stop sshd</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 6.2:</strong> On ZPA Connector: <code style="font-family:monospace;font-size:12px;">sudo systemctl stop zpa-connector</code> → <code style="font-family:monospace;font-size:12px;">sudo cp provision_key /opt/zscaler/var/</code> → <code style="font-family:monospace;font-size:12px;">sudo systemctl start zpa-connector</code> → <code style="font-family:monospace;font-size:12px;">sudo systemctl enable zpa-connector</code> → verify active in ZPA portal</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 6.3:</strong> ZPA → Resource Management → Application Management → Application Segments → Add → Name: <code style="font-family:monospace;font-size:12px;">Intranet</code> → <strong>Inspect Traffic with ZIA: Enabled</strong> → domain: <code style="font-family:monospace;font-size:12px;">intranet.patraining.safemarch.com</code> → Web Server ports → all other settings as per table → create CorpApps Segment Group → create CorpServers Server Group (Dynamic: On, App Connector: OnPrem) → Save</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 6.4:</strong> Click Edit Policy → Add Access Policy rule <code style="font-family:monospace;font-size:12px;">Allow Intranet</code> → Action: Allow Access → Criteria: Applications = Intranet → Save</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 6.4 verify:</strong> Client PC browser → <code style="font-family:monospace;font-size:12px;">http://intranet.patraining.safemarch.com</code> and <code style="font-family:monospace;font-size:12px;">https://intranet.patraining.safemarch.com</code> → both load</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 6.5:</strong> ZIA → Policy → Forwarding Control → find <strong>ZIA Inspected ZPA App</strong> row → click pencil icon → change Status to <strong>Enabled</strong> → Save → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 6.5:</strong> ZIA → Policy → SSL Inspection → click <code style="font-family:monospace;font-size:12px;">Enable SSL</code> rule → scroll to Action section → Untrusted Server Certificates: <strong>Allow</strong> → Save → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 6.5 verify:</strong> Client PC → <code style="font-family:monospace;font-size:12px;">http://intranet.patraining.safemarch.com</code> loads → ZPA Portal → Analytics → Diagnostics → Add Filters → select <strong>ZIA Inspection</strong> → Apply → confirm ZIA Inspected connections visible</span></li>
+              <li><div class="req-check"></div><span><strong>Task 6.1–6.2:</strong> On Corp: Win Svr 2016 → ZPA Portal → copy OnPrem provisioning key → save to Desktop as <code style="font-family:monospace;font-size:12px;">provision_key</code> in Notepad (use quotes to prevent .txt extension)</span></li>
+              <li><div class="req-check"></div><span><strong>Task 6.2:</strong> On Corp: ZPA Connector VM → <code style="font-family:monospace;font-size:12px;">sudo systemctl start sshd</code> → from Win Svr: WinSCP session <strong>ZPA Connector</strong> (10.0.0.2) → upload provision_key to <code style="font-family:monospace;font-size:12px;">/home/admin/</code> → close WinSCP → stop sshd</span></li>
+              <li><div class="req-check"></div><span><strong>Task 6.2:</strong> On ZPA Connector: <code style="font-family:monospace;font-size:12px;">sudo systemctl stop zpa-connector</code> → <code style="font-family:monospace;font-size:12px;">sudo cp provision_key /opt/zscaler/var/</code> → <code style="font-family:monospace;font-size:12px;">sudo systemctl start zpa-connector</code> → <code style="font-family:monospace;font-size:12px;">sudo systemctl enable zpa-connector</code> → verify active in ZPA portal</span></li>
+              <li><div class="req-check"></div><span><strong>Task 6.3:</strong> ZPA → Resource Management → Application Management → Application Segments → Add → Name: <code style="font-family:monospace;font-size:12px;">Intranet</code> → <strong>Inspect Traffic with ZIA: Enabled</strong> → domain: <code style="font-family:monospace;font-size:12px;">intranet.patraining.safemarch.com</code> → Web Server ports → all other settings as per table → create CorpApps Segment Group → create CorpServers Server Group (Dynamic: On, App Connector: OnPrem) → Save</span></li>
+              <li><div class="req-check"></div><span><strong>Task 6.4:</strong> Click Edit Policy → Add Access Policy rule <code style="font-family:monospace;font-size:12px;">Allow Intranet</code> → Action: Allow Access → Criteria: Applications = Intranet → Save</span></li>
+              <li><div class="req-check"></div><span><strong>Task 6.4 verify:</strong> Client PC browser → <code style="font-family:monospace;font-size:12px;">http://intranet.patraining.safemarch.com</code> and <code style="font-family:monospace;font-size:12px;">https://intranet.patraining.safemarch.com</code> → both load</span></li>
+              <li><div class="req-check"></div><span><strong>Task 6.5:</strong> ZIA → Policy → Forwarding Control → find <strong>ZIA Inspected ZPA App</strong> row → click pencil icon → change Status to <strong>Enabled</strong> → Save → Activate</span></li>
+              <li><div class="req-check"></div><span><strong>Task 6.5:</strong> ZIA → Policy → SSL Inspection → click <code style="font-family:monospace;font-size:12px;">Enable SSL</code> rule → scroll to Action section → Untrusted Server Certificates: <strong>Allow</strong> → Save → Activate</span></li>
+              <li><div class="req-check"></div><span><strong>Task 6.5 verify:</strong> Client PC → <code style="font-family:monospace;font-size:12px;">http://intranet.patraining.safemarch.com</code> loads → ZPA Portal → Analytics → Diagnostics → Add Filters → select <strong>ZIA Inspection</strong> → Apply → confirm ZIA Inspected connections visible</span></li>
             </ul>
           </div>
 
@@ -771,7 +619,6 @@
             <span class="lab-tag tag-sdc">SDC (7.3)</span>
             <span class="lab-tag tag-medium">Medium</span>
           </div>
-          <span class="lab-progress" id="prog-lab-7"></span>
           <div class="expand-icon">▾</div>
         </div>
         <div class="lab-card-body">
@@ -801,10 +648,10 @@
           <div class="challenge-block">
             <div class="challenge-label">Requirements</div>
             <ul class="requirement-list">
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 7.1:</strong> ZIA → Policy → Sandbox → Add Sandbox Rule → configure <code style="font-family:monospace;font-size:12px;">Catch-all</code> with all file types, all categories, all protocols, First-Time: Quarantine, Subsequent: Block → Save → Activate</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 7.2:</strong> ZIA → Administration → Alerts → Define Alerts tab → Add Alert Definition → click Alert Name field → select <strong>Sandbox Malware</strong> → leave other fields at default → Save</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 7.2:</strong> Publish Alerts tab → Add Alert Subscription → enter one or more email addresses → enable <strong>Critical</strong> under Security Alerts → Save</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 7.2:</strong> Trigger sandbox: visit the test URL above with the provided credentials → wait for Sandbox analysis to complete → check email for the Sandbox Malware alert within a few minutes</span></li>
+              <li><div class="req-check"></div><span><strong>Task 7.1:</strong> ZIA → Policy → Sandbox → Add Sandbox Rule → configure <code style="font-family:monospace;font-size:12px;">Catch-all</code> with all file types, all categories, all protocols, First-Time: Quarantine, Subsequent: Block → Save → Activate</span></li>
+              <li><div class="req-check"></div><span><strong>Task 7.2:</strong> ZIA → Administration → Alerts → Define Alerts tab → Add Alert Definition → click Alert Name field → select <strong>Sandbox Malware</strong> → leave other fields at default → Save</span></li>
+              <li><div class="req-check"></div><span><strong>Task 7.2:</strong> Publish Alerts tab → Add Alert Subscription → enter one or more email addresses → enable <strong>Critical</strong> under Security Alerts → Save</span></li>
+              <li><div class="req-check"></div><span><strong>Task 7.2:</strong> Trigger sandbox: visit the test URL above with the provided credentials → wait for Sandbox analysis to complete → check email for the Sandbox Malware alert within a few minutes</span></li>
             </ul>
           </div>
 
@@ -814,10 +661,10 @@
               <strong>SDC Tenant required.</strong> Switch to <code style="font-family:monospace;font-size:12px;">https://sdc.zslogin.net</code> using your ZIA Admin credentials. Your own tenant won't have enough sandbox activity data for a meaningful report.
             </div>
             <ul class="requirement-list">
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>ZIA (SDC) → Analytics → Sandbox Activity Report → explore the graphs → check quarantined vs malicious file counts</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>Dropdown → select <strong>Sandbox Files found Malicious</strong> → review list including File Type and Threat Name → click a Threat Name to open the Zscaler Threat Library</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>Click a file's unique MD5 value → select <strong>View Sandbox Detail Report</strong> → explore forensic details: registry keys changed, network connections initiated, files read</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span>ZIA (SDC) → Analytics → Web Insights → Logs tab → Add Filter → Sandbox → select all Sandbox options → Apply Filters → scroll through log details</span></li>
+              <li><div class="req-check"></div><span>ZIA (SDC) → Analytics → Sandbox Activity Report → explore the graphs → check quarantined vs malicious file counts</span></li>
+              <li><div class="req-check"></div><span>Dropdown → select <strong>Sandbox Files found Malicious</strong> → review list including File Type and Threat Name → click a Threat Name to open the Zscaler Threat Library</span></li>
+              <li><div class="req-check"></div><span>Click a file's unique MD5 value → select <strong>View Sandbox Detail Report</strong> → explore forensic details: registry keys changed, network connections initiated, files read</span></li>
+              <li><div class="req-check"></div><span>ZIA (SDC) → Analytics → Web Insights → Logs tab → Add Filter → Sandbox → select all Sandbox options → Apply Filters → scroll through log details</span></li>
             </ul>
           </div>
 
@@ -844,7 +691,6 @@
             <span class="lab-tag tag-sdc">SDC Tenant</span>
             <span class="lab-tag tag-medium">Medium</span>
           </div>
-          <span class="lab-progress" id="prog-lab-8"></span>
           <div class="expand-icon">▾</div>
         </div>
         <div class="lab-card-body">
@@ -860,13 +706,13 @@
           <div class="challenge-block">
             <div class="challenge-label">Requirements</div>
             <ul class="requirement-list">
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 8.1:</strong> Log out of ZCC → log in with <strong>MKT_department_username</strong> and Session_Password from SDC credentials</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 8.1:</strong> Open a browser → visit one of the public decoys: <code style="font-family:monospace;font-size:12px;">http://wordpress.thezerotrustexchange.com</code> or <code style="font-family:monospace;font-size:12px;">http://helpdesk.thezerotrustexchange.com</code></span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 8.1:</strong> Enter a trackable username (e.g. <code style="font-family:monospace;font-size:12px;">sdcuser_yourname</code>) and any password → click Sign On → page clears and prompts again (expected — that's the decoy recording the attempt)</span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 8.2:</strong> SDC portal → Deception tile → Investigate → ThreatParse → set timeframe to <strong>Last 10 minutes</strong></span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 8.2:</strong> In the Investigate bar, search: <code style="font-family:monospace;font-size:12px;">decoy.name is "wordpress.thezerotrustexchange.com"</code> (substitute the decoy you visited) → press Enter → also try queries: <code style="font-family:monospace;font-size:12px;">web.method</code>, <code style="font-family:monospace;font-size:12px;">web.host</code>, <code style="font-family:monospace;font-size:12px;">web.request</code></span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 8.2:</strong> Click an attacker entry → view Event Summary panel → click <strong>View Extended Details</strong></span></li>
-              <li onclick="toggleReqRow(this)"><div class="req-check"></div><span><strong>Task 8.2:</strong> Click <strong>Event Logs</strong> tab → sort/search by <code style="font-family:monospace;font-size:12px;">recon post_data user</code> → find the username you submitted in the decoy → click that entry for full details</span></li>
+              <li><div class="req-check"></div><span><strong>Task 8.1:</strong> Log out of ZCC → log in with <strong>MKT_department_username</strong> and Session_Password from SDC credentials</span></li>
+              <li><div class="req-check"></div><span><strong>Task 8.1:</strong> Open a browser → visit one of the public decoys: <code style="font-family:monospace;font-size:12px;">http://wordpress.thezerotrustexchange.com</code> or <code style="font-family:monospace;font-size:12px;">http://helpdesk.thezerotrustexchange.com</code></span></li>
+              <li><div class="req-check"></div><span><strong>Task 8.1:</strong> Enter a trackable username (e.g. <code style="font-family:monospace;font-size:12px;">sdcuser_yourname</code>) and any password → click Sign On → page clears and prompts again (expected — that's the decoy recording the attempt)</span></li>
+              <li><div class="req-check"></div><span><strong>Task 8.2:</strong> SDC portal → Deception tile → Investigate → ThreatParse → set timeframe to <strong>Last 10 minutes</strong></span></li>
+              <li><div class="req-check"></div><span><strong>Task 8.2:</strong> In the Investigate bar, search: <code style="font-family:monospace;font-size:12px;">decoy.name is "wordpress.thezerotrustexchange.com"</code> (substitute the decoy you visited) → press Enter → also try queries: <code style="font-family:monospace;font-size:12px;">web.method</code>, <code style="font-family:monospace;font-size:12px;">web.host</code>, <code style="font-family:monospace;font-size:12px;">web.request</code></span></li>
+              <li><div class="req-check"></div><span><strong>Task 8.2:</strong> Click an attacker entry → view Event Summary panel → click <strong>View Extended Details</strong></span></li>
+              <li><div class="req-check"></div><span><strong>Task 8.2:</strong> Click <strong>Event Logs</strong> tab → sort/search by <code style="font-family:monospace;font-size:12px;">recon post_data user</code> → find the username you submitted in the decoy → click that entry for full details</span></li>
             </ul>
           </div>
 
@@ -892,6 +738,16 @@
 <div class="sidebar">
 
   <div class="sidebar-section">
+    <div class="sidebar-label">STUDENT FQDN</div>
+    <div class="fqdn-widget">
+      <input id="fqdn-input" class="fqdn-input" type="text" placeholder="zs1234.safemarch.com" autocomplete="off" spellcheck="false" onkeydown="if(event.key==='Enter')applyFQDN()">
+      <button class="fqdn-btn" id="fqdn-apply-btn" onclick="applyFQDN()">Apply</button>
+      <button class="fqdn-edit-btn" id="fqdn-edit-btn" onclick="editFQDN()" style="display:none;">Edit</button>
+    </div>
+    <div class="fqdn-status" id="fqdn-status"></div>
+  </div>
+
+    <div class="sidebar-section">
     <div class="sidebar-label">LAB COMPLETION</div>
     <div class="progress-bar-track" style="margin-bottom:8px;">
       <div class="progress-bar-fill" id="sidebar-progress-fill"></div>
@@ -971,7 +827,7 @@
 </main>
 
 <footer>
-  <div class="footer-left">ZDDC<span>.</span></div>
+  <div class="footer-left">ZDTE<span>.</span></div>
   <div class="footer-right">EDU-230 · Cyberthreat Protection · Lab Challenge Guide</div>
 </footer>
 
@@ -986,71 +842,197 @@
     }
   }
 
-  function toggleLab(id) {
-    document.getElementById(id).classList.toggle('open');
-    updateLabProgress(id);
+  function applyFQDN() {
+    const input    = document.getElementById('fqdn-input');
+    const status   = document.getElementById('fqdn-status');
+    const applyBtn = document.getElementById('fqdn-apply-btn');
+    const editBtn  = document.getElementById('fqdn-edit-btn');
+    const fqdn     = input.value.trim();
+    if (!fqdn) { input.focus(); return; }
+
+    let count = 0;
+    const walker = document.createTreeWalker(document.querySelector('main'), NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    let node;
+    while ((node = walker.nextNode())) {
+      if (node.textContent.includes('<StudentFQDN>')) nodes.push(node);
+    }
+    nodes.forEach(n => { n.textContent = n.textContent.replace(/<StudentFQDN>/g, fqdn); count++; });
+    document.querySelectorAll('code').forEach(el => {
+      if (el.textContent.includes('<StudentFQDN>')) { el.textContent = el.textContent.replace(/<StudentFQDN>/g, fqdn); count++; }
+    });
+
+    input.setAttribute('readonly', true);
+    input.value = fqdn;
+    applyBtn.style.display = 'none';
+    editBtn.style.display  = '';
+    status.textContent = count > 0 ? '✓ Applied to ' + count + ' place' + (count !== 1 ? 's' : '') : '✓ Applied';
+    sessionStorage.setItem('studentFQDN', fqdn);
+  }
+
+  function editFQDN() {
+    const input    = document.getElementById('fqdn-input');
+    const applyBtn = document.getElementById('fqdn-apply-btn');
+    const editBtn  = document.getElementById('fqdn-edit-btn');
+    const status   = document.getElementById('fqdn-status');
+    input.removeAttribute('readonly');
+    applyBtn.style.display = '';
+    editBtn.style.display  = 'none';
+    status.textContent     = '';
+    input.focus();
+    input.select();
+  }
+
+  (function() {
+    const saved = sessionStorage.getItem('studentFQDN');
+    if (saved) { document.getElementById('fqdn-input').value = saved; applyFQDN(); }
+  })();
+
+  function toggleTopoCard(header) {
+    const card   = header.parentElement;
+    const isOpen = card.classList.contains('open');
+    document.querySelectorAll('#topo-grid .topo-card').forEach(c => c.classList.remove('open'));
+    if (!isOpen) card.classList.add('open');
+    syncTopoBtn();
+  }
+
+  function toggleAllTopo() {
+    const cards  = document.querySelectorAll('#topo-grid .topo-card');
+    const anyOpen = [...cards].some(c => c.classList.contains('open'));
+    cards.forEach(c => c.classList.toggle('open', !anyOpen));
+    syncTopoBtn();
+  }
+
+  function syncTopoBtn() {
+    const cards  = document.querySelectorAll('#topo-grid .topo-card');
+    const anyOpen = [...cards].some(c => c.classList.contains('open'));
+    const btn = document.getElementById('topoToggleBtn');
+    if (btn) { btn.textContent = anyOpen ? 'Collapse All' : 'Expand All'; btn.classList.toggle('expanded', anyOpen); }
+  }
+
+  document.querySelectorAll('.topo-val').forEach(el => {
+    const btn = document.createElement('button');
+    btn.className = 'copy-topo-btn';
+    btn.textContent = 'Copy';
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      navigator.clipboard.writeText(el.textContent.trim()).then(() => {
+        btn.textContent = '✓ Copied';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.textContent = 'Copy'; btn.classList.remove('copied'); }, 1500);
+      });
+    });
+    const wrap = document.createElement('span');
+    wrap.className = 'topo-val-wrap';
+    el.parentNode.insertBefore(wrap, el);
+    wrap.appendChild(el);
+    wrap.appendChild(btn);
+  });
+
+  function toggleAll() {
+    const btn   = document.getElementById('toggleAllBtn');
+    const cards = document.querySelectorAll('.lab-card');
+    const allOpen = [...cards].every(c => c.classList.contains('open'));
+    cards.forEach(c => c.classList.toggle('open', !allOpen));
+    btn.textContent = allOpen ? 'Expand All' : 'Collapse All';
+    btn.classList.toggle('expanded', !allOpen);
     updateSidebarProgress();
   }
 
-  function toggleReqRow(li) {
-    const check = li.querySelector('.req-check');
-    check.classList.toggle('checked');
-    li.classList.toggle('done', check.classList.contains('checked'));
-    const card = li.closest('.lab-card');
-    if (card) updateLabProgress(card.id);
-    updateGlobalProgress();
-  }
+  document.querySelectorAll('.lab-card').forEach(card => {
+    if (card.querySelector('.tag-hard'))        card.classList.add('difficulty-hard');
+    else if (card.querySelector('.tag-medium')) card.classList.add('difficulty-medium');
+    else if (card.querySelector('.tag-easy'))   card.classList.add('difficulty-easy');
+    else if (card.querySelector('.tag-capstone')) card.classList.add('difficulty-capstone');
+  });
 
-  function updateLabProgress(labId) {
-    const card = document.getElementById(labId);
-    if (!card) return;
+  restoreChecks();
+
+  document.querySelectorAll('.lab-card').forEach(card => {
+    const header     = card.querySelector('.lab-card-header');
+    const expandIcon = header.querySelector('.expand-icon');
+    const counter    = document.createElement('div');
+    counter.className = 'lab-progress';
+    counter.textContent = updateCardCounter(card);
+    header.insertBefore(counter, expandIcon);
+  });
+
+  updateGlobalProgress();
+  updateSidebarProgress();
+
+  function updateCardCounter(card) {
     const all  = card.querySelectorAll('.req-check').length;
     const done = card.querySelectorAll('.req-check.checked').length;
-    const prog = card.querySelector('[id^="prog-"]');
-    if (prog && all > 0) prog.textContent = done + '/' + all;
+    if (!all) return '';
+    return done === all ? '✓ Done' : `${done} / ${all}`;
+  }
+
+  function toggleLab(id) {
+    const card = document.getElementById(id);
+    card.classList.toggle('open');
+    updateSidebarProgress();
+  }
+
+  function toggleReq(el) {
+    const check = el.classList.contains('req-check') ? el : el.querySelector('.req-check');
+    if (!check) return;
+    check.classList.toggle('checked');
+    const li = check.closest('li');
+    li.classList.toggle('done', check.classList.contains('checked'));
+    const card    = check.closest('.lab-card');
+    const counter = card.querySelector('.lab-progress');
+    if (counter) counter.textContent = updateCardCounter(card);
+    updateGlobalProgress();
+    saveChecks();
+  }
+
+  document.querySelectorAll('.requirement-list li').forEach(li => {
+    li.addEventListener('click', function(e) {
+      if (!e.target.classList.contains('req-check')) toggleReq(this);
+    });
+  });
+
+  function saveChecks() {
+    const state = {};
+    document.querySelectorAll('.lab-card').forEach(card => {
+      card.querySelectorAll('.req-check').forEach((check, i) => {
+        state[card.id + '-' + i] = check.classList.contains('checked');
+      });
+    });
+    localStorage.setItem('edu230_checks', JSON.stringify(state));
+  }
+
+  function restoreChecks() {
+    const saved = localStorage.getItem('edu230_checks');
+    if (!saved) return;
+    const state = JSON.parse(saved);
+    document.querySelectorAll('.lab-card').forEach(card => {
+      card.querySelectorAll('.req-check').forEach((check, i) => {
+        const key = card.id + '-' + i;
+        if (state[key]) { check.classList.add('checked'); check.closest('li').classList.add('done'); }
+      });
+    });
   }
 
   function updateGlobalProgress() {
-    const all  = document.querySelectorAll('.req-check').length;
-    const done = document.querySelectorAll('.req-check.checked').length;
-    const pct  = all ? Math.round(done / all * 100) : 0;
+    const all  = document.querySelectorAll('.req-check');
+    const done = document.querySelectorAll('.req-check.checked');
+    const pct  = all.length ? Math.round((done.length / all.length) * 100) : 0;
     document.getElementById('global-progress-fill').style.width = pct + '%';
     document.getElementById('global-progress-pct').textContent = pct + '%';
   }
 
   function updateSidebarProgress() {
-    const total = document.querySelectorAll('.lab-card').length;
-    const open  = document.querySelectorAll('.lab-card.open').length;
-    document.getElementById('sidebar-progress-fill').style.width = (open / total * 100) + '%';
-    document.getElementById('sidebar-progress-pct').textContent = open + ' / ' + total + ' labs opened';
+    const all  = document.querySelectorAll('.req-check').length;
+    const done = document.querySelectorAll('.req-check.checked').length;
+    const pct  = all ? Math.round((done / all) * 100) : 0;
+    document.getElementById('sidebar-progress-fill').style.width = pct + '%';
+    document.getElementById('sidebar-progress-pct').textContent = done + ' / ' + all + ' requirements done';
   }
-
-  let allExpanded = false;
-  function toggleAll() {
-    const cards = document.querySelectorAll('.lab-card');
-    const btn   = document.getElementById('toggleAllBtn');
-    allExpanded = !allExpanded;
-    cards.forEach(c => { c.classList.toggle('open', allExpanded); if (c.id) updateLabProgress(c.id); });
-    btn.textContent = allExpanded ? 'Collapse All' : 'Expand All';
-    btn.classList.toggle('expanded', allExpanded);
-    updateSidebarProgress();
-  }
-
-  let topoExpanded = false;
-  function toggleAllTopo() {
-    const cards = document.querySelectorAll('#topo-grid .topo-card');
-    const btn   = document.getElementById('topoToggleBtn');
-    topoExpanded = !topoExpanded;
-    cards.forEach(c => c.classList.toggle('open', topoExpanded));
-    btn.textContent = topoExpanded ? 'Collapse All' : 'Expand All';
-    btn.classList.toggle('expanded', topoExpanded);
-  }
-
-  function toggleTopoCard(header) { header.parentElement.classList.toggle('open'); }
 
   window.addEventListener('scroll', () => {
     const sections = ['section-overview','section-labs-1','section-labs-2','section-labs-3','section-labs-4','section-labs-5'];
-    const tabs = document.querySelectorAll('.nav-tab');
+    const tabs   = document.querySelectorAll('.nav-tab');
     const offset = document.querySelector('.section-nav').offsetHeight + 32;
     let active = 0;
     sections.forEach((id, i) => {

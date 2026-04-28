@@ -39,7 +39,8 @@ Static HTML study site for the Zscaler Digital Transformation Engineer (ZDTE) ce
 ├── lab-challenges/             # Lab challenge pages + lab-challenges.css (blue/navy scheme)
 │   ├── lab-challenges.css      # Shared CSS (blue/navy) — used by lab challenges AND blue-scheme study bites
 │   ├── edu-200.html
-│   └── edu-202.html
+│   ├── edu-202.html
+│   └── edu-230.html
 ├── notebooklm/                 # NotebookLM episode cards
 │   └── index.html
 ├── sort/                       # Drop files here to be sorted — cleared on each sort
@@ -233,6 +234,6 @@ Domain tag classes: `.tag-zia` `.tag-zpa` `.tag-zdx` `.tag-arch` `.tag-rev` `.ta
 | Study bites | 5 | All cream/orange scheme |
 | Memory palaces | 5 | GET+POST · Response Flow · DLP · ZDX Hospital · Identity Airport · ITDR |
 | Mock exam reviews | 4 | Days 02, 04, 06, 08 |
-| Lab challenges | 2 | EDU-200 · EDU-202 |
+| Lab challenges | 3 | EDU-200 · EDU-202 · EDU-230 |
 | Study days complete | 10 | Day 11 in progress |
 | Exam date | 2 May 2026 | Saturday |
