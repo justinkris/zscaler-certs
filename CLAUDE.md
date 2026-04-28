@@ -18,11 +18,9 @@ Static HTML study site for the Zscaler Digital Transformation Engineer (ZDTE) ce
 ├── mock-exams.html             # Index of mock exams
 ├── lab-challenges.html         # Index of lab challenges
 │
-├── bite.css                    # Shared CSS for study bites (cream/orange scheme)
-├── nibble.css                  # Shared CSS for study nibbles (cream/orange scheme)
-├── study-guide.css             # Shared CSS for study guides (cream/orange scheme)
 │
 ├── study-guides/               # Day-by-day study guides — naming: day-0X-<topic>.html
+│   ├── study-guide.css         # Shared CSS for study guides (cream/orange scheme)
 │   ├── day-01-architecture-identity.html
 │   ├── day-02-mock-exam-1.html
 │   ├── day-03-connectivity.html
@@ -33,9 +31,11 @@ Static HTML study site for the Zscaler Digital Transformation Engineer (ZDTE) ce
 │   ├── day-08-zdx-automation.html
 │   └── mock-exam-2-review.html
 ├── study-nibbles/              # Quick-reference nibbles (nibble-*.html)
+│   └── nibble.css              # Shared CSS for study nibbles (cream/orange scheme)
 ├── memory-palaces/             # Memory palace pages + palace.css
 ├── mock-exams/                 # Mock exam review pages
 ├── study-bites/                # Individual study bites
+│   └── bite.css                # Shared CSS for study bites (cream/orange scheme)
 ├── lab-challenges/             # Lab challenge pages + lab-challenges.css (blue/navy scheme)
 │   ├── lab-challenges.css      # Shared CSS (blue/navy) — used by lab challenges AND blue-scheme study bites
 │   ├── edu-200.html
@@ -187,9 +187,9 @@ Image paths from sub-pages use `../images/…`
 
 | File | Used by | Scheme |
 |---|---|---|
-| `bite.css` | Study bites (cream/orange pages) | Cream/orange |
-| `nibble.css` | Study nibbles — link with `../nibble.css` from sub-pages | Cream/orange |
-| `study-guide.css` | Study guides | Cream/orange |
+| `study-bites/bite.css` | Study bites (cream/orange pages) | Cream/orange |
+| `study-nibbles/nibble.css` | Study nibbles | Cream/orange |
+| `study-guides/study-guide.css` | Study guides (mock-exams link via `../study-guides/study-guide.css`) | Cream/orange |
 | `memory-palaces/palace.css` | Memory palaces | Cream/orange |
 | `lab-challenges/lab-challenges.css` | Lab challenges, blue-scheme study bites | Blue/navy |
 

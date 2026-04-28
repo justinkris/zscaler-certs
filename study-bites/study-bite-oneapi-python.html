@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Study Bite — Zscaler OneAPI in Python</title>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=Epilogue:wght@300;400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../bite.css">
+<link rel="stylesheet" href="bite.css">
 <style>
   /* ── MISSING LAYOUT VARS (bite.css uses cream/orange tokens) ── */
   :root {
@@ -70,11 +70,23 @@
   }
   .quick-ref { background: var(--ink); border-radius: 12px; padding: 14px 16px; margin-bottom: 10px; }
   .quick-ref-term { font-size: 11px; font-weight: 600; color: var(--orange); letter-spacing: 0.06em; margin-bottom: 4px; }
-  .quick-ref-def  { font-size: 12px; color: #7a6a55; line-height: 1.6; }
-  .quick-ref code { background: rgba(255,107,53,0.15); border-color: rgba(255,107,53,0.3); color: #ff8c5a; }
+  .quick-ref-def  { font-size: 12px; color: #9a8070; line-height: 1.6; }
+  .quick-ref code { background: rgba(255,107,53,0.15); border-color: rgba(255,107,53,0.28); color: #ff9060; font-size: 11px; }
   .subtopic-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
   .subtopic-list li { display: flex; align-items: flex-start; gap: 8px; font-size: 12px; color: var(--ink-soft); padding: 6px 0; border-bottom: 1px solid var(--border); line-height: 1.5; }
   .subtopic-list li:last-child { border-bottom: none; }
+
+  /* ── STATUS TABLE ── */
+  .status-table { width: 100%; border-collapse: collapse; font-size: 13px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border); box-shadow: 0 1px 4px rgba(26,18,9,0.06); }
+  .status-table thead tr { background: var(--ink); }
+  .status-table th { padding: 10px 16px; text-align: left; color: rgba(255,255,255,0.55); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase; font-weight: 600; border: none; }
+  .status-table td { padding: 11px 16px; border-bottom: 1px solid var(--border); color: var(--ink-soft); vertical-align: top; line-height: 1.55; }
+  .status-table td:first-child { font-weight: 700; white-space: nowrap; }
+  .status-table tbody tr:last-child td { border-bottom: none; }
+  .status-table tbody tr:nth-child(even) td { background: var(--cream-dark); }
+  .status-table .s-ok   { color: var(--green); }
+  .status-table .s-warn { color: #c27c00; }
+  .status-table .s-err  { color: var(--red); }
 
   /* ── FOOTER ── */
   footer { padding: 20px 60px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: var(--cream-dark); }
@@ -92,20 +104,20 @@
   ic { display: inline; font-style: normal; }
 
   /* ── CODE BLOCKS (dark — intentional contrast on cream page) ── */
-  .code-block { background: #1a1209; border-radius: 12px; overflow: hidden; margin: 0; border: 1px solid rgba(255,107,53,0.12); }
+  .code-block { background: #120d08; border-radius: 12px; overflow: hidden; margin: 0; border: 1px solid rgba(255,107,53,0.22); box-shadow: 0 2px 12px rgba(26,18,9,0.12); }
   .code-block-header {
     display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 18px; background: rgba(255,255,255,0.04);
-    border-bottom: 1px solid rgba(255,107,53,0.08);
+    padding: 10px 18px; background: rgba(255,107,53,0.07);
+    border-bottom: 1px solid rgba(255,107,53,0.18);
   }
   .code-lang { font-size: 10px; letter-spacing: 0.14em; font-weight: 700; color: #ff9060; text-transform: uppercase; }
   .copy-btn {
     font-size: 10px; font-family: 'Epilogue', sans-serif; font-weight: 600;
     letter-spacing: 0.06em; padding: 3px 10px; border-radius: 6px; cursor: pointer;
-    background: rgba(255,107,53,0.12); color: #ff9060; border: 1px solid rgba(255,107,53,0.25);
+    background: rgba(255,107,53,0.14); color: #ff9060; border: 1px solid rgba(255,107,53,0.3);
     transition: background 0.15s, color 0.15s;
   }
-  .copy-btn:hover { background: rgba(255,107,53,0.22); color: #ffd0b8; }
+  .copy-btn:hover { background: rgba(255,107,53,0.28); color: #ffd0b8; }
   .copy-btn.copied { background: rgba(134,239,172,0.15); color: #86efac; border-color: rgba(134,239,172,0.3); }
   pre {
     margin: 0; padding: 18px 20px; overflow-x: auto;
@@ -126,11 +138,11 @@
   .t-warn    { color: #fb923c; font-weight: 700; }
 
   /* ── FLOW DIAGRAM ── */
-  .flow-step { flex: 1; background: var(--cream-dark); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
+  .flow-step { background: var(--cream-dark); border-radius: 10px; padding: 14px 16px; box-shadow: 0 1px 4px rgba(26,18,9,0.08), 0 0 0 1px rgba(26,18,9,0.04); }
   .flow-step-num   { font-family: 'Fraunces', serif; font-size: 11px; font-weight: 700; color: var(--ink-muted); letter-spacing: 0.1em; margin-bottom: 5px; }
   .flow-step-title { font-family: 'Fraunces', serif; font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 4px; line-height: 1.2; }
   .flow-step-desc  { font-size: 12px; color: var(--ink-muted); line-height: 1.5; }
-  .flow-arrow { display: flex; align-items: center; padding: 0 8px; font-size: 18px; color: var(--border); flex-shrink: 0; align-self: center; }
+  .flow-arrow { display: flex; align-items: center; padding: 0 8px; font-size: 18px; color: var(--ink-muted); flex-shrink: 0; align-self: center; }
   .flow-grid {
     display: grid; grid-template-columns: 1fr 24px 1fr 24px 1fr 24px 1fr 24px 1fr;
     gap: 0; align-items: center; margin-bottom: 0;
@@ -141,15 +153,32 @@
   }
 
   /* ── ANNOTATED LINES ── */
-  .annotated-block { display: flex; flex-direction: column; gap: 0; border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-  .anno-row { display: grid; grid-template-columns: 1fr 1fr; border-bottom: 1px solid var(--border-dim); }
-  .anno-row:last-child { border-bottom: none; }
-  .anno-code { background: #1a1209; padding: 12px 16px; border-right: 1px solid rgba(255,107,53,0.1); font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.7; color: #e8ddd0; }
-  .anno-note { background: var(--cream-dark); padding: 12px 16px; font-size: 12.5px; color: var(--ink-soft); line-height: 1.6; display: flex; align-items: flex-start; gap: 8px; }
-  .anno-note-icon { font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+  .annotated-block {
+    display: flex; flex-direction: column; gap: 0;
+    border: 1px solid var(--border); border-top: 3px solid var(--orange);
+    border-radius: 0 0 12px 12px; overflow: hidden;
+    box-shadow: 0 2px 8px rgba(26,18,9,0.06);
+  }
+  .anno-row { display: grid; grid-template-columns: 2fr 3fr; }
+  .anno-code {
+    background: #1a1209; padding: 13px 18px;
+    border-right: 2px solid rgba(255,107,53,0.18);
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+    font-family: 'Courier New', monospace; font-size: 12.5px; line-height: 1.75; color: #e8ddd0;
+  }
+  .anno-row:last-child .anno-code { border-bottom: none; }
+  .anno-note {
+    background: #fff; padding: 13px 18px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px; color: var(--ink-soft); line-height: 1.65;
+    display: flex; align-items: flex-start; gap: 10px;
+  }
+  .anno-row:last-child .anno-note { border-bottom: none; }
+  .anno-note code { background: rgba(26,18,9,0.05); border-color: rgba(26,18,9,0.12); color: var(--ink-soft); }
+  .anno-note-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
   @media (max-width: 700px) {
     .anno-row { grid-template-columns: 1fr; }
-    .anno-code { border-right: none; border-bottom: 1px solid rgba(255,107,53,0.1); }
+    .anno-code { border-right: none; border-bottom: 2px solid rgba(255,107,53,0.18); }
   }
 
   /* ── API CALL CARDS ── */
@@ -245,7 +274,7 @@
     <div class="breadcrumb">
       <a href="../index.html">Study Plan</a>
       <span class="breadcrumb-sep">›</span>
-      <a href="../study-bites.html">Study Bites</a>
+      <a href="index.html">Study Bites</a>
       <span class="breadcrumb-sep">›</span>
       <span>OneAPI in Python</span>
     </div>
@@ -268,12 +297,12 @@
         <div class="hint">hover to explore</div>
       </div>
       <div class="nav-hub-dropdown">
-        <a class="nav-hub-item" href="../study-guides.html"><span class="nav-icon">📖</span> STUDY GUIDES</a>
-        <a class="nav-hub-item" href="../memory-palaces.html"><span class="nav-icon">🧠</span> MEMORY PALACES</a>
-        <a class="nav-hub-item" href="../study-bites.html"><span class="nav-icon">🍐</span> STUDY BITES</a>
-        <a class="nav-hub-item" href="../study-nibbles.html"><span class="nav-icon">🍔</span> STUDY NIBBLES</a>
-        <a class="nav-hub-item" href="../mock-exams.html"><span class="nav-icon">📋</span> MOCK EXAMS</a>
-        <a class="nav-hub-item" href="../lab-challenges.html"><span class="nav-icon">⚗️</span> LAB CHALLENGES</a>
+        <a class="nav-hub-item" href="../study-guides/index.html"><span class="nav-icon">📖</span> STUDY GUIDES</a>
+        <a class="nav-hub-item" href="../memory-palaces/index.html"><span class="nav-icon">🧠</span> MEMORY PALACES</a>
+        <a class="nav-hub-item" href="index.html"><span class="nav-icon">🍐</span> STUDY BITES</a>
+        <a class="nav-hub-item" href="../study-nibbles/index.html"><span class="nav-icon">🍔</span> STUDY NIBBLES</a>
+        <a class="nav-hub-item" href="../mock-exams/index.html"><span class="nav-icon">📋</span> MOCK EXAMS</a>
+        <a class="nav-hub-item" href="../lab-challenges/index.html"><span class="nav-icon">⚗️</span> LAB CHALLENGES</a>
       </div>
     </div>
   </div>
@@ -844,21 +873,21 @@ rule     <span class="t-op">=</span> POST /zia/.../urlFilteringRules        <spa
 
     <div class="bite-section">
       <div class="bite-section-label">HTTP status codes you'll see</div>
-      <table style="width:100%;border-collapse:collapse;font-size:13px;border-radius:10px;overflow:hidden;border:1px solid var(--border);">
+      <table class="status-table">
         <thead>
-          <tr style="background:var(--text);">
-            <th style="padding:9px 14px;text-align:left;color:rgba(255,255,255,0.7);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;">Code</th>
-            <th style="padding:9px 14px;text-align:left;color:rgba(255,255,255,0.7);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;">Meaning</th>
-            <th style="padding:9px 14px;text-align:left;color:rgba(255,255,255,0.7);font-size:10px;letter-spacing:0.12em;text-transform:uppercase;">What to do</th>
+          <tr>
+            <th>Code</th>
+            <th>Meaning</th>
+            <th>What to do</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--green);font-weight:700;">200 OK</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-soft);">Success — resource returned or updated</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-soft);">Parse the JSON body</td></tr>
-          <tr style="background:var(--surface-2);"><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--green);font-weight:700;">201 Created</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-soft);">Resource created successfully</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-soft);">New object's <code>id</code> is in the response body</td></tr>
-          <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--amber);font-weight:700;">400 Bad Request</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-soft);">Malformed body or missing required field</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-soft);">Check JSON body — often a missing field like <code>protocols</code></td></tr>
-          <tr style="background:var(--surface-2);"><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--red);font-weight:700;">401 Unauthorized</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-soft);">Token missing, expired, or invalid</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-soft);">Re-run get_access_token() to get a fresh token</td></tr>
-          <tr><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--red);font-weight:700;">403 Forbidden</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-soft);">Token valid but insufficient scope/permission</td><td style="padding:10px 14px;border-bottom:1px solid var(--border);color:var(--text-soft);">Check API Client has the correct ZIA/ZPA resource scope in ZIdentity</td></tr>
-          <tr style="background:var(--surface-2);"><td style="padding:10px 14px;color:var(--red);font-weight:700;">404 Not Found</td><td style="padding:10px 14px;color:var(--text-soft);">Wrong URL or Customer ID</td><td style="padding:10px 14px;color:var(--text-soft);">Double-check the base URL and customer ID in CONFIG</td></tr>
+          <tr><td class="s-ok">200 OK</td><td>Success — resource returned or updated</td><td>Parse the JSON body</td></tr>
+          <tr><td class="s-ok">201 Created</td><td>Resource created successfully</td><td>New object's <code>id</code> is in the response body</td></tr>
+          <tr><td class="s-warn">400 Bad Request</td><td>Malformed body or missing required field</td><td>Check JSON body — often a missing field like <code>protocols</code></td></tr>
+          <tr><td class="s-err">401 Unauthorized</td><td>Token missing, expired, or invalid</td><td>Re-run get_access_token() to get a fresh token</td></tr>
+          <tr><td class="s-err">403 Forbidden</td><td>Token valid but insufficient scope/permission</td><td>Check API Client has the correct ZIA/ZPA resource scope in ZIdentity</td></tr>
+          <tr><td class="s-err">404 Not Found</td><td>Wrong URL or Customer ID</td><td>Double-check the base URL and customer ID in CONFIG</td></tr>
         </tbody>
       </table>
     </div>
@@ -905,12 +934,12 @@ rule     <span class="t-op">=</span> POST /zia/.../urlFilteringRules        <spa
 
   <div class="sidebar-section">
     <div class="sidebar-label">SCRIPT COMMANDS</div>
-    <div style="background:var(--text);border-radius:10px;padding:14px 16px;font-family:'Courier New',monospace;font-size:11px;line-height:2;color:#e2f0ff;">
-      <div style="color:#64748b;"># install dependency</div>
+    <div style="background:var(--ink);border-radius:10px;padding:14px 16px;font-family:'Courier New',monospace;font-size:11px;line-height:2;color:#e8ddd0;">
+      <div style="color:#7a6a55;"># install dependency</div>
       <div>pip install <span style="color:#86efac;">requests</span></div>
-      <div style="color:#64748b;margin-top:6px;"># run all tasks</div>
-      <div>python3 <span style="color:#7dd3fc;">zscaler_oneapi.py</span></div>
-      <div style="color:#64748b;margin-top:6px;"># specific tasks</div>
+      <div style="color:#7a6a55;margin-top:6px;"># run all tasks</div>
+      <div>python3 <span style="color:#ff9060;">zscaler_oneapi.py</span></div>
+      <div style="color:#7a6a55;margin-top:6px;"># specific tasks</div>
       <div>python3 zscaler_oneapi.py \</div>
       <div>&nbsp;&nbsp;--task <span style="color:#fcd34d;">devices</span></div>
       <div>&nbsp;&nbsp;--task <span style="color:#fcd34d;">connector_group</span></div>
@@ -945,7 +974,7 @@ rule     <span class="t-op">=</span> POST /zia/.../urlFilteringRules        <spa
 </main>
 
 <footer>
-  <div class="footer-left">ZDDC<span>.</span></div>
+  <div class="footer-left">ZDTE<span>.</span></div>
   <div class="footer-right">Study Bite · Zscaler OneAPI in Python · EDU-202 Labs 15 &amp; 16.5</div>
 </footer>
 

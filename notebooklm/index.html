@@ -45,6 +45,11 @@
   .episode-chevron { font-size: 14px; color: #7a6a55; transition: transform 0.2s; flex-shrink: 0; }
   .episode-card.open .episode-chevron { transform: rotate(90deg); }
 
+  .toggle-all-btn { background: transparent; color: var(--orange); border: 1px solid rgba(255,107,53,0.4); padding: 7px 18px; border-radius: 20px; font-size: 11px; letter-spacing: 0.06em; font-weight: 600; cursor: pointer; font-family: 'Epilogue', sans-serif; transition: background 0.15s, color 0.15s; }
+  .toggle-all-btn:hover { background: var(--orange); color: #fff; }
+  .episode-list-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+  .episode-list-label { font-size: 10px; letter-spacing: 0.18em; color: var(--ink-muted); font-weight: 600; }
+
   .episode-body { display: none; padding: 24px; }
   .episode-card.open .episode-body { display: block; }
 
@@ -103,12 +108,12 @@
         <div class="hint">hover to explore</div>
       </div>
       <div class="nav-hub-dropdown">
-        <a class="nav-hub-item" href="../study-guides.html"><span class="nav-icon">📖</span> STUDY GUIDES</a>
-        <a class="nav-hub-item" href="../memory-palaces.html"><span class="nav-icon">🧠</span> MEMORY PALACES</a>
-        <a class="nav-hub-item" href="../study-bites.html"><span class="nav-icon">🍐</span> STUDY BITES</a>
-        <a class="nav-hub-item" href="../study-nibbles.html"><span class="nav-icon">🍔</span> STUDY NIBBLES</a>
-        <a class="nav-hub-item" href="../mock-exams.html"><span class="nav-icon">📋</span> MOCK EXAMS</a>
-        <a class="nav-hub-item" href="../lab-challenges.html"><span class="nav-icon">⚗️</span> LAB CHALLENGES</a>
+        <a class="nav-hub-item" href="../study-guides/index.html"><span class="nav-icon">📖</span> STUDY GUIDES</a>
+        <a class="nav-hub-item" href="../memory-palaces/index.html"><span class="nav-icon">🧠</span> MEMORY PALACES</a>
+        <a class="nav-hub-item" href="../study-bites/index.html"><span class="nav-icon">🍐</span> STUDY BITES</a>
+        <a class="nav-hub-item" href="../study-nibbles/index.html"><span class="nav-icon">🍔</span> STUDY NIBBLES</a>
+        <a class="nav-hub-item" href="../mock-exams/index.html"><span class="nav-icon">📋</span> MOCK EXAMS</a>
+        <a class="nav-hub-item" href="../lab-challenges/index.html"><span class="nav-icon">⚗️</span> LAB CHALLENGES</a>
         <a class="nav-hub-item" href="index.html"><span class="nav-icon">🎙️</span> NOTEBOOKLM</a>
       </div>
     </div>
@@ -121,9 +126,14 @@
     <p><strong>How to use:</strong> Open a NotebookLM notebook with your ZDTE study sources uploaded. Click any episode below to expand it, then copy the prompt and paste it into the NotebookLM chat. It will generate a conversational podcast script you can listen to or use as a study audio track.</p>
   </div>
 
+  <div class="episode-list-header">
+    <div class="episode-list-label">6 EPISODES</div>
+    <button class="toggle-all-btn" id="toggleAllBtn" onclick="toggleAll()">Collapse All</button>
+  </div>
+
   <div class="episode-list">
 
-    <div class="episode-card" id="ep1">
+    <div class="episode-card open" id="ep1">
       <div class="episode-header" onclick="toggleEp('ep1')">
         <div class="episode-num">1</div>
         <div class="episode-meta">
@@ -141,7 +151,7 @@
       </div>
     </div>
 
-    <div class="episode-card" id="ep2">
+    <div class="episode-card open" id="ep2">
       <div class="episode-header" onclick="toggleEp('ep2')">
         <div class="episode-num">2</div>
         <div class="episode-meta">
@@ -159,7 +169,7 @@
       </div>
     </div>
 
-    <div class="episode-card" id="ep3">
+    <div class="episode-card open" id="ep3">
       <div class="episode-header" onclick="toggleEp('ep3')">
         <div class="episode-num">3</div>
         <div class="episode-meta">
@@ -177,7 +187,7 @@
       </div>
     </div>
 
-    <div class="episode-card" id="ep4">
+    <div class="episode-card open" id="ep4">
       <div class="episode-header" onclick="toggleEp('ep4')">
         <div class="episode-num">4</div>
         <div class="episode-meta">
@@ -195,7 +205,7 @@
       </div>
     </div>
 
-    <div class="episode-card" id="ep5">
+    <div class="episode-card open" id="ep5">
       <div class="episode-header" onclick="toggleEp('ep5')">
         <div class="episode-num">5</div>
         <div class="episode-meta">
@@ -213,7 +223,7 @@
       </div>
     </div>
 
-    <div class="episode-card" id="ep6">
+    <div class="episode-card open" id="ep6">
       <div class="episode-header" onclick="toggleEp('ep6')">
         <div class="episode-num">6</div>
         <div class="episode-meta">
@@ -243,6 +253,21 @@
   function toggleEp(id) {
     const card = document.getElementById(id);
     card.classList.toggle('open');
+    syncToggleBtn();
+  }
+
+  function toggleAll() {
+    const cards = document.querySelectorAll('.episode-card');
+    const allOpen = [...cards].every(c => c.classList.contains('open'));
+    cards.forEach(c => c.classList.toggle('open', !allOpen));
+    syncToggleBtn();
+  }
+
+  function syncToggleBtn() {
+    const cards = document.querySelectorAll('.episode-card');
+    const allOpen = [...cards].every(c => c.classList.contains('open'));
+    const btn = document.getElementById('toggleAllBtn');
+    if (btn) btn.textContent = allOpen ? 'Collapse All' : 'Expand All';
   }
 
   function copyPod(id, btn) {
