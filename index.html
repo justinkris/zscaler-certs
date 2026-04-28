@@ -84,243 +84,154 @@
     background: var(--cream);
     border: 1.5px solid var(--border);
     border-radius: 20px;
-    padding: 32px 28px 28px;
+    padding: 28px 28px 24px;
     overflow: hidden;
     cursor: pointer;
     transition:
-      transform 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
-      box-shadow 0.45s cubic-bezier(0.2, 0.8, 0.2, 1),
+      transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
       border-color 0.3s ease;
-    min-height: 360px;
     display: flex;
     flex-direction: column;
     text-decoration: none;
     color: inherit;
   }
 
-  /* Sheen overlay — diagonal light sweep */
+  /* Sheen sweep */
   .cert-card::before {
     content: '';
     position: absolute;
     top: 0; left: -100%;
     width: 60%; height: 100%;
-    background: linear-gradient(
-      120deg,
-      transparent 0%,
-      rgba(255,255,255,0.55) 50%,
-      transparent 100%
-    );
+    background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.55) 50%, transparent 100%);
     transform: skewX(-20deg);
-    transition: left 0.85s cubic-bezier(0.2, 0.8, 0.2, 1);
+    transition: left 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
     pointer-events: none;
     z-index: 2;
   }
 
-  /* Soft glow halo behind card */
+  /* Glow halo */
   .cert-card::after {
     content: '';
     position: absolute;
     inset: 0;
     border-radius: 20px;
     box-shadow: 0 0 0 0 rgba(255,107,53,0);
-    transition: box-shadow 0.5s ease;
+    transition: box-shadow 0.45s ease;
     pointer-events: none;
   }
 
   .cert-card:hover {
-    transform: translateY(-10px) scale(1.015);
-    box-shadow: 0 22px 50px -18px rgba(26,18,9,0.28);
+    transform: translateY(-14px) scale(1.03);
+    box-shadow: 0 32px 64px -16px rgba(26,18,9,0.3);
   }
+  .cert-card:hover::before { left: 140%; }
 
-  .cert-card:hover::before {
-    left: 140%;
-  }
+  .cert-card.status-complete:hover { border-color: var(--green-border); }
+  .cert-card.status-complete:hover::after { box-shadow: 0 0 0 5px rgba(58,125,68,0.14), 0 0 60px 0 rgba(58,125,68,0.28); }
 
-  /* Status-specific hover glows */
-  .cert-card.status-complete:hover {
-    border-color: var(--green-border);
-  }
-  .cert-card.status-complete:hover::after {
-    box-shadow: 0 0 0 4px rgba(58,125,68,0.10), 0 0 40px 0 rgba(58,125,68,0.18);
-  }
+  .cert-card.status-progress:hover { border-color: var(--orange-border); }
+  .cert-card.status-progress:hover::after { box-shadow: 0 0 0 5px rgba(255,107,53,0.16), 0 0 60px 0 rgba(255,107,53,0.32); }
 
-  .cert-card.status-progress:hover {
-    border-color: var(--orange-border);
-  }
-  .cert-card.status-progress:hover::after {
-    box-shadow: 0 0 0 4px rgba(255,107,53,0.12), 0 0 40px 0 rgba(255,107,53,0.22);
-  }
-
-  .cert-card.status-soon:hover {
-    border-color: #d6cab8;
-  }
-  .cert-card.status-soon:hover::after {
-    box-shadow: 0 0 0 4px rgba(138,118,96,0.10), 0 0 40px 0 rgba(138,118,96,0.15);
-  }
+  .cert-card.status-soon:hover { border-color: #d6cab8; }
+  .cert-card.status-soon:hover::after { box-shadow: 0 0 0 5px rgba(138,118,96,0.12), 0 0 60px 0 rgba(138,118,96,0.22); }
 
   /* ── CARD CONTENT ── */
-  .card-content {
-    position: relative;
-    z-index: 3;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-  }
+  .card-content { position: relative; z-index: 3; display: flex; flex-direction: column; }
 
+  /* Default visible: code + edu + name */
   .cert-code {
     font-family: 'Fraunces', serif;
-    font-size: 38px;
-    font-weight: 700;
-    line-height: 1;
-    letter-spacing: -0.01em;
-    margin-bottom: 4px;
+    font-size: 36px; font-weight: 700;
+    line-height: 1; letter-spacing: -0.01em;
+    margin-bottom: 3px;
     transition: color 0.3s ease;
   }
-  .cert-card.status-complete .cert-code { color: #4ade80; }
-  .cert-card.status-progress .cert-code { color: #fb923c; }
-  .cert-card.status-soon     .cert-code { color: #60a5fa; }
-
+  .cert-card.status-complete .cert-code { color: var(--ink); }
+  .cert-card.status-progress .cert-code { color: var(--ink); }
+  .cert-card.status-soon     .cert-code { color: var(--ink-soft); }
   .cert-card:hover .cert-code { color: var(--orange); }
-  .cert-card.status-complete:hover .cert-code { color: #86efac; }
-  .cert-card.status-progress:hover .cert-code { color: #fdba74; }
-  .cert-card.status-soon:hover     .cert-code { color: #93c5fd; }
+  .cert-card.status-complete:hover .cert-code { color: var(--green); }
 
   .cert-edu {
-    display: inline-block;
-    font-size: 11px;
-    letter-spacing: 0.12em;
-    color: var(--ink-muted);
-    text-transform: uppercase;
-    margin-bottom: 20px;
-    font-weight: 500;
+    font-size: 11px; letter-spacing: 0.12em;
+    color: var(--ink-muted); text-transform: uppercase;
+    font-weight: 500; margin-bottom: 14px;
   }
 
   .cert-name {
     font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-weight: 400;
-    font-size: 18px;
-    color: var(--ink-soft);
+    font-style: italic; font-weight: 400;
+    font-size: 17px; color: var(--ink-soft);
     line-height: 1.35;
-    margin-bottom: 28px;
-    flex-grow: 1;
+  }
+
+  /* ── DETAILS — hidden by default, revealed on hover ── */
+  .card-details {
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    transition:
+      max-height 0.4s cubic-bezier(0.2, 0.8, 0.2, 1),
+      opacity 0.3s ease;
+    margin-top: 0;
+  }
+  .cert-card:hover .card-details {
+    max-height: 160px;
+    opacity: 1;
+    margin-top: 20px;
   }
 
   /* ── STATUS BADGE ── */
-  .status-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: auto;
-  }
-
   .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 7px 14px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    border: 1px solid;
-    transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
-  }
-  .cert-card:hover .status-badge { transform: scale(1.06); }
-
-  .status-dot {
-    width: 7px; height: 7px;
-    border-radius: 50%;
-    flex-shrink: 0;
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 14px; border-radius: 20px;
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    border: 1px solid; margin-bottom: 14px;
   }
 
-  /* COMPLETE = green */
-  .status-complete .status-badge {
-    background: var(--green-light);
-    color: var(--green);
-    border-color: var(--green-border);
-  }
-  .status-complete .status-dot { background: var(--green); }
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 
-  /* IN PROGRESS = orange + pulse */
-  .status-progress .status-badge {
-    background: var(--orange-light);
-    color: #cc4a18;
-    border-color: var(--orange-border);
-  }
-  .status-progress .status-dot {
-    background: var(--orange);
-    animation: pulse 1.8s ease-in-out infinite;
-  }
+  .status-complete .status-badge { background: var(--green-light); color: var(--green); border-color: var(--green-border); }
+  .status-complete .status-dot   { background: var(--green); }
+
+  .status-progress .status-badge { background: var(--orange-light); color: #cc4a18; border-color: var(--orange-border); }
+  .status-progress .status-dot   { background: var(--orange); animation: pulse 1.8s ease-in-out infinite; }
   @keyframes pulse {
     0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,53,0.55); }
     50%      { box-shadow: 0 0 0 6px rgba(255,107,53,0); }
   }
 
-  /* COMING SOON = muted */
-  .status-soon .status-badge {
-    background: #f3ece0;
-    color: var(--ink-muted);
-    border-color: var(--border);
-  }
-  .status-soon .status-dot { background: var(--ink-muted); }
+  .status-soon .status-badge { background: #f3ece0; color: var(--ink-muted); border-color: var(--border); }
+  .status-soon .status-dot   { background: var(--ink-muted); }
 
   /* ── EXAM DATE ── */
   .exam-date {
-    font-size: 11px;
-    color: var(--ink-muted);
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-    font-weight: 500;
+    font-size: 11px; color: var(--ink-muted);
+    letter-spacing: 0.08em; text-transform: uppercase; font-weight: 500;
   }
-  .exam-date strong {
-    color: var(--ink);
-    font-weight: 600;
-    margin-left: 4px;
-  }
+  .exam-date strong { color: var(--ink); font-weight: 600; margin-left: 4px; }
 
-  /* ── CREDLY LINK (only on complete card) ── */
+  /* ── CREDLY LINK ── */
   .credly-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    margin-top: 18px;
-    padding: 10px 14px;
-    border-radius: 10px;
-    background: transparent;
-    border: 1px solid var(--green-border);
-    color: var(--green);
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-decoration: none;
-    align-self: flex-start;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 8px 14px; border-radius: 10px;
+    background: transparent; border: 1px solid var(--green-border);
+    color: var(--green); font-size: 12px; font-weight: 600;
+    letter-spacing: 0.06em; text-decoration: none;
     transition: all 0.25s ease;
   }
-  .credly-link:hover {
-    background: var(--green);
-    color: var(--cream);
-    transform: translateX(3px);
-  }
+  .credly-link:hover { background: var(--green); color: var(--cream); }
   .credly-link svg { transition: transform 0.25s ease; }
   .credly-link:hover svg { transform: translateX(2px); }
 
-  /* ── CORNER RIBBON for in-progress: subtle countdown vibe ── */
+  /* ── CORNER FLAG ── */
   .corner-flag {
-    position: absolute;
-    top: 18px;
-    right: 18px;
-    z-index: 4;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    color: var(--orange);
-    font-weight: 600;
-    opacity: 0;
-    transform: translateY(-4px);
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    position: absolute; top: 18px; right: 18px; z-index: 4;
+    font-size: 10px; letter-spacing: 0.1em;
+    color: var(--orange); font-weight: 600;
   }
-  .cert-card.status-progress .corner-flag { opacity: 1; transform: translateY(0); }
 
   /* ── FOOTER ── */
   footer {
@@ -361,21 +272,18 @@
         <div class="cert-code">ZDTA</div>
         <div class="cert-edu">EDU-200</div>
         <div class="cert-name">Zscaler Digital Transformation — Administrator</div>
-
-        <div class="status-row">
-          <div class="status-badge">
-            <span class="status-dot"></span>
-            Complete
+        <div class="card-details">
+          <div class="status-badge"><span class="status-dot"></span>Complete</div>
+          <div>
+            <span class="credly-link">
+              View on Credly
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+                <polyline points="12 5 19 12 12 19"/>
+              </svg>
+            </span>
           </div>
         </div>
-
-        <span class="credly-link">
-          View on Credly
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="5" y1="12" x2="19" y2="12"/>
-            <polyline points="12 5 19 12 12 19"/>
-          </svg>
-        </span>
       </div>
     </a>
 
